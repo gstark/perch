@@ -27,7 +27,6 @@ final class HotKeyCenter {
     private struct Entry {
         let shortcut: KeyShortcut
         let onKeyDown: () -> Void
-        let onKeyUp: (() -> Void)?
         let carbonID: UInt32
         var ref: EventHotKeyRef?
     }
@@ -50,15 +49,11 @@ final class HotKeyCenter {
     }
 
     /// Registers `shortcut` under `id`, dropping any previous one so no combo leaks.
-    func register(
-        id: String, shortcut: KeyShortcut, onKeyDown: @escaping () -> Void,
-        onKeyUp: (() -> Void)? = nil
-    ) {
+    func register(id: String, shortcut: KeyShortcut, onKeyDown: @escaping () -> Void) {
         unregister(id: id)
         nextCarbonID += 1
         entries[id] = Entry(
-            shortcut: shortcut, onKeyDown: onKeyDown, onKeyUp: onKeyUp,
-            carbonID: nextCarbonID, ref: nil)
+            shortcut: shortcut, onKeyDown: onKeyDown, carbonID: nextCarbonID, ref: nil)
         idToKey[nextCarbonID] = id
         if !isPaused { activate(id) }
     }
@@ -101,9 +96,7 @@ final class HotKeyCenter {
         guard eventHandler == nil, let dispatcher = GetEventDispatcherTarget() else { return }
         var eventTypes = [
             EventTypeSpec(
-                eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed)),
-            EventTypeSpec(
-                eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyReleased))
+                eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
         ]
         InstallEventHandler(
             dispatcher,
@@ -121,16 +114,10 @@ final class HotKeyCenter {
         guard
             hotKeyID.signature == signature,
             let key = idToKey[hotKeyID.id],
-            let entry = entries[key]
+            let entry = entries[key],
+            kind == kEventHotKeyPressed
         else { return OSStatus(eventNotHandledErr) }
-        if kind == kEventHotKeyPressed {
-            entry.onKeyDown()
-        } else if kind == kEventHotKeyReleased {
-            guard let onKeyUp = entry.onKeyUp else { return OSStatus(eventNotHandledErr) }
-            onKeyUp()
-        } else {
-            return OSStatus(eventNotHandledErr)
-        }
+        entry.onKeyDown()
         return noErr
     }
 }

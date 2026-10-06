@@ -72,19 +72,6 @@ enum SettingsBackupCoverage {
 
     /// Keys kept out of a backup on purpose, each with the reason it has to stay out.
     static let deliberatelyExcluded: [String: String] = [
-        AppSettingsKey.dictationEnabled.rawValue:
-            "Microphone capture is an opt-in capability on this Mac; a backup must not enable it.",
-        AppSettingsKey.dictationMode.rawValue: "Dictation preferences stay local until backup supports them.",
-        AppSettingsKey.dictationModel.rawValue: "Downloaded models are local to this Mac.",
-        AppSettingsKey.dictationLanguage.rawValue:
-            "Dictation preferences stay local until backup supports them.",
-        AppSettingsKey.dictationMicrophone.rawValue: "Names a microphone attached to this Mac.",
-        AppSettingsKey.dictationDestination.rawValue:
-            "An import must not change where dictated text is sent.",
-        AppSettingsKey.dictationAdaptsCapitalization.rawValue:
-            "Dictation preferences stay local until backup supports them.",
-        AppSettingsKey.dictationIdleRelease.rawValue:
-            "Dictation memory use stays a device-local preference.",
         AppSettingsKey.clipboardTextSearchEnabled.rawValue:
             "Background OCR is an opt-in processing choice on this Mac; a backup must not enable it.",
         AppSettingsKey.snippetsEnabled.rawValue:
@@ -110,9 +97,6 @@ enum SettingsBackupCoverage {
             "Arms the app to open meeting links unattended; an import must not switch that on.",
         AppSettingsKey.cameraPreview.rawValue:
             "Turns the camera on before a meeting; an import must not grant that.",
-        AppSettingsKey.aiEnabled.rawValue:
-            "No other AI setting travels in a backup, so an import would arm a feature it cannot "
-            + "configure.",
         AppSettingsKey.aiInstalledProviders.rawValue:
             "Installed commands and their accounts belong to this Mac; an import must not enable "
             + "their discovery on another one.",
@@ -148,15 +132,9 @@ enum SettingsBackupCoverage {
         AppSettingsKey.aiInstalledOverrides.rawValue:
             "Names a command to run and the variables to run it with; an import must never decide "
             + "which program this Mac launches.",
-        AppSettingsKey.mcpEnabled.rawValue:
-            "Doubles as consent to run third-party MCP servers, one of which is a local process; a "
-            + "flag that grants a capability is never carried by a backup.",
         AppSettingsKey.mcpServers.rawValue:
             "An MCP server is a source of executable code and a destination for chat context, and "
             + "it is meaningless without the machine-local Keychain secrets it describes.",
-        AppSettingsKey.quickActionsEnabled.rawValue:
-            "Grants keystroke delivery into other apps through the Accessibility permission, and a "
-            + "flag that grants a capability is never carried by a backup.",
         AppSettingsKey.quickActionModel.rawValue:
             "Names an external AI destination for text taken from whatever app is frontmost; an "
             + "import must not choose one.",

@@ -110,7 +110,7 @@ enum SettingsSearchCatalog {
     static let entries: [SettingsSearchEntry] =
         general + applications + systemSettings + systemActions + commands + quicklinks
         + appleShortcuts + fallbacks + clipboard + snippets + fileSearch + windowManagement
-        + navigation + notes + calendar + emoji + dictation + extensions + permissions
+        + navigation + notes + calendar + emoji + extensions + permissions
         + backup + about
 
     private static let general: [SettingsSearchEntry] = [
@@ -268,20 +268,6 @@ enum SettingsSearchCatalog {
         .init(
             pane: .fallbacks,
             keywords: ["no results", "empty", "search web", "order"])
-    ]
-
-    private static let dictation: [SettingsSearchEntry] = [
-        .init(pane: .dictation, keywords: ["speech", "voice", "transcription", "microphone"]),
-        .init(.dictationDictation, "Enable Dictation"),
-        .init(.dictationCommands, "Shortcut behavior"),
-        .init(.dictationCommands, "Shortcut"),
-        .init(.dictationModel, "Model"),
-        .init(.dictationModel, "Engine", keywords: ["parakeet", "redux", "ultra", "qwen"]),
-        .init(.dictationModel, "Language"),
-        .init(.dictationMemory, "Release model from memory"),
-        .init(.dictationOutput, "Microphone"),
-        .init(.dictationOutput, "When finished"),
-        .init(.dictationOutput, "Adapt capitalization", keywords: ["uppercase", "lowercase", "sentence"])
     ]
 
     private static let fileSearch: [SettingsSearchEntry] = [

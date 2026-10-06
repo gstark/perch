@@ -310,11 +310,6 @@ swiftc -O -swift-version 6 Tinycast/Platform/{Signposts,Appearance,NotificationT
 leaks the interval when the work throws, because the `.end` emit is skipped on the throw path and the
 instrument then shows an interval that never closes.
 
-`./Scripts/benchmark-dictation.sh AUDIO` measures all four installed dictation models with fresh and
-reused helpers, reporting load time, transcription time, sampled helper footprint and recognized text.
-It uses only the supplied audio and already downloaded models, outside the app and deterministic suite.
-See [Dictation validation](features/dictation.md#validation) for comparison limits and optional arguments.
-
 Measure before optimising, and measure the same way twice. For cold launch: quit fully, relaunch, time
 it three times, take the median.
 

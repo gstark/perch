@@ -317,41 +317,6 @@ final class AppSettings {
         didSet { defaults.set(notesEnabled, forKey: Key.notesEnabled.rawValue) }
     }
 
-    var dictationEnabled: Bool {
-        didSet { defaults.set(dictationEnabled, forKey: Key.dictationEnabled.rawValue) }
-    }
-
-    var dictationMode: DictationMode {
-        didSet { defaults.set(dictationMode.rawValue, forKey: Key.dictationMode.rawValue) }
-    }
-
-    var dictationModel: DictationModel {
-        didSet { defaults.set(dictationModel.rawValue, forKey: Key.dictationModel.rawValue) }
-    }
-
-    /// Nil lets macOS follow the system input device as it changes.
-    var dictationMicrophone: String? {
-        didSet { defaults.set(dictationMicrophone, forKey: Key.dictationMicrophone.rawValue) }
-    }
-
-    var dictationDestination: DictationDestination {
-        didSet { defaults.set(dictationDestination.rawValue, forKey: Key.dictationDestination.rawValue) }
-    }
-
-    var dictationAdaptsCapitalization: Bool {
-        didSet {
-            defaults.set(dictationAdaptsCapitalization, forKey: Key.dictationAdaptsCapitalization.rawValue)
-        }
-    }
-
-    var dictationIdleRelease: DictationIdleRelease {
-        didSet { defaults.set(dictationIdleRelease.rawValue, forKey: Key.dictationIdleRelease.rawValue) }
-    }
-
-    var dictationLanguage: String? {
-        didSet { defaults.set(dictationLanguage, forKey: Key.dictationLanguage.rawValue) }
-    }
-
     var notesRendersMarkdown: Bool {
         didSet { defaults.set(notesRendersMarkdown, forKey: Key.notesRendersMarkdown.rawValue) }
     }
@@ -363,14 +328,6 @@ final class AppSettings {
     /// The notes folder as the user wrote it, `~` allowed; nil keeps it in Application Support.
     var notesFolder: String? {
         didSet { defaults.set(notesFolder, forKey: Key.notesFolder.rawValue) }
-    }
-
-    /// Off by default: connecting a server is consent to run code Tinycast did not write.
-    var mcpEnabled: Bool {
-        didSet { defaults.set(mcpEnabled, forKey: Key.mcpEnabled.rawValue) }
-    }
-    var aiEnabled: Bool {
-        didSet { defaults.set(aiEnabled, forKey: Key.aiEnabled.rawValue) }
     }
 
     var customCommandsEnabled: Bool {
@@ -388,11 +345,6 @@ final class AppSettings {
     /// Also keyword-expansion consent, so it confirms first and never rides a backup.
     var snippetsEnabled: Bool {
         didSet { defaults.set(snippetsEnabled, forKey: Key.snippetsEnabled.rawValue) }
-    }
-
-    /// Off out of the box: on means Tinycast may read a selection anywhere and type over it.
-    var quickActionsEnabled: Bool {
-        didSet { defaults.set(quickActionsEnabled, forKey: Key.quickActionsEnabled.rawValue) }
     }
 
     var snippetsShowInLauncher: Bool {
@@ -701,27 +653,6 @@ final class AppSettings {
         fileSearchIgnorePatterns =
             defaults.stringArray(forKey: Key.fileSearchIgnorePatterns.rawValue) ?? []
         notesEnabled = defaults.bool(forKey: Key.notesEnabled.rawValue)
-        dictationEnabled = defaults.bool(forKey: Key.dictationEnabled.rawValue)
-        dictationMode =
-            defaults.string(forKey: Key.dictationMode.rawValue)
-            .flatMap(DictationMode.init) ?? .toggle
-        dictationModel =
-            defaults.string(forKey: Key.dictationModel.rawValue)
-            .flatMap(DictationModel.init) ?? .redux
-        dictationMicrophone = defaults.string(forKey: Key.dictationMicrophone.rawValue)
-        dictationDestination =
-            defaults.string(forKey: Key.dictationDestination.rawValue)
-            .flatMap(DictationDestination.init) ?? .paste
-        dictationAdaptsCapitalization =
-            defaults.object(forKey: Key.dictationAdaptsCapitalization.rawValue) == nil
-            || defaults.bool(forKey: Key.dictationAdaptsCapitalization.rawValue)
-        dictationIdleRelease =
-            defaults.object(forKey: Key.dictationIdleRelease.rawValue)
-            .flatMap { $0 as? Int }
-            .flatMap(DictationIdleRelease.init(rawValue:)) ?? .oneMinute
-        dictationLanguage =
-            defaults.string(forKey: Key.dictationLanguage.rawValue)
-            .flatMap(DictationLanguage.init(rawValue:))?.rawValue
         notesRendersMarkdown =
             defaults.object(forKey: Key.notesRendersMarkdown.rawValue) == nil
             || defaults.bool(forKey: Key.notesRendersMarkdown.rawValue)
@@ -729,15 +660,12 @@ final class AppSettings {
             defaults.object(forKey: Key.notesShowsFormattingBar.rawValue) == nil
             || defaults.bool(forKey: Key.notesShowsFormattingBar.rawValue)
         notesFolder = defaults.string(forKey: Key.notesFolder.rawValue)
-        aiEnabled = defaults.bool(forKey: Key.aiEnabled.rawValue)
-        mcpEnabled = defaults.bool(forKey: Key.mcpEnabled.rawValue)
         customCommandsEnabled = defaults.bool(forKey: Key.customCommandsEnabled.rawValue)
         // These default on, so absence must be distinguished from a stored `false`.
         customCommandsShowInLauncher =
             defaults.object(forKey: Key.customCommandsShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.customCommandsShowInLauncher.rawValue)
         snippetsEnabled = defaults.bool(forKey: Key.snippetsEnabled.rawValue)
-        quickActionsEnabled = defaults.bool(forKey: Key.quickActionsEnabled.rawValue)
         snippetsShowInLauncher =
             defaults.object(forKey: Key.snippetsShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.snippetsShowInLauncher.rawValue)

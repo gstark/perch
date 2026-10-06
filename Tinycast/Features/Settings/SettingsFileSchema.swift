@@ -72,19 +72,6 @@ enum SettingsFileSchema {
         case .notesShowsFormattingBar: return bind(settings, \.notesShowsFormattingBar)
         case .notesFolder: return bind(settings, \.notesFolder, accept: folder)
         case .notesCommands: return launcher.commandsBinding(for: key, owner: .notes)
-        case .dictationMode: return bind(settings, \.dictationMode)
-        case .dictationShortcut:
-            return shortcuts.binding(for: key, action: .dictation, name: "Dictation")
-        case .dictationModel: return bind(settings, \.dictationModel)
-        case .dictationMicrophone: return bind(settings, \.dictationMicrophone)
-        case .dictationDestination: return bind(settings, \.dictationDestination)
-        case .dictationAdaptsCapitalization: return bind(settings, \.dictationAdaptsCapitalization)
-        case .dictationIdleRelease: return bind(settings, \.dictationIdleRelease)
-        case .dictationLanguage:
-            return bind(settings, \.dictationLanguage) { language in
-                guard let language else { return .some(nil) }
-                return DictationLanguage(rawValue: language) == nil ? nil : .some(language)
-            }
         case .snippetsShowInLauncher: return bind(settings, \.snippetsShowInLauncher)
         case .snippetsFolder: return bind(settings, \.snippetsFolder, accept: folder)
         case .snippetsCommands: return launcher.commandsBinding(for: key, owner: .snippets)
@@ -153,10 +140,6 @@ extension WindowCycle: SettingsFileRawValue {}
 extension ClipboardDefaultAction: SettingsFileRawValue {}
 extension EmojiSkinTone: SettingsFileRawValue {}
 extension EmojiGridColumns: SettingsFileRawValue {}
-extension DictationModel: SettingsFileRawValue {}
-extension DictationMode: SettingsFileRawValue {}
-extension DictationDestination: SettingsFileRawValue {}
-extension DictationIdleRelease: SettingsFileRawValue {}
 extension JoinWindow: SettingsFileRawValue {}
 
 extension ClipboardRetention: SettingsFileToken {
