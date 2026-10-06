@@ -89,7 +89,9 @@ final class AppCore {
     @ObservationIgnored private(set) lazy var calculatorCoordinator = CalculatorCoordinator(
         calcHistory: calcHistory, paletteCoordinator: paletteCoordinator, core: self)
 
-    @ObservationIgnored private(set) lazy var statusItem = StatusItemController(core: self)
+    let cpuSampler = CPUSampler()
+    @ObservationIgnored private(set) lazy var statusItem = StatusItemController(
+        core: self, sampler: cpuSampler)
     @ObservationIgnored private lazy var windowController = PaletteWindowController(core: self)
     @ObservationIgnored private lazy var messageHUD = MessageHUDController(settings: settings)
     private(set) var isShowingDialog = false
@@ -250,6 +252,7 @@ final class AppCore {
 
     func prepareForTermination() {
         settingsFile?.flush()
+        cpuSampler.stop()
         clipboardTextIndexer?.stop()
         // Caps Lock first: its remap is the one teardown that outlives the process.
         hyperKeyTap.prepareForTermination()

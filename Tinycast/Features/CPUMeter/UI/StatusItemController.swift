@@ -1,25 +1,41 @@
 import AppKit
 
-/// Perch's one menu-bar item. Either click opens the same menu, rebuilt each time it opens.
+/// Perch's one menu-bar item: the CPU meter. Either click opens the same menu, rebuilt each time.
 @MainActor
 final class StatusItemController: NSObject, NSMenuDelegate {
     private unowned let core: AppCore
+    private let sampler: CPUSampler
     private var statusItem: NSStatusItem?
     private let menu = NSMenu()
 
-    init(core: AppCore) {
+    init(core: AppCore, sampler: CPUSampler) {
         self.core = core
+        self.sampler = sampler
         super.init()
         menu.delegate = self
     }
 
     func start() {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.button?.image = NSImage(named: "MenuBarIcon")
-        item.button?.setAccessibilityLabel(Bundle.main.appDisplayName)
+        item.button?.imagePosition = .imageOnly
+        item.button?.setAccessibilityLabel("CPU")
         item.menu = menu
         statusItem = item
         applyVisibility()
+        // Idle cells until the first interval is measured, so the item never jumps in width.
+        drawMeter(Array(repeating: .idle, count: ProcessInfo.processInfo.processorCount))
+        sampler.onSample = { [weak self] in
+            guard let self else { return }
+            drawMeter(sampler.cores)
+        }
+        sampler.start()
+    }
+
+    private func drawMeter(_ loads: [CoreLoad]) {
+        guard let button = statusItem?.button else { return }
+        button.image = MeterImage.make(loads: loads)
+        let busy = loads.isEmpty ? 0 : loads.map { $0.user + $0.system }.reduce(0, +) / Double(loads.count)
+        button.setAccessibilityValue("\(Int((busy * 100).rounded())) percent")
     }
 
     func applyVisibility() {
