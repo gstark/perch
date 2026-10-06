@@ -13,7 +13,6 @@ struct SettingsDetailView: View {
             case .systemSettings: SystemSettingsSettingsView()
             case .systemActions: SystemActionsSettingsView()
             case .commands: CommandsSettingsView()
-            case .appleShortcuts: AppleShortcutsSettingsView()
             case .fileSearch: FileSearchSettingsView()
             case .snippets: SnippetsSettingsView()
             case .navigation: NavigationSettingsView()
@@ -22,7 +21,6 @@ struct SettingsDetailView: View {
             case .emoji: EmojiSettingsView()
             case .calendar: CalendarSettingsView()
             case .permissions: PermissionsSettingsView()
-            case .about: AboutView()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

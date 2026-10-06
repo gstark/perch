@@ -109,11 +109,6 @@ final class LauncherCoordinator {
             calendarCoordinator.activateMeeting(id: id)
             return
         }
-        if app.kind == .appleShortcut {
-            guard let id = AppleShortcut.id(fromEntryID: app.id) else { return }
-            core.appleShortcutCoordinator.run(id: id)
-            return
-        }
         let previous = windowController.previousTarget
         paletteCoordinator.hidePalette(restoreFocus: false)
         switch app.kind {
@@ -126,7 +121,7 @@ final class LauncherCoordinator {
             guard let snippetID = StoredSnippet.id(fromEntryID: app.id) else { return }
             snippetCoordinator.expandSnippet(id: snippetID, target: previous)
         case .command, .customCommand, .systemAction, .windowCommand, .windowLayout,
-            .windowRoom, .appleShortcut, .meeting:
+            .windowRoom, .meeting:
             break  // handled above
         }
     }
@@ -180,18 +175,9 @@ final class LauncherCoordinator {
             core.roomCoordinator.showRooms()
         case .createRoom:
             core.roomCoordinator.createRoom()
-        case .checkForUpdates:
-            dismissPalette()
-            core.updateCoordinator.checkForUpdates()
         case .settings:
             dismissPalette()
             settingsCoordinator.showSettings()
-        case .about:
-            dismissPalette()
-            settingsCoordinator.showAbout()
-        case .support:
-            dismissPalette()
-            core.supportCoordinator.showSupport()
         case .quit:
             NSApp.terminate(nil)
         }

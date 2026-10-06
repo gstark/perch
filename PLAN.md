@@ -40,7 +40,7 @@ Perch is for one user on their own Macs. We do not distribute it.
 
 ## Features to delete
 
-- AI, AppleShortcuts, Backup, Calendar, Camera, CustomCommands, Dictation, Dictionary, Extensions, FileSearch, MCP, MenuSearch, Notes, Onboarding, QuickActions, Quicklinks, Snippets, Support, SystemActions, TextInjection, WindowSwitcher.
+- AI, AppleShortcuts, Backup, Calendar, Camera, CustomCommands, Dictation, Dictionary, Extensions, FileSearch, MCP, MenuSearch, Notes, Onboarding, QuickActions, Quicklinks, Snippets, Support, SystemActions, TextInjection, Uninstall, Updates, WindowSwitcher.
 - Launcher fallbacks.
 - The updater and the "Support" menu item.
 - The `DictationHelper` target.

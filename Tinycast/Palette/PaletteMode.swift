@@ -14,7 +14,6 @@ enum PaletteMode: String, CaseIterable, Identifiable {
     case schedule
     /// One meeting's read-only page, pushed from that meeting's own actions.
     case meetingDetails
-    case uninstall
     case snippets
     case dictionary
     /// A Raycast extension command rendering into the palette.
@@ -34,7 +33,6 @@ enum PaletteMode: String, CaseIterable, Identifiable {
         case .roomWindows: return "macwindow.badge.plus"
         case .schedule: return "calendar"
         case .meetingDetails: return "calendar"
-        case .uninstall: return "trash"
         case .snippets: return "curlybraces"
         case .dictionary: return "book.closed"
         }
@@ -52,7 +50,6 @@ enum PaletteMode: String, CaseIterable, Identifiable {
         case .roomWindows: return "Search windows, or type an app to add…"
         case .schedule: return "Search your schedule…"
         case .meetingDetails: return "Meeting details"
-        case .uninstall: return "Filter files and folders by name…"
         case .snippets: return "Search snippets…"
         case .dictionary: return "Look up a word…"
         // Replaced by the command's own `searchBarPlaceholder` whenever it declares one.

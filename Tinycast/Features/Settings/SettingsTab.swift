@@ -1,7 +1,7 @@
 enum SettingsTab: CaseIterable, Identifiable {
-    case general, applications, systemSettings, systemActions, commands, appleShortcuts,
+    case general, applications, systemSettings, systemActions, commands,
         clipboard, snippets, fileSearch, windowManagement, navigation, calendar, emoji,
-        permissions, about
+        permissions
     /// The case, never an index: a selectable `List` flattens section and row IDs together.
     var id: Self { self }
 
@@ -12,7 +12,6 @@ enum SettingsTab: CaseIterable, Identifiable {
         case .systemSettings: return "System Settings"
         case .systemActions: return "System Actions"
         case .commands: return "Commands"
-        case .appleShortcuts: return "Apple Shortcuts"
         case .fileSearch: return "File Search"
         case .snippets: return "Snippets"
         case .navigation: return "Navigation"
@@ -21,7 +20,6 @@ enum SettingsTab: CaseIterable, Identifiable {
         case .emoji: return "Emoji & Symbols"
         case .calendar: return "Calendar"
         case .permissions: return "Permissions"
-        case .about: return "About"
         }
     }
 
@@ -32,7 +30,6 @@ enum SettingsTab: CaseIterable, Identifiable {
         case .systemSettings: return "gearshape"
         case .systemActions: return "bolt"
         case .commands: return "terminal"
-        case .appleShortcuts: return "square.2.layers.3d"
         case .fileSearch: return "doc.text.magnifyingglass"
         case .snippets: return "curlybraces"
         case .navigation: return "arrow.left.arrow.right"
@@ -41,14 +38,13 @@ enum SettingsTab: CaseIterable, Identifiable {
         case .emoji: return "face.smiling"
         case .calendar: return "calendar"
         case .permissions: return "lock.shield"
-        case .about: return "info.circle"
         }
     }
 }
 
 /// Declaration order is display order; not `.Section`, which would shadow SwiftUI's `Section`.
 enum SettingsSection: CaseIterable, Identifiable {
-    case general, launcher, features, advanced
+    case general, launcher, features
     /// See `SettingsTab.id`: distinct types keep the two namespaces from colliding.
     var id: Self { self }
 
@@ -57,7 +53,6 @@ enum SettingsSection: CaseIterable, Identifiable {
         case .general: return "General"
         case .launcher: return "Launcher"
         case .features: return "Features"
-        case .advanced: return "Advanced"
         }
     }
 
@@ -65,17 +60,13 @@ enum SettingsSection: CaseIterable, Identifiable {
         switch self {
         case .general: return [.general, .permissions]
         case .launcher:
-            return [
-                .applications, .systemSettings, .systemActions, .commands,
-                .appleShortcuts
-            ]
+            return [.applications, .systemSettings, .systemActions, .commands]
         case .features:
             // Everyday tools first.
             return [
                 .clipboard, .snippets, .fileSearch, .windowManagement, .navigation,
                 .calendar, .emoji
             ]
-        case .advanced: return [.about]
         }
     }
 }

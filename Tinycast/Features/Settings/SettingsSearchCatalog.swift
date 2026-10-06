@@ -108,9 +108,8 @@ enum SettingsSearchCatalog {
     // Pane order, then section order within a pane, so this reads as a table of contents.
 
     static let entries: [SettingsSearchEntry] =
-        general + applications + systemSettings + systemActions + commands
-        + appleShortcuts + clipboard + snippets + fileSearch + windowManagement
-        + navigation + calendar + emoji + permissions + about
+        general + applications + systemSettings + systemActions + commands + clipboard + snippets + fileSearch + windowManagement
+        + navigation + calendar + emoji + permissions
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -123,9 +122,6 @@ enum SettingsSearchCatalog {
         .init(
             .generalGeneral, "Show in menu bar",
             keywords: ["menubar", "status item", "icon", "hide"]),
-        .init(
-            .generalGeneral, "Automatically check for updates",
-            keywords: ["software", "update", "automatic", "disable", "popup"]),
         .init(
             .generalGeneral, "Pop to Root Search",
             keywords: ["reset", "timeout", "back"]),
@@ -223,16 +219,6 @@ enum SettingsSearchCatalog {
         .init(
             .commandsCustomCommands, "Import Raycast Scripts",
             keywords: ["raycast", "script", "folder", "directory", "migrate"])
-    ]
-
-    private static let appleShortcuts: [SettingsSearchEntry] = [
-        .init(pane: .appleShortcuts, keywords: ["shortcuts app", "automation", "workflow"]),
-        .init(
-            .appleShortcutsAppleShortcuts, "Enable Apple Shortcuts",
-            keywords: ["shortcuts app", "automation", "workflow"]),
-        .init(
-            group: .appleShortcutsShortcuts, "Aliases and shortcuts",
-            keywords: ["alias", "hotkey", "hide"])
     ]
 
     private static let fileSearch: [SettingsSearchEntry] = [
@@ -456,18 +442,4 @@ enum SettingsSearchCatalog {
             keywords: ["dictation", "recording", "privacy", "grant"])
     ]
 
-    private static let about: [SettingsSearchEntry] = [
-        .init(
-            pane: .about,
-            keywords: ["version", "licence", "license", "credits"]),
-        .init(
-            .aboutAbout, "Check for Updates",
-            keywords: ["version", "upgrade", "release"]),
-        .init(
-            group: .aboutLinks, "Links",
-            keywords: ["github", "source", "issues", "website"]),
-        .init(
-            .aboutLinks, "Support",
-            keywords: ["donate", "sponsor", "funding"])
-    ]
 }

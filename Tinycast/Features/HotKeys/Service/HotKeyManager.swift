@@ -13,7 +13,6 @@ final class HotKeyManager {
     var onRunWindowLayout: ((UUID) -> Void)?
     var onEnterRoom: ((UUID) -> Void)?
     var onRunCustomWindowSize: ((UUID) -> Void)?
-    var onRunAppleShortcut: ((UUID) -> Void)?
     var onExpandSnippet: ((StoredSnippet.ID) -> Void)?
     /// Names what only the stores know; the fixed catalogs resolve here. Set in `AppCore.start()`.
     var displayName: ((HotKeyAction) -> String?)?
@@ -55,7 +54,6 @@ final class HotKeyManager {
     private let boundWindowLayoutKey = "boundWindowLayoutIDs"
     private let boundWindowRoomKey = "boundWindowRoomIDs"
     private let boundCustomWindowSizeKey = "boundCustomWindowSizeIDs"
-    private let boundAppleShortcutKey = "boundAppleShortcutIDs"
     private let boundSnippetKey = "boundSnippetIDs"
 
     func start(
@@ -105,8 +103,6 @@ final class HotKeyManager {
     var boundCustomWindowSizeIDs: [UUID] { boundIDs(key: boundCustomWindowSizeKey) }
 
 
-    /// Pruned by `AppleShortcutCoordinator` after a successful read, never here at launch.
-    var boundAppleShortcutIDs: [UUID] { boundIDs(key: boundAppleShortcutKey) }
 
     /// Swept by `removeSnippetBindings` on each load, never at launch: the store may be off.
     var boundSnippetIDs: [StoredSnippet.ID] {
@@ -173,8 +169,6 @@ final class HotKeyManager {
             index(id, bound: binding != nil, key: boundWindowRoomKey)
         case .customWindowSize(let id):
             index(id, bound: binding != nil, key: boundCustomWindowSizeKey)
-        case .appleShortcut(let id):
-            index(id, bound: binding != nil, key: boundAppleShortcutKey)
         case .snippet(let id):
             index(id, bound: binding != nil, key: boundSnippetKey)
         case .togglePalette, .command, .systemAction, .windowCommand:
@@ -220,7 +214,6 @@ final class HotKeyManager {
         actions += boundWindowLayoutIDs.map { .windowLayout(id: $0) }
         actions += boundWindowRoomIDs.map { .windowRoom(id: $0) }
         actions += boundCustomWindowSizeIDs.map { .customWindowSize(id: $0) }
-        actions += boundAppleShortcutIDs.map { .appleShortcut(id: $0) }
         actions += boundSnippetIDs.map { .snippet(id: $0) }
         actions += SystemAction.ID.allCases.map { .systemAction(id: $0) }
         actions += WindowCommand.ID.allCases.map { .windowCommand(id: $0) }
@@ -248,8 +241,6 @@ final class HotKeyManager {
             return displayName?(action) ?? "Room"
         case .customWindowSize:
             return displayName?(action) ?? "Custom Size"
-        case .appleShortcut:
-            return displayName?(action) ?? "Apple Shortcut"
         case .snippet:
             return displayName?(action) ?? "Snippet"
         }
@@ -287,7 +278,6 @@ final class HotKeyManager {
         case .windowLayout(let id): onRunWindowLayout?(id)
         case .windowRoom(let id): onEnterRoom?(id)
         case .customWindowSize(let id): onRunCustomWindowSize?(id)
-        case .appleShortcut(let id): onRunAppleShortcut?(id)
         case .snippet(let id): onExpandSnippet?(id)
         }
     }

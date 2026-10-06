@@ -19,7 +19,6 @@ struct RootPaletteView: View {
     @Environment(CalendarStore.self) private var calendarStore
     /// Observed so the join card's countdown redraws on the minute boundary.
     @Environment(MeetingClock.self) private var meetingClock
-    @Environment(UninstallSession.self) private var uninstall
     @Environment(SnippetsStore.self) private var snippets
     @Environment(AppSettings.self) private var settings
     @Environment(\.metrics) private var metrics
@@ -54,9 +53,6 @@ struct RootPaletteView: View {
                 meeting: core.calendarCoordinator.cardedMeeting, now: meetingClock.now,
                 openActions: openActions, openArgumentOptions: openArgumentOptions,
                 scrollToFollow: { scroll = ScrollIntent(kind: .follow) })
-        case .uninstall:
-            return UninstallScreen(
-                session: uninstall, core: core, vm: vm, openActions: openActions)
         case .snippets:
             return SnippetsScreen(
                 store: snippets, core: core, vm: vm, openActions: openActions)
@@ -154,20 +150,6 @@ struct RootPaletteView: View {
         return PopoverMenuContent(
             header: title,
             items: [
-                PopoverMenuItem(
-                    title: "Changelog",
-                    systemImage: "clock.arrow.trianglehead.2.counterclockwise.rotate.90"
-                ) {
-                    if let url = URL(string: "https://github.com/abue-ammar/tinycast/releases") {
-                        openURL(url)
-                    }
-                },
-                PopoverMenuItem(title: "About Perch", systemImage: "info.circle") {
-                    core.settingsCoordinator.showAbout()
-                },
-                PopoverMenuItem(title: "Support Perch", systemImage: "heart") {
-                    core.supportCoordinator.showSupport()
-                },
                 PopoverMenuItem(title: "Settings", systemImage: "gearshape", shortcut: "⌘,") {
                     core.settingsCoordinator.showSettings()
                 },
@@ -335,8 +317,6 @@ struct RootPaletteView: View {
                 if menuOpen { closeMenus() }
                 land()
                 searchFocused = !screen.hidesSearchField
-                // Every way out of the Uninstall screen: back chevron, bare backspace, a fresh summon.
-                if vm.mode != .uninstall { uninstall.cancel() }
                 // Entering with no query is the blank screen's own request for recents.
                 if vm.mode == .fileSearch {
                     fileSearch.search(vm.query, filter: vm.fileSearchFilter)
@@ -737,11 +717,6 @@ struct RootPaletteView: View {
             }
     }
 
-    /// The Uninstall screen's primary action is destructive, so its pill isn't white.
-    private var pillTint: Color {
-        vm.mode == .uninstall ? Theme.Colors.destructive : .primary
-    }
-
     private func bottomBar(
         pillLabel: String, showActionGroup: Bool, showActions: Bool
     ) -> some View {
@@ -775,7 +750,7 @@ struct RootPaletteView: View {
                 HStack(spacing: metrics.spacing.sm) {
                     Text(pillLabel)
                         .font(metrics.typography.bar)
-                        .foregroundStyle(pillTint)
+                        .foregroundStyle(.primary)
                     KeyCapChip(text: "↵", style: .outline)
                 }
             }

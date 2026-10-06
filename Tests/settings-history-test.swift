@@ -88,8 +88,8 @@ struct SettingsHistoryTests {
         history.goBack()
         history.goBack()
 
-        history.select(.about)
-        expect(history.current == .about, "selecting after going back moves there")
+        history.select(.permissions)
+        expect(history.current == .permissions, "selecting after going back moves there")
         expect(!history.canGoForward, "and drops the branch we had backed out of")
 
         history.goBack()
@@ -103,9 +103,9 @@ struct SettingsHistoryTests {
         history.goForward()
         expect(history.current == .general, "Forward with nothing ahead is a no-op")
 
-        history.select(.about)
+        history.select(.permissions)
         history.goForward()
-        expect(history.current == .about, "Forward at the tip is a no-op too")
+        expect(history.current == .permissions, "Forward at the tip is a no-op too")
     }
 
     // MARK: - Sidebar taxonomy
@@ -150,8 +150,6 @@ struct SettingsHistoryTests {
             ("hyper", .general),
             ("caps lock", .general),
             ("launch at login", .general),
-            ("automatically check for updates", .general),
-            ("popup", .general),
             ("paste history", .clipboard),
             ("window manage", .windowManagement),
             ("skin tone", .emoji)

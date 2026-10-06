@@ -63,10 +63,7 @@ struct TinycastApp: App {
     /// Declared, not assigned to `NSApp.mainMenu`: SwiftUI rebuilds the menu on any scene change.
     @CommandsBuilder
     private var menuBarCommands: some Commands {
-        CommandGroup(replacing: .appInfo) {
-            Button("About \(appName)") { AppCore.shared.settingsCoordinator.showAbout() }
-            Button("Check for Updates…") { AppCore.shared.updateCoordinator.checkForUpdates() }
-        }
+        CommandGroup(replacing: .appInfo) {}
         CommandGroup(replacing: .appSettings) {
             Button("Settings…") { AppCore.shared.settingsCoordinator.showSettings() }
                 .keyboardShortcut(",")

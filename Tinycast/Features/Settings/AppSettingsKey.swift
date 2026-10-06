@@ -14,7 +14,6 @@ enum AppSettingsKey: String, CaseIterable {
     case emojiSkinTone = "emojiSkinTone"
     case emojiGridColumns = "emojiGridColumns"
     case showInMenuBar = "showInMenuBar"
-    case automaticallyCheckForUpdates = "automaticallyCheckForUpdates"
     case popToRootTimeout = "popToRootTimeout"
     case escapeKeyBehavior = "escapeKeyBehavior"
     case appearance = "appearance"
@@ -47,7 +46,6 @@ enum AppSettingsKey: String, CaseIterable {
     case windowCycle = "windowManagementCycleMode"
     case windowLayoutsShowInLauncher = "windowLayoutsShowInLauncher"
     case windowRoomsShowInLauncher = "windowRoomsShowInLauncher"
-    case appleShortcutsEnabled = "appleShortcutsEnabled"
     case calendarEnabled = "calendarEnabled"
     case calendarShowInLauncher = "calendarShowInLauncher"
     case calendarLauncherLimit = "calendarLauncherLimit"
@@ -62,5 +60,4 @@ enum AppSettingsKey: String, CaseIterable {
     case menuBarLinkedEventsOnly = "menuBarLinkedEventsOnly"
     case calendarMenuBarHidesWhenEmpty = "calendarMenuBarHidesWhenEmpty"
     case hideCurrentEvent = "hideCurrentEvent"
-    case supportReminders = "supportReminders"
 }

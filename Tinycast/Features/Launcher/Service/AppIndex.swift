@@ -11,7 +11,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case windowCommand
         case windowLayout
         case windowRoom
-        case appleShortcut
         case meeting
 
         var descriptor: KindDescriptor {
@@ -61,12 +60,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
                     label: "Room", sectionTitle: "Rooms", openVerb: "Enter Room",
                     canHideFromSearch: true, canRevealInFinder: false, canDragOut: false,
                     isSymbolIcon: true, rankPriority: 3)
-            case .appleShortcut:
-                // File-backed so every row draws the Shortcuts app's own icon.
-                return KindDescriptor(
-                    label: "Apple Shortcut", sectionTitle: "Apple Shortcuts",
-                    openVerb: "Run Shortcut", canHideFromSearch: true,
-                    canRevealInFinder: false, canDragOut: false, isSymbolIcon: false, rankPriority: 3)
             case .meeting:
                 return KindDescriptor(
                     label: "Meeting", sectionTitle: "Meetings",
@@ -168,8 +161,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
             return WindowLayout.id(fromEntryID: id).map { .windowLayout(id: $0) }
         case .windowRoom:
             return Room.id(fromEntryID: id).map { .windowRoom(id: $0) }
-        case .appleShortcut:
-            return AppleShortcut.id(fromEntryID: id).map { .appleShortcut(id: $0) }
         case .snippet:
             return StoredSnippet.id(fromEntryID: id).map { .snippet(id: $0) }
         case .meeting:
@@ -205,7 +196,7 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case .windowLayout: return WindowLayout.sfSymbol
         case .windowRoom: return Room.sfSymbol
         case .meeting: return "video.fill"
-        case .application, .systemSettings, .appleShortcut: return "questionmark"
+        case .application, .systemSettings: return "questionmark"
         }
     }
 
@@ -251,12 +242,6 @@ extension AppEntry {
             bundleID: nil, kind: .customCommand, symbolName: command.iconSymbol)
     }
 
-    /// No bundle id: that would key every shortcut's alias and ranking to the Shortcuts app.
-    init(_ shortcut: AppleShortcut, applicationURL: URL) {
-        self.init(
-            id: shortcut.entryID, name: shortcut.name, url: applicationURL, bundleID: nil,
-            kind: .appleShortcut)
-    }
 }
 
 extension AppEntry.Kind {
@@ -335,7 +320,6 @@ final class AppIndex {
     private var customWindowSizeEntries: [AppEntry] = []
     private var windowLayoutEntries: [AppEntry] = []
     private var windowRoomEntries: [AppEntry] = []
-    private var appleShortcutEntries: [AppEntry] = []
     private var meetingEntries: [AppEntry] = []
     /// The catalog's commands a disabled feature hides; the Commands slice is recomputed from it.
     private var hiddenCommands: Set<CommandID> = []
@@ -396,13 +380,6 @@ final class AppIndex {
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         guard entries != customCommandEntries else { return }
         customCommandEntries = entries
-        publishEntries()
-    }
-
-    /// Discovered from the Shortcuts app, so it arrives already built and sorted.
-    func setAppleShortcuts(_ entries: [AppEntry]) {
-        guard entries != appleShortcutEntries else { return }
-        appleShortcutEntries = entries
         publishEntries()
     }
 
@@ -576,7 +553,7 @@ final class AppIndex {
         let updated =
             Self.named(meetingEntries) + discoveredEntries
             + Self.named(
-                appleShortcutEntries + snippetEntries
+                snippetEntries
                     + Self.systemActionEntries + windowLayoutEntries + windowRoomEntries
                     + windowCommandEntries
                     + customWindowSizeEntries + customCommandEntries

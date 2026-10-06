@@ -371,8 +371,6 @@ enum Theme {
         static let textTertiary = ramp(dark: 0.40, light: 0.42)
         static let menuSymbol = ramp(dark: 0.70, light: 0.70)
         static let iconPlaceholder = ramp(dark: 0.06, light: 0.06)
-        /// The faint wash behind the Onboarding header.
-        static let sheen = ramp(dark: 0.04, light: 0.04)
         /// The Settings card: a faint surface whose border doubles as the row divider.
         static let cardFill = ramp(dark: 0.05, light: 0.04)
         static let cardStroke = ramp(dark: 0.10, light: 0.10)

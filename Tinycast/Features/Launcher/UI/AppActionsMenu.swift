@@ -77,15 +77,6 @@ enum AppActionsMenu {
                     core.launcherCoordinator.quit(app, force: true)
                 })
         }
-        if app.kind == .application {
-            items.append(
-                PopoverMenuItem(
-                    title: "Uninstall Application", systemImage: "trash", startsSection: true,
-                    isDestructive: true
-                ) {
-                    core.uninstallCoordinator.beginUninstall(app)
-                })
-        }
         return PopoverMenuContent(header: app.name, items: items)
     }
 

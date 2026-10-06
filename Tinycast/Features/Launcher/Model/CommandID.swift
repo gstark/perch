@@ -24,10 +24,7 @@ enum CommandID: String, CaseIterable, Sendable {
     case createRoom = "command:create-room"
     case searchSnippets = "command:search-snippets"
     case createSnippet = "command:create-snippet"
-    case checkForUpdates = "command:check-for-updates"
     case settings = "command:settings"
-    case about = "command:about"
-    case support = "command:support"
     case quit = "command:quit"
 
     var name: String {
@@ -54,10 +51,7 @@ enum CommandID: String, CaseIterable, Sendable {
         case .createRoom: return "Create Room"
         case .searchSnippets: return "Search Snippets"
         case .createSnippet: return "Create Snippet"
-        case .checkForUpdates: return "Check for Updates"
         case .settings: return "Perch Settings"
-        case .about: return "About Perch"
-        case .support: return "Support Perch"
         case .quit: return "Quit Perch"
         }
     }
@@ -86,10 +80,7 @@ enum CommandID: String, CaseIterable, Sendable {
         case .createRoom: return "rectangle.stack.badge.plus"
         case .searchSnippets: return "curlybraces"
         case .createSnippet: return "plus.rectangle.on.rectangle"
-        case .checkForUpdates: return "arrow.down.circle"
         case .settings: return "gearshape"
-        case .about: return "info.circle"
-        case .support: return "heart"
         case .quit: return "power"
         }
     }

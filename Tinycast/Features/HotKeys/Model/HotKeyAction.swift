@@ -14,7 +14,6 @@ enum HotKeyAction: Hashable, Sendable {
     case windowLayout(id: UUID)
     case windowRoom(id: UUID)
     case customWindowSize(id: UUID)
-    case appleShortcut(id: UUID)
     case snippet(id: StoredSnippet.ID)
     /// Keyed by `AppEntry.id`, which is what survives a reinstall of the extension.
 
@@ -32,7 +31,6 @@ enum HotKeyAction: Hashable, Sendable {
         case .windowRoom(let id): "hotkey.windowRoom." + id.uuidString.lowercased()
         case .customWindowSize(let id):
             "hotkey.customWindowSize." + id.uuidString.lowercased()
-        case .appleShortcut(let id): "hotkey.appleShortcut." + id.uuidString.lowercased()
         case .snippet(let id): "hotkey.snippet." + id
         }
     }
