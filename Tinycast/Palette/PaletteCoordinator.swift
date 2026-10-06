@@ -7,9 +7,6 @@ final class PaletteCoordinator {
     private let settings: AppSettings
     private let appIndex: AppIndex
     private let windowController: PaletteWindowController
-    /// Features whose launcher rows are read from outside Tinycast re-read them on each open.
-    /// Screens that snapshot other apps re-read them on every open, a restored one included.
-    var onScreenOpening: ((PaletteMode) -> Void)?
 
     init(
         palette: PaletteState,
@@ -85,8 +82,6 @@ final class PaletteCoordinator {
             navigate(to: mode)
         }
         if let query { palette.query = query }
-        // Before the show: `targetApp` must still name the app in front, and no row may pop in.
-        onScreenOpening?(palette.mode)
         windowController.show()
         // Re-scan on open so an app uninstalled since the last scan drops out of the launcher.
         if palette.mode == .launcher { Task { await appIndex.refresh() } }

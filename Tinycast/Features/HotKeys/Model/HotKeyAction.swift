@@ -9,8 +9,6 @@ enum HotKeyAction: Hashable, Sendable {
     case app(bundleID: String)
     case settingsPane(bundleID: String)
     case windowCommand(id: WindowCommand.ID)
-    case windowLayout(id: UUID)
-    case windowRoom(id: UUID)
     case customWindowSize(id: UUID)
 
     /// The UserDefaults key, and the `HotKeyCenter` registration id: one per action.
@@ -21,8 +19,6 @@ enum HotKeyAction: Hashable, Sendable {
         case .app(let bundleID): "hotkey.app." + bundleID
         case .settingsPane(let bundleID): "hotkey.pane." + bundleID
         case .windowCommand(let id): "hotkey.windowCommand." + id.rawValue
-        case .windowLayout(let id): "hotkey.windowLayout." + id.uuidString.lowercased()
-        case .windowRoom(let id): "hotkey.windowRoom." + id.uuidString.lowercased()
         case .customWindowSize(let id):
             "hotkey.customWindowSize." + id.uuidString.lowercased()
         }

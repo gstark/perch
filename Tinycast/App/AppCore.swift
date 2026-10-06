@@ -8,13 +8,7 @@ final class AppCore {
 
     let launcherRanking: LauncherRankingStore
     let appIndex: AppIndex
-    let windowLayouts = WindowLayoutStore()
     let customWindowSizes = CustomWindowSizeStore()
-    let rooms = RoomStore()
-    let roomMinimums = RoomMinimumSizeStore()
-    let roomParking = RoomParkingLedger(
-        fileURL: AppPaths.applicationSupport().appendingPathComponent("room-parking.json"))
-    let roomSession = RoomSession()
     let clipboardStore = ClipboardStore()
     @ObservationIgnored private var clipboardTextIndexer: ClipboardTextIndexer?
     let clipboardManager: ClipboardManager
@@ -43,9 +37,6 @@ final class AppCore {
     let palette = PaletteState()
     let activationPolicy = ActivationPolicy()
 
-    /// Set when a layout editor should open with Settings; the pane consumes it.
-    var pendingWindowLayoutEdit: WindowLayoutEditRequest?
-
     @ObservationIgnored private(set) lazy var paletteCoordinator = PaletteCoordinator(
         palette: palette, settings: settings, appIndex: appIndex,
         windowController: windowController)
@@ -61,23 +52,12 @@ final class AppCore {
             aliases: aliases, core: self)
     @ObservationIgnored private(set) lazy var windowShortcutPresetCoordinator =
         WindowShortcutPresetCoordinator(hotKeys: hotKeys, core: self)
-    @ObservationIgnored private(set) lazy var windowLayoutCoordinator = WindowLayoutCoordinator(
-        store: windowLayouts, settings: settings, appIndex: appIndex, hotKeys: hotKeys,
-        favorites: favorites, visibility: visibility, ranking: launcherRanking, aliases: aliases,
-        paletteCoordinator: paletteCoordinator, settingsCoordinator: settingsCoordinator,
-        core: self)
-    @ObservationIgnored private(set) lazy var roomCoordinator = RoomCoordinator(
-        store: rooms, minimums: roomMinimums, ledger: roomParking, session: roomSession,
-        settings: settings, appIndex: appIndex, hotKeys: hotKeys, favorites: favorites,
-        visibility: visibility, ranking: launcherRanking, aliases: aliases, palette: palette,
-        paletteCoordinator: paletteCoordinator, core: self)
 
     @ObservationIgnored private(set) lazy var launcherCoordinator = LauncherCoordinator(
         ranking: launcherRanking, windowController: windowController,
         paletteCoordinator: paletteCoordinator,
         settingsCoordinator: settingsCoordinator,
         windowCommandCoordinator: windowCommandCoordinator,
-        windowLayoutCoordinator: windowLayoutCoordinator,
         core: self)
     @ObservationIgnored private(set) lazy var clipboardCoordinator = ClipboardCoordinator(
         clipboardStore: clipboardStore, clipboardManager: clipboardManager, settings: settings,
@@ -134,20 +114,6 @@ final class AppCore {
                 self?.customWindowSizeCoordinator.applyCustomWindowSizesPresence()
             }
             customWindowSizeCoordinator.applyCustomWindowSizesPresence()
-            windowLayouts.onChange = { [weak self] _ in
-                self?.windowLayoutCoordinator.applyWindowLayoutsPresence()
-            }
-            windowLayoutCoordinator.applyWindowLayoutsPresence()
-            rooms.onChange = { [weak self] _ in self?.roomCoordinator.applyRoomsPresence() }
-            roomCoordinator.applyRoomsPresence()
-            // A crash can leave windows parked off-screen; they come home before anything else.
-            roomCoordinator.recoverParkedWindows()
-            paletteCoordinator.onScreenOpening = { [weak self] mode in
-                switch mode {
-                case .rooms, .roomWindows: self?.roomCoordinator.load()
-                default: break
-                }
-            }
             Task { await appIndex.refresh() }
             Task { await emojiIndex.load(languages: Locale.preferredLanguages) }
             currencyRates.start()
@@ -160,10 +126,6 @@ final class AppCore {
             hotKeys.onRunWindowCommand = { [weak self] id in
                 self?.windowCommandCoordinator.runWindowCommand(id: id)
             }
-            hotKeys.onRunWindowLayout = { [weak self] id in
-                self?.windowLayoutCoordinator.runWindowLayout(id: id)
-            }
-            hotKeys.onEnterRoom = { [weak self] id in self?.roomCoordinator.enterRoom(id: id) }
             hotKeys.onRunCustomWindowSize = { [weak self] id in
                 self?.windowCommandCoordinator.runCustomWindowSize(id: id)
             }
@@ -189,8 +151,6 @@ final class AppCore {
                 return KeyShortcut.hyperChord(includesShift: settings.hyperKeyIncludesShift)
             }
             hotKeys.start(
-                windowLayoutIDs: Set(windowLayouts.layouts.map(\.id)),
-                windowRoomIDs: Set(rooms.rooms.map(\.id)),
                 customWindowSizeIDs: Set(customWindowSizes.sizes.map(\.id)))
             // Keeps running while Carbon pauses: the recorder needs its rewritten flags.
             hyperKeyTap.start(settings: settings)
@@ -213,10 +173,6 @@ final class AppCore {
         case .settingsPane(let bundleID):
             return appIndex.apps.first { $0.kind == .systemSettings && $0.bundleID == bundleID }?
                 .name
-        case .windowLayout(let id):
-            return windowLayouts.layout(id: id)?.name
-        case .windowRoom(let id):
-            return rooms.room(id: id)?.name
         case .customWindowSize(let id):
             return customWindowSizes.size(id: id)?.name
         case .togglePalette, .command, .windowCommand:
@@ -256,8 +212,6 @@ final class AppCore {
         clipboardTextIndexer?.stop()
         // Caps Lock first: its remap is the one teardown that outlives the process.
         hyperKeyTap.prepareForTermination()
-        windowLayoutCoordinator.prepareForTermination()
-        roomCoordinator.prepareForTermination()
         inputSourceSwitcher.endSession()
     }
 
@@ -274,16 +228,6 @@ final class AppCore {
                 $0.applyWindowCommandsPresence()
                 $0.customWindowSizeCoordinator.applyCustomWindowSizesPresence()
             })
-        track(
-            {
-                _ = $0.windowManagementEnabled
-                _ = $0.windowLayoutsShowInLauncher
-            }, reproject: { $0.windowLayoutCoordinator.applyWindowLayoutsPresence() })
-        track(
-            {
-                _ = $0.windowManagementEnabled
-                _ = $0.windowRoomsShowInLauncher
-            }, reproject: { $0.roomCoordinator.applyEnabled() })
         track(
             { _ = $0.clipboardEnabled }, reproject: { $0.clipboardCoordinator.applyEnabled() })
         track(
@@ -359,7 +303,7 @@ final class AppCore {
             bindings: SettingsFileSchema.bindings(
                 settings: settings, shortcuts: shortcuts, launcher: launcher,
                 windowManagement: WindowManagementSettingsFile(
-                    sizes: customWindowSizes, layouts: windowLayouts, rooms: rooms, aliases: aliases,
+                    sizes: customWindowSizes, aliases: aliases,
                     shortcuts: shortcuts)),
             commit: shortcuts.commit)
         file.onIssues = { [weak self] issues in self?.reportSettingsFileIssues(issues) }

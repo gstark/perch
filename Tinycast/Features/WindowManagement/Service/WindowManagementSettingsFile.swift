@@ -4,8 +4,6 @@ import Foundation
 @MainActor
 struct WindowManagementSettingsFile {
     let sizes: CustomWindowSizeStore
-    let layouts: WindowLayoutStore
-    let rooms: RoomStore
     let aliases: AliasStore
     let shortcuts: HotKeySettingsFile
 
@@ -85,68 +83,6 @@ struct WindowManagementSettingsFile {
                         records: sizes.sizes.map { Record(id: $0.id, name: $0.name, entryID: $0.entryID) },
                         previous: previous, bound: hotKeys.boundCustomWindowSizeIDs,
                         kind: "custom size", action: HotKeyAction.customWindowSize, key: key)
-            })
-    }
-
-    func layoutsBinding(for key: SettingsFileKey) -> SettingsFileBinding {
-        SettingsFileBinding(
-            key,
-            read: {
-                let spelling = shortcuts.spelling
-                return .array(
-                    layouts.layouts.map { layout in
-                        WindowManagementFileFormat.json(
-                            layout,
-                            shortcut: shortcuts.text(for: .windowLayout(id: layout.id), spelling),
-                            alias: aliases.alias(for: layout.entryID))
-                    })
-            },
-            write: { json in
-                guard let decoded = WindowManagementFileFormat.layouts(from: json) else {
-                    return [.invalidValue(key)]
-                }
-                let previous = Set(layouts.layouts.map(\.entryID))
-                let kept = layouts.replace(with: decoded.records)
-                let rule = "a name is empty or used twice, or it has no apps"
-                return report(decoded, kept: kept, kind: "layout", rule: rule, key: key)
-                    + follow(
-                        decoded,
-                        records: layouts.layouts.map {
-                            Record(id: $0.id, name: $0.name, entryID: $0.entryID)
-                        },
-                        previous: previous, bound: hotKeys.boundWindowLayoutIDs, kind: "layout",
-                        action: HotKeyAction.windowLayout, key: key)
-            })
-    }
-
-    func roomsBinding(for key: SettingsFileKey) -> SettingsFileBinding {
-        SettingsFileBinding(
-            key,
-            read: {
-                let spelling = shortcuts.spelling
-                return .array(
-                    rooms.rooms.map { room in
-                        WindowManagementFileFormat.json(
-                            room, shortcut: shortcuts.text(for: .windowRoom(id: room.id), spelling),
-                            alias: aliases.alias(for: room.entryID))
-                    })
-            },
-            write: { json in
-                guard let decoded = WindowManagementFileFormat.rooms(from: json) else {
-                    return [.invalidValue(key)]
-                }
-                let learned = Dictionary(
-                    rooms.rooms.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-                let previous = Set(rooms.rooms.map(\.entryID))
-                let kept = rooms.replace(
-                    with: decoded.records.map { room in learned[room.id].map(room.keepingRuntime) ?? room })
-                let rule = "a name is empty or used twice, or it has no windows"
-                return report(decoded, kept: kept, kind: "room", rule: rule, key: key)
-                    + follow(
-                        decoded,
-                        records: rooms.rooms.map { Record(id: $0.id, name: $0.name, entryID: $0.entryID) },
-                        previous: previous, bound: hotKeys.boundWindowRoomIDs, kind: "room",
-                        action: HotKeyAction.windowRoom, key: key)
             })
     }
 

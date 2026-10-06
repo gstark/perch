@@ -8,7 +8,6 @@ final class LauncherCoordinator {
     private let paletteCoordinator: PaletteCoordinator
     private let settingsCoordinator: SettingsCoordinator
     private let windowCommandCoordinator: WindowCommandCoordinator
-    private let windowLayoutCoordinator: WindowLayoutCoordinator
     /// The backup commands only, which need the live stores to gather from and apply to.
     private unowned let core: AppCore
 
@@ -18,7 +17,6 @@ final class LauncherCoordinator {
         paletteCoordinator: PaletteCoordinator,
         settingsCoordinator: SettingsCoordinator,
         windowCommandCoordinator: WindowCommandCoordinator,
-        windowLayoutCoordinator: WindowLayoutCoordinator,
         core: AppCore
     ) {
         self.ranking = ranking
@@ -26,7 +24,6 @@ final class LauncherCoordinator {
         self.paletteCoordinator = paletteCoordinator
         self.settingsCoordinator = settingsCoordinator
         self.windowCommandCoordinator = windowCommandCoordinator
-        self.windowLayoutCoordinator = windowLayoutCoordinator
         self.core = core
     }
 
@@ -61,18 +58,6 @@ final class LauncherCoordinator {
             windowCommandCoordinator.runCustomWindowSize(id: id)
             return
         }
-        if app.kind == .windowRoom {
-            // The coordinator hides the palette itself: entering must not restore focus first.
-            guard let id = Room.id(fromEntryID: app.id) else { return }
-            core.roomCoordinator.enterRoom(id: id)
-            return
-        }
-        if app.kind == .windowLayout {
-            // The coordinator hides the palette itself: a layout must not restore focus first.
-            guard let id = WindowLayout.id(fromEntryID: app.id) else { return }
-            windowLayoutCoordinator.runWindowLayout(id: id)
-            return
-        }
         paletteCoordinator.hidePalette(restoreFocus: false)
         switch app.kind {
         case .application:
@@ -80,8 +65,7 @@ final class LauncherCoordinator {
         case .systemSettings:
             guard let bundleID = app.bundleID else { return }
             AppLauncher.openSettingsPane(bundleID: bundleID)
-        case .command, .windowCommand, .windowLayout,
-            .windowRoom:
+        case .command, .windowCommand:
             break  // handled above
         }
     }
@@ -99,16 +83,6 @@ final class LauncherCoordinator {
             paletteCoordinator.togglePalette(mode: .emoji)
         case .openInBrowser:
             break  // Query-driven: each runs where the typed text is, never through this funnel.
-        case .createWindowLayout:
-            dismissPalette()
-            windowLayoutCoordinator.editWindowLayout(nil)
-        case .captureWindowLayout:
-            dismissPalette()
-            windowLayoutCoordinator.captureWindowLayout()
-        case .switchRoom:
-            core.roomCoordinator.showRooms()
-        case .createRoom:
-            core.roomCoordinator.createRoom()
         case .settings:
             dismissPalette()
             settingsCoordinator.showSettings()

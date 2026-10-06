@@ -2,7 +2,7 @@
 
 A personal macOS menu-bar app, forked from [Tinycast](https://github.com/abue-ammar/tinycast) and cut
 down to: a fuzzy app launcher, global hotkeys, a text/image clipboard history, an inline calculator
-with unit conversion, an emoji picker, window management with Rooms, and a per-core CPU meter whose
+with unit conversion, an emoji picker, window management, and a per-core CPU meter whose
 menu lists the busiest processes. SwiftUI + AppKit, running as an accessory with no Dock icon
 (`LSUIElement`). Zero third-party dependencies. [PLAN.md](PLAN.md) records why it is shaped this way.
 

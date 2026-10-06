@@ -7,10 +7,6 @@ enum CommandID: String, CaseIterable, Sendable {
     case pasteSequentially = "command:paste-sequentially"
     case searchEmoji = "command:search-emoji"
     case openInBrowser = "command:open-in-browser"
-    case createWindowLayout = "command:create-window-layout"
-    case captureWindowLayout = "command:capture-window-layout"
-    case switchRoom = "command:switch-room"
-    case createRoom = "command:create-room"
     case settings = "command:settings"
     case quit = "command:quit"
 
@@ -21,10 +17,6 @@ enum CommandID: String, CaseIterable, Sendable {
         case .pasteSequentially: return "Paste Sequentially"
         case .searchEmoji: return "Search Emoji & Symbols"
         case .openInBrowser: return "Open in Browser"
-        case .createWindowLayout: return "Create Window Layout"
-        case .captureWindowLayout: return "Create Layout from Current Windows"
-        case .switchRoom: return "Switch Room"
-        case .createRoom: return "Create Room"
         case .settings: return "Perch Settings"
         case .quit: return "Quit Perch"
         }
@@ -37,10 +29,6 @@ enum CommandID: String, CaseIterable, Sendable {
         case .pasteSequentially: return "list.bullet.clipboard"
         case .searchEmoji: return "face.smiling"
         case .openInBrowser: return "globe"
-        case .createWindowLayout: return "plus.rectangle.on.rectangle"
-        case .captureWindowLayout: return "macwindow.badge.plus"
-        case .switchRoom: return "door.left.hand.open"
-        case .createRoom: return "rectangle.stack.badge.plus"
         case .settings: return "gearshape"
         case .quit: return "power"
         }

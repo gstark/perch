@@ -603,49 +603,6 @@ per-scroll-view shim: chasing that flip after the fact is what caused the flash.
 
 ---
 
-## The room preview
-
-The one full-screen surface besides the drop guides, and like them a readout: one click-through,
-never-key panel per display at `.paletteDropGuide`, under the palette. It is the exception to "glass
-only on floating controls" in the other direction — the whole desk is `NSVisualEffectView`
-`.fullScreenUI` blurred behind the window and dimmed by `roomPreviewDim`, so only the cards read.
-
-A card is a solid window-to-be, not a row: `Theme.Radius.roomCard` (16), `roomCardFill` in both
-appearances so the desk never shows through it, a `roomCardStroke` accent border, and one shadow.
-Its title bar carries three quiet dots, the app name (`.headline`) and the window title. The icon
-grows to `roomCardIconLarge` on a card larger than 320 pt both ways, hides on one shorter than 160,
-and moves out from under the palette.
-
-Motion is `Theme.RoomMotion.glide` for a card that changes place, a fade for one that arrives or
-leaves, and `fadeIn`/`fadeOut` for the panels; Reduce Motion removes all of it. See
-[features/window-rooms.md](features/window-rooms.md#the-preview).
-
-## The camera preview panel
-
-`CameraPreviewPanel` is the third borderless surface, beside the dialog and the notes panel. It takes
-the same recipe — `panelScrim`, then `GlassEffectView`, then the clip — and the same optical lift a
-dialog takes, but sits at `.floating` rather than `.dialog` so a failure report still lands on
-top of it.
-
-`AVCaptureVideoPreviewLayer` is hosted in one `NSViewRepresentable` and nothing else; the title,
-countdown and buttons around it are Tinycast's own. Its buttons are a **deliberate copy** of
-`DialogButton` rather than a share: the dialog owns its button, and a preview that had to move with
-it would couple two unrelated surfaces.
-
-## Dialog accessories
-
-A dialog carries at most one control beyond its buttons, and `DialogAccessory` makes that structural
-rather than a convention — `.volume` for the Set Volume prompt, `.eventDraft` for New Event,
-`.snippetArguments` for a snippet's `{argument}` values. Text fields take `dialogTextField()`;
-New Event groups its fixed start and duration values into two local segmented bars, while a snippet's
-inline enumerated arguments remain `DialogChip`s. Two things follow from the enum:
-
-- **Arrow keys belong to the accessory, not the panel.** `DialogPanel.handlesArrowKeys` is set from
-  `DialogAccessory.claimsArrowKeys`, so the slider still steps on ←/→ while the New Event title field
-  keeps its caret.
-- **An accessory can refuse its own primary action.** An invalid draft leaves the dialog up on ↵ and
-  on a click alike, which is what a greyed-out button would say if `DialogAction` could carry one.
-
 ## Settings
 
 Source: `DesignSystem/SettingsComponents.swift`.
@@ -796,38 +753,6 @@ system-drawn and a pane reads exactly as macOS System Settings does.
   `SettingsListMetrics` keeps row icons at one size, and `SettingsScopeRow` renders folder and
   application scope icons consistently across pages.
   A long list whose rows hold no AppKit control can stay a `LazyVStack`.
-
-### The window-layout editor
-
-`Theme.Size.layoutEditorSheet` is **900 × 660, both stated**. The width less
-`layoutInspectorColumn` (300) leaves the preview two thirds of the panel, and the canvas is greedy
-inside it — a fixed preview box would spend that third on margin. **The height is stated because the
-inspector grows**: picking an app reveals Argument, Size, Offset and Position, and an intrinsic
-panel would jump out from under the pointer mid-click. The inspector scrolls if it ever overflows.
-
-Every inspector control — text field, dropdown, add button — is one `layoutFieldChrome`: a
-`Radius.barControl` rounded rect at `layoutControlHeight`, `cardFill` on `cardStroke`, accent-stroked
-while focused. A numeric field fills its half of the row rather than sizing to a stated width, so a
-value can never be cropped, and `layoutFieldUnit` keeps "%" and "pt" on one x.
-
-**The entry dropdown is a button and a popover, not a `Menu`**: a menu label stretches an `NSImage`
-out of aspect, which is what made the app icon smear. The rest of the app already picks apps this
-way (`AppPickerPopover`).
-
-In the position grid the **glyph floats in a wider cell** carrying the `contentShape`, so a click
-anywhere in the cell lands — a bare stroke is hittable only on the line itself. Each anchor's block
-takes half a pinned axis and all of a spanned one, which is what makes nine cells nine silhouettes
-rather than nine identical rectangles.
-
-`layoutPreviewGround` is **`adaptive`, never `ramp`**: a drawn display is dark in both appearances,
-and a ramp would invert it in Light. `layoutPreviewWindow` is white in both for the same reason — it
-sits on that always-dark plate. `Radius.glyph` (2) exists because `thumbnail` rounds a 10 pt square
-into a circle.
-
-The Save button draws a `⌘ ↵` cap, which the no-caps-on-buttons rule above otherwise forbids. That
-rule guards against a printed cap drifting from what `DialogPanel.sendEvent` handles separately; here
-the cap and the behaviour come from one `.keyboardShortcut`, so the drift is structurally impossible.
-See [features/window-layouts.md](features/window-layouts.md#the-editor).
 
 ### The shortcut recorder callout
 

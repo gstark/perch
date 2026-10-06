@@ -58,15 +58,6 @@ final class CustomWindowSizeCoordinator {
         removeReferences(ids: [size.id], entryIDs: [size.entryID])
     }
 
-    @discardableResult
-    func replaceCustomWindowSizes(_ incoming: [CustomWindowSize]) -> Int {
-        let previous = Dictionary(uniqueKeysWithValues: store.sizes.map { ($0.id, $0.entryID) })
-        let count = store.replace(with: incoming)
-        let removed = Set(previous.keys).subtracting(store.sizes.map(\.id))
-        removeReferences(ids: removed, entryIDs: Set(removed.compactMap { previous[$0] }))
-        return count
-    }
-
     private func removeReferences(ids: Set<UUID>, entryIDs: Set<String>) {
         for id in ids {
             let action = HotKeyAction.customWindowSize(id: id)

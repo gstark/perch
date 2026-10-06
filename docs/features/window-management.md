@@ -52,11 +52,6 @@ entries and a still-registered shortcut moves nothing.
 | `Model/WindowShortcutPreset.swift`   | Foundation + Carbon          | **Pure.** Rectangle / Magnet and Spectacle tables, and the apply plan |
 | `UI/WindowShortcutPresetCoordinator.swift` | Foundation             | Applies a preset, confirming first when it replaces a user's key   |
 
-The feature also owns **[Window Layouts](window-layouts.md)** — saved multi-display arrangements
-applied in one pass — and **[Rooms](window-rooms.md)**, named sets of windows that tile on the
-display you are on while everything else steps back. Both share this feature's switch, its
-Accessibility grant and its gap setting.
-
 The first four compile into `Tests/window-command-test.swift` and `SpaceGesture.swift` compiles into
 `Tests/space-gesture-test.swift`, so none of them may gain an AppKit, SwiftUI or `NSScreen`
 dependency, and all must stay pure — `WindowActionMemory` takes `now` as a parameter rather than
@@ -122,7 +117,7 @@ full-height and still off-screen.
 ## Custom sizes
 
 A **custom size** is a user-defined command: a name, a width and a height — each in points or as a
-percentage — a position on the 3×3 grid [Window Layouts](window-layouts.md) uses, and an optional
+percentage — a position on a 3×3 grid, and an optional
 offset in points on top of that position. It acts on the focused window exactly as a built-in
 command does, and is the answer for a display where Reasonable Size is wrong: no single built-in
 size suits every screen, so the size is the user's.

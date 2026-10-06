@@ -12,8 +12,6 @@ struct WindowFileTest {
         testCommandShortcuts()
         testCommandAliases()
         testCustomSizes()
-        testLayouts()
-        testRooms()
 
         print(failures == 0 ? "\nALL PASSED" : "\n\(failures) FAILED")
         exit(failures == 0 ? 0 : 1)
@@ -90,86 +88,6 @@ struct WindowFileTest {
         check(
             "an unknown position falls back to the centre and is reported",
             first?.records.last?.anchor == .center && first?.problems.count == 2)
-    }
-
-    private static func testLayouts() {
-        let display = WindowLayoutDisplay(uuid: "37D8832A-0000", name: "Built-in")
-        let editor = WindowLayoutEntry(
-            bundleID: "com.example.editor", argument: "~/Code", display: display,
-            widthFraction: 2.0 / 3, heightFraction: 1, anchor: .left, offset: CGPoint(x: 4, y: -2))
-        let browser = WindowLayoutEntry(
-            bundleID: "com.example.browser", display: display, widthFraction: 1.0 / 3,
-            anchor: .right)
-        let layout = WindowLayout(
-            name: "Coding", iconSymbol: "star", usesPreferredGap: false, entries: [editor, browser],
-            frontmostEntryID: browser.id)
-        let json = WindowManagementFileFormat.json(layout, shortcut: nil, alias: nil)
-        check(
-            "an app's display carries its id",
-            json["apps"]?.items?.first?["display"]?["id"] == "37D8832A-0000")
-
-        let decoded = WindowManagementFileFormat.layouts(from: .array([json]))
-        let read = decoded?.records.first
-        check("a layout keeps its id and name", read?.id == layout.id && read?.name == "Coding")
-        check(
-            "and its icon and gap",
-            read?.iconSymbol == "star" && read?.usesPreferredGap == false)
-        check(
-            "every app keeps its place exactly",
-            read?.entries.map(\.bundleID) == ["com.example.editor", "com.example.browser"]
-                && read?.entries.first?.widthFraction == 2.0 / 3
-                && read?.entries.first?.argument == "~/Code"
-                && read?.entries.first?.offset == CGPoint(x: 4, y: -2)
-                && read?.entries.last?.anchor == .right)
-        check("the frontmost app is the one marked", read?.frontmostEntryID == read?.entries.last?.id)
-        check(
-            "reading the same text twice yields the same layout",
-            WindowManagementFileFormat.layouts(from: .array([json]))?.records == decoded?.records)
-        check(
-            "null clears the shortcut and the alias",
-            decoded?.shortcuts == [layout.id: nil] && decoded?.aliases == [layout.id: nil])
-
-        let broken = WindowManagementFileFormat.layouts(
-            from: .array([.object(["name": "Half", "apps": .array([.object(["app": "com.example.a"])])])]))
-        check("an app without a display is skipped", broken?.records.first?.entries.isEmpty == true)
-        check("and reported", broken?.problems.count == 1)
-    }
-
-    private static func testRooms() {
-        let window = RoomWindow(
-            bundleID: "com.example.notes", appName: "Notes", title: "Draft", windowID: 42,
-            unitFrame: CGRect(x: 0, y: 0, width: 0.6, height: 1),
-            cell: RoomGrid.Cell(column: 0, columns: 8, row: 0, rows: 12))
-        let room = Room(
-            name: "Writing", windows: [window], layout: .focus, layoutsByDisplay: ["abc": .columns],
-            lastEnteredAt: Date(timeIntervalSince1970: 100))
-        let json = WindowManagementFileFormat.json(room, shortcut: "ctrl+option+w", alias: "wr")
-        let windowKeys = json["windows"]?.items?.first?.members?.map(\.key) ?? []
-        check("a window's number never reaches the file", !windowKeys.contains("windowID"))
-        check("nor does when the room was last entered", json["lastEnteredAt"] == nil)
-
-        let decoded = WindowManagementFileFormat.rooms(from: .array([json]))
-        var expected = room
-        expected.lastEnteredAt = nil
-        expected.windows[0].windowID = nil
-        check("a room round-trips its configuration", decoded?.records == [expected])
-        check(
-            "with its shortcut and alias",
-            decoded?.shortcuts == [room.id: "ctrl+option+w"] && decoded?.aliases == [room.id: "wr"])
-
-        let edited = WindowManagementFileFormat.rooms(
-            from: .array([
-                .object(["name": "Later", "layout": "someday", "windows": .array([.object(["app": "a"])])]),
-                .object(["windows": .array([])])
-            ]))
-        check("an unknown layout resets to Auto", edited?.records.first?.layout == .auto)
-        check("a room with no name is skipped", edited?.records.count == 1)
-        check("both are reported", edited?.problems.count == 2)
-
-        let typed = WindowManagementFileFormat.rooms(from: .array([.object(["name": "Typed", "alias": 3])]))
-        check(
-            "an alias that isn't text is reported",
-            typed?.aliases.isEmpty == true && typed?.problems.count == 1)
     }
 
     private static func check(_ description: String, _ condition: @autoclosure () -> Bool) {

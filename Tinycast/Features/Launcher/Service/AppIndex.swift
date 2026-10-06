@@ -6,8 +6,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case systemSettings
         case command
         case windowCommand
-        case windowLayout
-        case windowRoom
 
         var descriptor: KindDescriptor {
             switch self {
@@ -31,16 +29,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
                     label: "Window Command", sectionTitle: "Window Management",
                     openVerb: "Move Window", canHideFromSearch: true,
                     canRevealInFinder: false, canDragOut: false, isSymbolIcon: true, rankPriority: 3)
-            case .windowLayout:
-                return KindDescriptor(
-                    label: "Window Layout", sectionTitle: "Window Layouts",
-                    openVerb: "Arrange Windows", canHideFromSearch: true,
-                    canRevealInFinder: false, canDragOut: false, isSymbolIcon: true, rankPriority: 3)
-            case .windowRoom:
-                return KindDescriptor(
-                    label: "Room", sectionTitle: "Rooms", openVerb: "Enter Room",
-                    canHideFromSearch: true, canRevealInFinder: false, canDragOut: false,
-                    isSymbolIcon: true, rankPriority: 3)
             }
         }
     }
@@ -129,10 +117,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
                 return .windowCommand(id: command.id)
             }
             return CustomWindowSize.id(fromEntryID: id).map { .customWindowSize(id: $0) }
-        case .windowLayout:
-            return WindowLayout.id(fromEntryID: id).map { .windowLayout(id: $0) }
-        case .windowRoom:
-            return Room.id(fromEntryID: id).map { .windowRoom(id: $0) }
         }
     }
 
@@ -158,8 +142,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case .windowCommand:
             return WindowCommandCatalog.command(forEntryID: id)?.sfSymbol
                 ?? CustomWindowSize.sfSymbol
-        case .windowLayout: return WindowLayout.sfSymbol
-        case .windowRoom: return Room.sfSymbol
         case .application, .systemSettings: return "questionmark"
         }
     }
@@ -175,21 +157,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
 }
 
 extension AppEntry {
-    /// The one row a layout draws, wherever it is offered from.
-    init(_ layout: WindowLayout) {
-        self.init(
-            id: layout.entryID, name: layout.name,
-            url: URL(string: "perch://window-layout/" + layout.id.uuidString)!,
-            bundleID: nil, kind: .windowLayout, symbolName: layout.iconSymbol)
-    }
-
-    init(_ room: Room) {
-        self.init(
-            id: room.entryID, name: room.name,
-            url: URL(string: "perch://window-room/" + room.id.uuidString)!,
-            bundleID: nil, kind: .windowRoom)
-    }
-
     /// A custom size shares the window commands' kind and section, as custom Quick Actions do.
     init(_ size: CustomWindowSize) {
         self.init(
@@ -261,8 +228,6 @@ final class AppIndex {
     private var discoveredEntries: [AppEntry] = []
     private var windowCommandEntries: [AppEntry] = []
     private var customWindowSizeEntries: [AppEntry] = []
-    private var windowLayoutEntries: [AppEntry] = []
-    private var windowRoomEntries: [AppEntry] = []
     /// The catalog's commands a disabled feature hides; the Commands slice is recomputed from it.
     private var hiddenCommands: Set<CommandID> = []
     /// Kept out of launcher search by a "Show in launcher" switch, yet still runnable by shortcut.
@@ -329,22 +294,6 @@ final class AppIndex {
         let entries = sizes.sorted(by: CustomWindowSize.precedes).map(AppEntry.init)
         guard entries != customWindowSizeEntries else { return }
         customWindowSizeEntries = entries
-        publishEntries()
-    }
-
-    /// Replaces the layout slice; a toggle can't split its entries from their section.
-    func setWindowLayouts(_ layouts: [WindowLayout]) {
-        let entries = layouts.sorted(by: WindowLayout.precedes).map(AppEntry.init)
-        guard entries != windowLayoutEntries else { return }
-        windowLayoutEntries = entries
-        publishEntries()
-    }
-
-    /// Replaces the room slice, which publishes between the layouts and the window commands.
-    func setWindowRooms(_ rooms: [Room]) {
-        let entries = rooms.sorted(by: Room.precedes).map(AppEntry.init)
-        guard entries != windowRoomEntries else { return }
-        windowRoomEntries = entries
         publishEntries()
     }
 
@@ -460,8 +409,7 @@ final class AppIndex {
         let updated =
             discoveredEntries
             + Self.named(
-                windowLayoutEntries + windowRoomEntries
-                    + windowCommandEntries
+                windowCommandEntries
                     + customWindowSizeEntries
                     + commandEntries)
         guard updated != apps else { return }

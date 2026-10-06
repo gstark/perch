@@ -1,41 +1,5 @@
 import SwiftUI
 
-/// The numbered display tabs: they scope the canvas and target a newly added entry.
-struct WindowLayoutDisplayTabs: View {
-    let draft: WindowLayoutDraft
-    let displays: [WindowLayoutDisplay]
-
-    var body: some View {
-        HStack(spacing: Theme.Spacing.xs) {
-            ForEach(Array(displays.enumerated()), id: \.element.uuid) { index, display in
-                tab(display, ordinal: index + 1)
-            }
-        }
-        .accessibilityLabel("Display")
-    }
-
-    private func tab(_ display: WindowLayoutDisplay, ordinal: Int) -> some View {
-        let isSelected = draft.selectedDisplayUUID == display.uuid
-        let shape = RoundedRectangle(cornerRadius: Theme.Radius.menu, style: .continuous)
-        return Button {
-            draft.select(displayUUID: display.uuid)
-        } label: {
-            Text("\(ordinal)")
-                .font(Theme.Typography.keyCap)
-                .monospacedDigit()
-                .foregroundStyle(isSelected ? Theme.Colors.textPrimary : Theme.Colors.textSecondary)
-                .frame(width: Theme.Size.layoutDisplayTab, height: Theme.Size.layoutDisplayTab)
-                .background(shape.fill(Theme.Colors.controlSurface))
-                .overlay(shape.stroke(isSelected ? Color.accentColor : Theme.Colors.border))
-                .contentShape(shape)
-        }
-        .buttonStyle(.plain)
-        .help(display.name)
-        .accessibilityLabel("Display \(ordinal), \(display.name)")
-        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
-    }
-}
-
 /// The 3×3 anchor control: nine cells, each drawing the corner of a screen its window would take.
 struct WindowLayoutPositionGrid: View {
     let selection: WindowLayoutAnchor

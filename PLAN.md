@@ -34,7 +34,7 @@ Perch is for one user on their own Macs. We do not distribute it.
 | Emoji finder | `Features/Emoji` | |
 | Clipboard manager | `Features/Clipboard` | Includes Paste Sequentially. Keep the `ClipboardTextHelper` target. |
 | Calculator | `Features/Calculator` | Keep all of it: math, units, currency, dates, time zones, history. |
-| Window management | `Features/WindowManagement` | Includes Rooms. |
+| Window management | `Features/WindowManagement` | Commands, cycling, custom sizes. Rooms and window layouts were removed later. |
 | Hotkeys | `Features/HotKeys` | |
 | Settings | `Features/Settings` | Cut down to 8 tabs. |
 

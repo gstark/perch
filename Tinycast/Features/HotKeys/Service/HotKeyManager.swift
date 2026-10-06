@@ -8,8 +8,6 @@ final class HotKeyManager {
     /// The launcher's own command funnel, so a shortcut and a palette row run the same thing.
     var onRunCommand: ((CommandID) -> Void)?
     var onRunWindowCommand: ((WindowCommand.ID) -> Void)?
-    var onRunWindowLayout: ((UUID) -> Void)?
-    var onEnterRoom: ((UUID) -> Void)?
     var onRunCustomWindowSize: ((UUID) -> Void)?
     /// Names what only the stores know; the fixed catalogs resolve here. Set in `AppCore.start()`.
     var displayName: ((HotKeyAction) -> String?)?
@@ -47,16 +45,11 @@ final class HotKeyManager {
     private let encoder = JSONEncoder()
     private let boundKey = "boundAppBundleIDs"
     private let boundPaneKey = "boundPaneBundleIDs"
-    private let boundWindowLayoutKey = "boundWindowLayoutIDs"
-    private let boundWindowRoomKey = "boundWindowRoomIDs"
     private let boundCustomWindowSizeKey = "boundCustomWindowSizeIDs"
 
     func start(
-        windowLayoutIDs: Set<UUID>,
-        windowRoomIDs: Set<UUID>, customWindowSizeIDs: Set<UUID>
+        customWindowSizeIDs: Set<UUID>
     ) {
-        prune(key: boundWindowLayoutKey, live: windowLayoutIDs) { .windowLayout(id: $0) }
-        prune(key: boundWindowRoomKey, live: windowRoomIDs) { .windowRoom(id: $0) }
         prune(key: boundCustomWindowSizeKey, live: customWindowSizeIDs) {
             .customWindowSize(id: $0)
         }
@@ -85,11 +78,6 @@ final class HotKeyManager {
         UserDefaults.standard.stringArray(forKey: boundPaneKey) ?? []
     }
 
-
-    /// Window-layout UUIDs with a binding; authored records, so they need an index of their own.
-    var boundWindowLayoutIDs: [UUID] { boundIDs(key: boundWindowLayoutKey) }
-
-    var boundWindowRoomIDs: [UUID] { boundIDs(key: boundWindowRoomKey) }
 
     var boundCustomWindowSizeIDs: [UUID] { boundIDs(key: boundCustomWindowSizeKey) }
 
@@ -136,10 +124,6 @@ final class HotKeyManager {
             index(bundleID, bound: binding != nil, key: boundKey)
         case .settingsPane(let bundleID):
             index(bundleID, bound: binding != nil, key: boundPaneKey)
-        case .windowLayout(let id):
-            index(id, bound: binding != nil, key: boundWindowLayoutKey)
-        case .windowRoom(let id):
-            index(id, bound: binding != nil, key: boundWindowRoomKey)
         case .customWindowSize(let id):
             index(id, bound: binding != nil, key: boundCustomWindowSizeKey)
         case .togglePalette, .command, .windowCommand:
@@ -181,8 +165,6 @@ final class HotKeyManager {
         var actions = HotKeyAction.builtInActions
         actions += boundBundleIDs.map { .app(bundleID: $0) }
         actions += boundPaneBundleIDs.map { .settingsPane(bundleID: $0) }
-        actions += boundWindowLayoutIDs.map { .windowLayout(id: $0) }
-        actions += boundWindowRoomIDs.map { .windowRoom(id: $0) }
         actions += boundCustomWindowSizeIDs.map { .customWindowSize(id: $0) }
         actions += WindowCommand.ID.allCases.map { .windowCommand(id: $0) }
         candidateActionsCache = actions
@@ -199,10 +181,6 @@ final class HotKeyManager {
             return displayName?(action) ?? bundleID
         case .windowCommand(let id):
             return WindowCommandCatalog.command(id: id)?.name ?? "Window Command"
-        case .windowLayout:
-            return displayName?(action) ?? "Window Layout"
-        case .windowRoom:
-            return displayName?(action) ?? "Room"
         case .customWindowSize:
             return displayName?(action) ?? "Custom Size"
         }
@@ -235,8 +213,6 @@ final class HotKeyManager {
         case .app(let bundleID): AppLauncher.toggle(bundleID: bundleID)
         case .settingsPane(let bundleID): AppLauncher.openSettingsPane(bundleID: bundleID)
         case .windowCommand(let id): onRunWindowCommand?(id)
-        case .windowLayout(let id): onRunWindowLayout?(id)
-        case .windowRoom(let id): onEnterRoom?(id)
         case .customWindowSize(let id): onRunCustomWindowSize?(id)
         }
     }

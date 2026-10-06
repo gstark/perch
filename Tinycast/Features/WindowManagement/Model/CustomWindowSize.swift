@@ -45,7 +45,7 @@ struct CustomWindowSize: Codable, Hashable, Identifiable, Sendable {
         func length(in available: CGFloat) -> CGFloat {
             let requested =
                 unit == .points ? CGFloat(value) : available * CGFloat(value) / 100
-            return min(available, max(WindowLayoutGeometry.minimumLength, requested))
+            return min(available, max(1, requested))
         }
 
         /// The same length restated in `unit`, measured against `available`.

@@ -542,22 +542,6 @@ made for snippets. The feature ships off. User-defined custom sizes join the sam
 own slice, `AppIndex.setCustomWindowSizes(_:)`, published right after the catalog. See
 [window-management.md](window-management.md#custom-sizes).
 
-## Window layouts
-
-`WindowLayoutStore` supplies its slice the way custom commands do, sorted by name, published
-immediately **before** the window commands so the two read as one family. Their per-layout shortcut
-and launcher checkbox live in Settings › Window Management beside the commands', and
-`windowLayoutsShowInLauncher` takes the section and its two commands out together. See
-[window-layouts.md](window-layouts.md).
-
-## Rooms
-
-`RoomStore` supplies the `.windowRoom` slice the same way, sorted by name and published between the
-window layouts and the window commands; `LauncherList.rows` mirrors that position. ↵ on a room
-enters it through `RoomCoordinator.enterRoom(id:)`, which hides the palette itself. The section and
-the two room commands leave together with `windowRoomsShowInLauncher`. See
-[window-rooms.md](window-rooms.md).
-
 ## Quicklinks
 
 `QuicklinkStore` supplies its slice the same way custom commands do, sorted pinned-first then
