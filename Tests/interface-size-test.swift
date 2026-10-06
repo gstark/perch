@@ -145,9 +145,6 @@ struct InterfaceSizeTests {
         expect(
             m.typography.chipNSFont == Theme.Typography.chipNSFont,
             "typography.chipNSFont is the Theme font itself")
-
-        // Extensions duplicates the mechanism rather than importing it, so it is checked here too.
-        expect(ExtensionFormMetrics.base.scale, 1, "the form metrics base is unscaled")
     }
 
     // MARK: - Fonts
@@ -222,13 +219,6 @@ struct InterfaceSizeTests {
             expect(
                 m.size.dialogButtonHeight, m.size.menuButton - dialogButtonReduction,
                 "a dialog button stays the scaled reduction below a menu button at \(size.rawValue)")
-
-            let form = ExtensionFormMetrics(scale: size.scale)
-            expect(
-                form.popoverRowsMaxHeight
-                    == (form.popoverVisibleRows * (form.popoverRowHeight + form.popoverRowSpacing))
-                    .rounded(),
-                "a form popover still caps on a whole row at \(size.rawValue)")
         }
     }
 

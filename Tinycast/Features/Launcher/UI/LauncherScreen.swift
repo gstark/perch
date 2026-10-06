@@ -142,37 +142,19 @@ struct LauncherScreen: PaletteScreen {
     )
         -> PaletteHeaderAccessory?
     {
-        guard let entry = entry(at: selection) else { return nil }
-        if entry.kind == .customCommand {
-            return CustomCommandArgumentsAccessory.make(
-                command: core.customCommands.command(entryID: entry.id), vm: vm,
-                metrics: core.settings.interfaceSize.metrics, focus: focus,
-                onSubmit: { activate(at: selection) })
-        }
-        return ExtensionArgumentsAccessory.make(
-            entry: entry, coordinator: core.extensionCoordinator,
-            values: { name in headerFieldBinding(entry: entry, name: name) },
-            focus: focus, metrics: core.settings.interfaceSize.metrics,
+        guard let entry = entry(at: selection), entry.kind == .customCommand else { return nil }
+        return CustomCommandArgumentsAccessory.make(
+            command: core.customCommands.command(entryID: entry.id), vm: vm,
+            metrics: core.settings.interfaceSize.metrics, focus: focus,
             onSubmit: { activate(at: selection) })
-    }
-
-    private func headerFieldBinding(entry: AppEntry, name: String) -> Binding<String> {
-        let key = PaletteState.argumentKey(entry.id, name)
-        return Binding(get: { vm.commandArguments[key] ?? "" }, set: { vm.commandArguments[key] = $0 })
     }
 
     /// The typed values for one row, stripped of blanks — what gets handed to the command.
     private func argumentValues(for entry: AppEntry) -> [String: String] {
-        if entry.kind == .customCommand {
-            guard let command = core.customCommands.command(entryID: entry.id) else { return [:] }
-            return CustomCommandArgumentsAccessory.values(for: command, vm: vm)
-        }
-        var values: [String: String] = [:]
-        for argument in core.extensionCoordinator.commandArguments(for: entry) ?? [] {
-            let typed = vm.commandArguments[PaletteState.argumentKey(entry.id, argument.name)] ?? ""
-            if !typed.isEmpty { values[argument.name] = typed }
-        }
-        return values
+        guard entry.kind == .customCommand,
+            let command = core.customCommands.command(entryID: entry.id)
+        else { return [:] }
+        return CustomCommandArgumentsAccessory.values(for: command, vm: vm)
     }
 
     private func entry(at selection: Int) -> AppEntry? {

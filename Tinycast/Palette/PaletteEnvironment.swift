@@ -34,7 +34,6 @@ extension View {
             .environment(core.hotKeys)
             .environment(core.uninstall)
             .environment(core.snippetsStore)
-            .environment(core.extensions)
             .environment(core.calendarStore)
             .environment(core.meetingClock)
     }

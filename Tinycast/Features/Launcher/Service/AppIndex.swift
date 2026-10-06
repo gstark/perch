@@ -12,7 +12,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case windowLayout
         case windowRoom
         case appleShortcut
-        case extensionCommand
         case meeting
 
         var descriptor: KindDescriptor {
@@ -68,12 +67,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
                     label: "Apple Shortcut", sectionTitle: "Apple Shortcuts",
                     openVerb: "Run Shortcut", canHideFromSearch: true,
                     canRevealInFinder: false, canDragOut: false, isSymbolIcon: false, rankPriority: 3)
-            case .extensionCommand:
-                // The label is per-entry, the owning extension's title; this is the fallback.
-                return KindDescriptor(
-                    label: "Extension", sectionTitle: "Extensions",
-                    openVerb: "Run Command", canHideFromSearch: true,
-                    canRevealInFinder: false, canDragOut: false, isSymbolIcon: true, rankPriority: 3)
             case .meeting:
                 return KindDescriptor(
                     label: "Meeting", sectionTitle: "Meetings",
@@ -107,8 +100,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
     var settingsOwner: SettingsTab?
     /// Secondary label beside the name, for an entry whose name alone can't say what it acts on.
     var subtitle: String?
-    /// Background-refresh dot for a scheduled extension command; nil everywhere else.
-    var backgroundRefresh: ExtensionRefreshState?
     /// Ranked like the name: a translation, a rename, `CFBundleAlternateNames`.
     var alternateTitles: [String] = []
     /// Per-item symbol, for the one kind whose glyph is the user's choice. Nil elsewhere.
@@ -181,7 +172,7 @@ struct AppEntry: Identifiable, Hashable, Sendable {
             return AppleShortcut.id(fromEntryID: id).map { .appleShortcut(id: $0) }
         case .snippet:
             return StoredSnippet.id(fromEntryID: id).map { .snippet(id: $0) }
-        case .extensionCommand, .meeting:
+        case .meeting:
             return nil
         }
     }
@@ -214,7 +205,7 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case .windowLayout: return WindowLayout.sfSymbol
         case .windowRoom: return Room.sfSymbol
         case .meeting: return "video.fill"
-        case .application, .systemSettings, .appleShortcut, .extensionCommand: return "questionmark"
+        case .application, .systemSettings, .appleShortcut: return "questionmark"
         }
     }
 
@@ -345,7 +336,6 @@ final class AppIndex {
     private var windowLayoutEntries: [AppEntry] = []
     private var windowRoomEntries: [AppEntry] = []
     private var appleShortcutEntries: [AppEntry] = []
-    private var extensionEntries: [AppEntry] = []
     private var meetingEntries: [AppEntry] = []
     /// The catalog's commands a disabled feature hides; the Commands slice is recomputed from it.
     private var hiddenCommands: Set<CommandID> = []
@@ -420,13 +410,6 @@ final class AppIndex {
     func setMeetings(_ entries: [AppEntry]) {
         guard entries != meetingEntries else { return }
         meetingEntries = entries
-        publishEntries()
-    }
-
-    /// Called by `ExtensionManager` when the installed set or a chosen appearance changes.
-    func setExtensionCommands(_ entries: [AppEntry]) {
-        guard entries != extensionEntries else { return }
-        extensionEntries = entries
         publishEntries()
     }
 
@@ -593,7 +576,7 @@ final class AppIndex {
         let updated =
             Self.named(meetingEntries) + discoveredEntries
             + Self.named(
-                extensionEntries + appleShortcutEntries + snippetEntries
+                appleShortcutEntries + snippetEntries
                     + Self.systemActionEntries + windowLayoutEntries + windowRoomEntries
                     + windowCommandEntries
                     + customWindowSizeEntries + customCommandEntries
@@ -694,12 +677,9 @@ final class AppIndex {
                 && !($0.bundleID?.hasPrefix(Self.ownBundlePrefix) ?? false)
         }
         return LauncherSuggestions.select(from: eligible, now: usage.now) { entry in
-            // `hotKeyAction` is nil for an extension command, whose shortcut is keyed by entry ID.
-            let action: HotKeyAction? =
-                entry.kind == .extensionCommand ? .extensionCommand(entryID: entry.id) : entry.hotKeyAction
-            return LauncherSuggestions.Traits(
+            LauncherSuggestions.Traits(
                 signals: signals(for: entry, usage: usage), installedAt: entry.installedAt,
-                hasHotKey: action.flatMap(hotKeys.binding(for:)) != nil,
+                hasHotKey: entry.hotKeyAction.flatMap(hotKeys.binding(for:)) != nil,
                 priority: CommandCatalog.command(for: entry)?.suggestionPriority)
         }
     }
