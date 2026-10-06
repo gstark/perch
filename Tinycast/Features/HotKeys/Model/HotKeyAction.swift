@@ -13,7 +13,6 @@ enum HotKeyAction: Hashable, Sendable {
     case windowLayout(id: UUID)
     case windowRoom(id: UUID)
     case customWindowSize(id: UUID)
-    case snippet(id: StoredSnippet.ID)
 
     /// The UserDefaults key, and the `HotKeyCenter` registration id: one per action.
     var defaultsKey: String {
@@ -28,7 +27,6 @@ enum HotKeyAction: Hashable, Sendable {
         case .windowRoom(let id): "hotkey.windowRoom." + id.uuidString.lowercased()
         case .customWindowSize(let id):
             "hotkey.customWindowSize." + id.uuidString.lowercased()
-        case .snippet(let id): "hotkey.snippet." + id
         }
     }
 

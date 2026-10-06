@@ -10,7 +10,6 @@ final class LauncherCoordinator {
     private let customCommandCoordinator: CustomCommandCoordinator
     private let windowCommandCoordinator: WindowCommandCoordinator
     private let windowLayoutCoordinator: WindowLayoutCoordinator
-    private let snippetCoordinator: SnippetCoordinator
     /// The backup commands only, which need the live stores to gather from and apply to.
     private unowned let core: AppCore
 
@@ -22,7 +21,6 @@ final class LauncherCoordinator {
         customCommandCoordinator: CustomCommandCoordinator,
         windowCommandCoordinator: WindowCommandCoordinator,
         windowLayoutCoordinator: WindowLayoutCoordinator,
-        snippetCoordinator: SnippetCoordinator,
         core: AppCore
     ) {
         self.ranking = ranking
@@ -32,7 +30,6 @@ final class LauncherCoordinator {
         self.customCommandCoordinator = customCommandCoordinator
         self.windowCommandCoordinator = windowCommandCoordinator
         self.windowLayoutCoordinator = windowLayoutCoordinator
-        self.snippetCoordinator = snippetCoordinator
         self.core = core
     }
 
@@ -84,7 +81,6 @@ final class LauncherCoordinator {
             windowLayoutCoordinator.runWindowLayout(id: id)
             return
         }
-        let previous = windowController.previousTarget
         paletteCoordinator.hidePalette(restoreFocus: false)
         switch app.kind {
         case .application:
@@ -92,9 +88,6 @@ final class LauncherCoordinator {
         case .systemSettings:
             guard let bundleID = app.bundleID else { return }
             AppLauncher.openSettingsPane(bundleID: bundleID)
-        case .snippet:
-            guard let snippetID = StoredSnippet.id(fromEntryID: app.id) else { return }
-            snippetCoordinator.expandSnippet(id: snippetID, target: previous)
         case .command, .customCommand, .windowCommand, .windowLayout,
             .windowRoom:
             break  // handled above
@@ -114,11 +107,6 @@ final class LauncherCoordinator {
             paletteCoordinator.togglePalette(mode: .emoji)
         case .openInBrowser, .runShellCommand:
             break  // Query-driven: each runs where the typed text is, never through this funnel.
-        case .searchSnippets:
-            snippetCoordinator.showSnippets()
-        case .createSnippet:
-            dismissPalette()
-            snippetCoordinator.editSnippet(nil)
         case .createWindowLayout:
             dismissPalette()
             windowLayoutCoordinator.editWindowLayout(nil)

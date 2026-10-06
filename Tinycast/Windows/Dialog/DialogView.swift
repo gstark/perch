@@ -43,11 +43,6 @@ struct DialogView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-
-                switch request.accessory {
-                case .snippetArguments(let arguments): SnippetArgumentFields(state: arguments)
-                case nil: EmptyView()
-                }
             }
             .padding(.horizontal, metrics.spacing.xs)
             .padding(.top, metrics.spacing.xs)

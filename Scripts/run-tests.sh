@@ -144,8 +144,7 @@ run launcher-settings-file-test $L/LauncherFileFormat.swift \
                                 Tinycast/Features/HotKeys/Model/HyperKey.swift \
                                 Tinycast/Platform/ASCIIKeyboardLayout.swift \
                                 Tinycast/Platform/LinkDestination.swift \
-                                Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
-                                Tinycast/Features/Snippets/Model/Snippet.swift
+                                Tinycast/Features/WindowManagement/Model/WindowCommand.swift
 run calc-test              Tinycast/Features/Calculator/Model/*.swift
 run index calc-performance Tinycast/Features/Calculator/Model/*.swift
 run clipboard-test         Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
@@ -270,8 +269,7 @@ run hotkey-test Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
                 Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
                 Tinycast/Features/Launcher/Model/CommandID.swift \
                 Tinycast/Platform/LinkDestination.swift \
-                Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
-                Tinycast/Features/Snippets/Model/Snippet.swift
+                Tinycast/Features/WindowManagement/Model/WindowCommand.swift
 run callout-test          Tinycast/Platform/Appearance.swift \
                            Tinycast/DesignSystem/Theme.swift \
                            Tinycast/DesignSystem/InterfaceMetrics.swift \
@@ -347,12 +345,6 @@ run custom-command-test    Tinycast/Platform/PseudoTerminal.swift \
                            Tinycast/Features/CustomCommands/Model/CustomCommand.swift \
                            Tinycast/Features/CustomCommands/Model/RaycastScriptImport.swift \
                            Tinycast/Features/CustomCommands/Service/ShellCommandRunner.swift
-run slow snippets-test     Tinycast/Platform/NotificationToken.swift \
-                           Tinycast/Platform/HealthTicker.swift \
-                           Tinycast/Platform/AccessibilityText.swift \
-                           Tinycast/Features/Snippets/Model/*.swift \
-                           Tinycast/Features/Snippets/Service/*.swift \
-                           Tinycast/Features/TextInjection/Service/*.swift
 run settings-file-test     Tinycast/Features/Settings/Model/*.swift \
                            Tinycast/Features/Settings/Service/SettingsFileMonitor.swift \
                            Tinycast/Features/Settings/Service/SettingsFileRepository.swift \

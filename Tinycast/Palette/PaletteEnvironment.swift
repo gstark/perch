@@ -28,6 +28,5 @@ extension View {
             .environment(core.frequentEmoji)
             .environment(core.runningApps)
             .environment(core.hotKeys)
-            .environment(core.snippetsStore)
     }
 }

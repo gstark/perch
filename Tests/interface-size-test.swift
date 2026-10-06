@@ -118,7 +118,6 @@ struct InterfaceSizeTests {
         expect(
             m.size.dialogCompactWidth, Theme.Size.dialogCompactWidth,
             "size.dialogCompactWidth")
-        expect(m.size.dialogWidth, Theme.Size.dialogWidth, "size.dialogWidth")
         expect(
             m.size.dialogButtonHeight, Theme.Size.dialogButtonHeight,
             "size.dialogButtonHeight")
@@ -266,7 +265,6 @@ struct InterfaceSizeTests {
             ("size.emojiGridInset", m.size.emojiGridInset),
             ("size.emojiCell", m.size.emojiCell),
             ("size.dialogCompactWidth", m.size.dialogCompactWidth),
-            ("size.dialogWidth", m.size.dialogWidth),
             ("size.dialogButtonHeight", m.size.dialogButtonHeight),
             ("size.dialogSymbol", m.size.dialogSymbol),
             ("size.dialogSymbolContainer", m.size.dialogSymbolContainer),

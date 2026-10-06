@@ -23,10 +23,6 @@ extension SettingsAnchor {
     static let commandsCommands = Self(tab: .commands, title: "Commands")
     static let commandsCustomCommands = Self(tab: .commands, title: "Custom Commands")
 
-    static let snippetsSnippets = Self(tab: .snippets, title: "Snippets")
-    static let snippetsCommands = Self(tab: .snippets, title: "Commands")
-    static let snippetsLibrary = Self(tab: .snippets, title: "Library")
-
     static let windowManagementWindowManagement = Self(
         tab: .windowManagement, title: "Window Management")
     static let windowManagementLayouts = Self(tab: .windowManagement, title: "Window Layouts")

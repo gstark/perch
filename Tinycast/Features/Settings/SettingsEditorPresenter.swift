@@ -414,7 +414,6 @@ extension View {
             .environment(core.visibility)
             .environment(core.aliases)
             .environment(core.customCommands)
-            .environment(core.snippetsStore)
             .environment(core.windowLayouts)
             .environment(core.rooms)
             .environment(core.roomCoordinator)

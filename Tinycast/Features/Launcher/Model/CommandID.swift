@@ -12,8 +12,6 @@ enum CommandID: String, CaseIterable, Sendable {
     case captureWindowLayout = "command:capture-window-layout"
     case switchRoom = "command:switch-room"
     case createRoom = "command:create-room"
-    case searchSnippets = "command:search-snippets"
-    case createSnippet = "command:create-snippet"
     case settings = "command:settings"
     case quit = "command:quit"
 
@@ -29,8 +27,6 @@ enum CommandID: String, CaseIterable, Sendable {
         case .captureWindowLayout: return "Create Layout from Current Windows"
         case .switchRoom: return "Switch Room"
         case .createRoom: return "Create Room"
-        case .searchSnippets: return "Search Snippets"
-        case .createSnippet: return "Create Snippet"
         case .settings: return "Perch Settings"
         case .quit: return "Quit Perch"
         }
@@ -48,8 +44,6 @@ enum CommandID: String, CaseIterable, Sendable {
         case .captureWindowLayout: return "macwindow.badge.plus"
         case .switchRoom: return "door.left.hand.open"
         case .createRoom: return "rectangle.stack.badge.plus"
-        case .searchSnippets: return "curlybraces"
-        case .createSnippet: return "plus.rectangle.on.rectangle"
         case .settings: return "gearshape"
         case .quit: return "power"
         }
@@ -64,7 +58,6 @@ enum CommandID: String, CaseIterable, Sendable {
         switch self {
         case .clipboardHistory: 80
         case .searchEmoji: 50
-        case .createSnippet: 30
         default: nil
         }
     }

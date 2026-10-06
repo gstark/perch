@@ -8,7 +8,6 @@ enum PaletteMode: String, CaseIterable, Identifiable {
     case rooms
     /// Choosing a room's windows and apps; the room was named on the Rooms screen.
     case roomWindows
-    case snippets
 
     var id: String { rawValue }
 
@@ -20,7 +19,6 @@ enum PaletteMode: String, CaseIterable, Identifiable {
         case .emoji: return "face.smiling"
         case .rooms: return "door.left.hand.open"
         case .roomWindows: return "macwindow.badge.plus"
-        case .snippets: return "curlybraces"
         }
     }
     var placeholder: String {
@@ -31,7 +29,6 @@ enum PaletteMode: String, CaseIterable, Identifiable {
         case .emoji: return "Search emoji and symbols…"
         case .rooms: return "Search rooms, or name a new one…"
         case .roomWindows: return "Search windows, or type an app to add…"
-        case .snippets: return "Search snippets…"
         // Replaced by the command's own `searchBarPlaceholder` whenever it declares one.
         }
     }

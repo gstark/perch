@@ -2,9 +2,6 @@ import AppKit
 import Carbon.HIToolbox
 
 enum Paster {
-    /// Stamped on Tinycast's own synthetic keystrokes so the snippet keyword tap can skip them.
-    static let tinycastEventTag: Int64 = 0x54494E59
-
     /// Covers the gap between `activate()` returning and the target app accepting a keystroke.
     private static let activationDelay: TimeInterval = 0.08
 
@@ -169,8 +166,6 @@ enum Paster {
 
         down.flags = .maskCommand
         up.flags = .maskCommand
-        down.setIntegerValueField(.eventSourceUserData, value: tinycastEventTag)
-        up.setIntegerValueField(.eventSourceUserData, value: tinycastEventTag)
 
         if let pid {
             down.postToPid(pid)

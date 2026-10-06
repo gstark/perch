@@ -96,7 +96,6 @@ struct InterfaceMetrics: Equatable, Sendable {
 
 
         var dialogCompactWidth: CGFloat { scaledPoints(Theme.Size.dialogCompactWidth, scale) }
-        var dialogWidth: CGFloat { scaledPoints(Theme.Size.dialogWidth, scale) }
         var dialogButtonHeight: CGFloat {
             menuButton
                 - scaledPoints(Theme.Size.menuButton - Theme.Size.dialogButtonHeight, scale)

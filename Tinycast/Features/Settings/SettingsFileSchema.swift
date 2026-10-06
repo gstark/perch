@@ -52,9 +52,6 @@ enum SettingsFileSchema {
         case .builtInCommands: return launcher.commandsBinding(for: key, owner: nil)
         case .customCommandsEnabled: return bind(settings, \.customCommandsEnabled)
         case .customCommandsShowInLauncher: return bind(settings, \.customCommandsShowInLauncher)
-        case .snippetsShowInLauncher: return bind(settings, \.snippetsShowInLauncher)
-        case .snippetsFolder: return bind(settings, \.snippetsFolder, accept: folder)
-        case .snippetsCommands: return launcher.commandsBinding(for: key, owner: .snippets)
         case .windowManagementEnabled: return bind(settings, \.windowManagementEnabled)
         case .windowManagementShowInLauncher:
             return bind(settings, \.windowManagementShowInLauncher)
@@ -83,11 +80,6 @@ enum SettingsFileSchema {
         }
     }
 
-    /// A folder is absolute or under `~/`; null puts it back in Application Support.
-    private static func folder(_ path: String?) -> String?? {
-        guard let path else { return .some(nil) }
-        return AppPaths.isFolderPath(path) ? path : nil
-    }
 }
 
 extension PopToRootTimeout: SettingsFileRawValue {}

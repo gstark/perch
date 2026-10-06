@@ -12,7 +12,6 @@ final class HotKeyManager {
     var onRunWindowLayout: ((UUID) -> Void)?
     var onEnterRoom: ((UUID) -> Void)?
     var onRunCustomWindowSize: ((UUID) -> Void)?
-    var onExpandSnippet: ((StoredSnippet.ID) -> Void)?
     /// Names what only the stores know; the fixed catalogs resolve here. Set in `AppCore.start()`.
     var displayName: ((HotKeyAction) -> String?)?
     /// Whether the action's launcher category is switched on. Set in `AppCore.start()`.
@@ -53,7 +52,6 @@ final class HotKeyManager {
     private let boundWindowLayoutKey = "boundWindowLayoutIDs"
     private let boundWindowRoomKey = "boundWindowRoomIDs"
     private let boundCustomWindowSizeKey = "boundCustomWindowSizeIDs"
-    private let boundSnippetKey = "boundSnippetIDs"
 
     func start(
         customCommandIDs: Set<UUID>, windowLayoutIDs: Set<UUID>,
@@ -93,7 +91,6 @@ final class HotKeyManager {
     /// Custom-command UUIDs with a binding, indexed separately so startup can re-register them.
     var boundCustomCommandIDs: [UUID] { boundIDs(key: boundCustomCommandKey) }
 
-
     /// Window-layout UUIDs with a binding; authored records, so they need an index of their own.
     var boundWindowLayoutIDs: [UUID] { boundIDs(key: boundWindowLayoutKey) }
 
@@ -101,26 +98,10 @@ final class HotKeyManager {
 
     var boundCustomWindowSizeIDs: [UUID] { boundIDs(key: boundCustomWindowSizeKey) }
 
-
-
-    /// Swept by `removeSnippetBindings` on each load, never at launch: the store may be off.
-    var boundSnippetIDs: [StoredSnippet.ID] {
-        UserDefaults.standard.stringArray(forKey: boundSnippetKey) ?? []
-    }
-
     /// A deleted app takes its Settings row with it, so nothing else could ever clear its binding.
     func removeAppBindings(where isUninstalled: (String) -> Bool) {
         for bundleID in boundBundleIDs where isUninstalled(bundleID) {
             let action = HotKeyAction.app(bundleID: bundleID)
-            if recordingAction == action { recordingAction = nil }
-            setBinding(nil, for: action)
-        }
-    }
-
-    /// Covers a file deleted or renamed outside Tinycast, which no Settings row is left to clear.
-    func removeSnippetBindings(keeping liveIDs: Set<StoredSnippet.ID>) {
-        for id in boundSnippetIDs where !liveIDs.contains(id) {
-            let action = HotKeyAction.snippet(id: id)
             if recordingAction == action { recordingAction = nil }
             setBinding(nil, for: action)
         }
@@ -168,8 +149,6 @@ final class HotKeyManager {
             index(id, bound: binding != nil, key: boundWindowRoomKey)
         case .customWindowSize(let id):
             index(id, bound: binding != nil, key: boundCustomWindowSizeKey)
-        case .snippet(let id):
-            index(id, bound: binding != nil, key: boundSnippetKey)
         case .togglePalette, .command, .windowCommand:
             break
         }
@@ -213,7 +192,6 @@ final class HotKeyManager {
         actions += boundWindowLayoutIDs.map { .windowLayout(id: $0) }
         actions += boundWindowRoomIDs.map { .windowRoom(id: $0) }
         actions += boundCustomWindowSizeIDs.map { .customWindowSize(id: $0) }
-        actions += boundSnippetIDs.map { .snippet(id: $0) }
         actions += WindowCommand.ID.allCases.map { .windowCommand(id: $0) }
         candidateActionsCache = actions
         return actions
@@ -237,8 +215,6 @@ final class HotKeyManager {
             return displayName?(action) ?? "Room"
         case .customWindowSize:
             return displayName?(action) ?? "Custom Size"
-        case .snippet:
-            return displayName?(action) ?? "Snippet"
         }
     }
 
@@ -273,7 +249,6 @@ final class HotKeyManager {
         case .windowLayout(let id): onRunWindowLayout?(id)
         case .windowRoom(let id): onEnterRoom?(id)
         case .customWindowSize(let id): onRunCustomWindowSize?(id)
-        case .snippet(let id): onExpandSnippet?(id)
         }
     }
 

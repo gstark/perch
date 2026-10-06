@@ -62,33 +62,13 @@ final class DialogController: NSObject, NSWindowDelegate {
         return await present(request) == recoveryIndex
     }
 
-    func fillSnippetArguments(
-        snippetName: String, arguments: [SnippetTemplateEngine.MissingArgument]
-    ) async -> [String: String]? {
-        let state = SnippetArgumentsState(arguments: arguments)
-        let request = DialogRequest(
-            title: snippetName, message: "Fill in the template fields.", symbol: "curlybraces",
-            tone: .neutral,
-            actions: [
-                DialogAction(title: "Expand"),
-                DialogAction(title: "Cancel", role: .cancel)
-            ],
-            defaultIndex: 0, cancelIndex: 1, accessory: .snippetArguments(state))
-        guard await present(request) == 0 else { return nil }
-        return state.values
-    }
-
     private func present(_ request: DialogRequest) async -> Int {
         // Keyed on the continuation, so a panel still fading can't swallow the next.
         guard continuation == nil else { return request.cancelIndex }
         return await withCheckedContinuation { continuation in
             self.continuation = continuation
             onPresentationChanged(true)
-            let width =
-                switch request.accessory {
-                case nil: metrics.size.dialogCompactWidth
-                case .snippetArguments: metrics.size.dialogWidth
-                }
+            let width = metrics.size.dialogCompactWidth
             let content = hostingView(
                 DialogView(
                     request: request, width: width,

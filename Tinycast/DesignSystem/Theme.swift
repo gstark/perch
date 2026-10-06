@@ -189,8 +189,6 @@ enum Theme {
         static let hudEdgeOffset: CGFloat = 48
         /// Questions and notices stay compact; controls keep the room their native widgets need.
         static let dialogCompactWidth: CGFloat = 290
-        /// Tinycast's own control dialog: fixed width, height measured from its SwiftUI content.
-        static let dialogWidth: CGFloat = 420
         static let dialogButtonHeight: CGFloat = menuButton - 2
         /// Subject glyph and its fixed tile at the top of a dialog.
         static let dialogSymbol: CGFloat = 28
