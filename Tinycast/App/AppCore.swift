@@ -89,6 +89,7 @@ final class AppCore {
     @ObservationIgnored private(set) lazy var calculatorCoordinator = CalculatorCoordinator(
         calcHistory: calcHistory, paletteCoordinator: paletteCoordinator, core: self)
 
+    @ObservationIgnored private(set) lazy var statusItem = StatusItemController(core: self)
     @ObservationIgnored private lazy var windowController = PaletteWindowController(core: self)
     @ObservationIgnored private lazy var messageHUD = MessageHUDController(settings: settings)
     private(set) var isShowingDialog = false
@@ -119,6 +120,7 @@ final class AppCore {
             NSApp.setActivationPolicy(.accessory)
             applyAppearance()
             observeEffectiveAppearance()
+            statusItem.start()
             pinnedEmoji.onPersistenceFailure = { [weak self] in
                 self?.showMessage("Couldn't save Emoji & Symbols pins", tone: .danger)
             }
@@ -259,6 +261,7 @@ final class AppCore {
     // MARK: - Feature switches
 
     private func observeFeatureSwitches() {
+        track({ _ = $0.showInMenuBar }, reproject: { $0.statusItem.applyVisibility() })
         track(
             {
                 _ = $0.windowManagementEnabled

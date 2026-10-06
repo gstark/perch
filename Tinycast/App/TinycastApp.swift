@@ -4,28 +4,10 @@ import SwiftUI
 struct TinycastApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
-    // Channel-aware: "Perch" or "Perch Dev".
-    private let appName = Bundle.main.appDisplayName
-
+    /// The status item is AppKit's, so this scene exists only to carry the app menu's commands.
     var body: some Scene {
-        MenuBarExtra(isInserted: menuBarInsertion) {
-            MenuBarMenu(appName: appName)
-        } label: {
-            MenuBarLabel(appName: appName)
-        }
-        .commands { menuBarCommands }
-    }
-
-    /// Read in `body` for Observation; SwiftUI echoes the binding back, so only a change writes.
-    private var menuBarInsertion: Binding<Bool> {
-        let settings = AppCore.shared.settings
-        let isInserted = settings.showInMenuBar
-        return Binding(
-            get: { isInserted },
-            set: { inserted in
-                guard inserted != settings.showInMenuBar else { return }
-                settings.showInMenuBar = inserted
-            })
+        Settings { EmptyView() }
+            .commands { menuBarCommands }
     }
 
     /// Declared, not assigned to `NSApp.mainMenu`: SwiftUI rebuilds the menu on any scene change.
