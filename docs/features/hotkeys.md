@@ -44,6 +44,12 @@ return `OSStatus` synchronously, preserving event order and hold-to-talk release
   ✦ collapse and the re-point below. `HyperKeyTap` composes its own flags because it also needs the
   left-side device bits, which no display path wants.
 
+
+## Defaults
+
+`HotKeyDefaults` lists the bindings a fresh install starts with: ⌘Space opens the launcher, and
+⇧⌘ with an arrow or Return runs the four halves and Maximize. A key with nothing stored reads its
+default. Clearing a binding that has a default stores `unbound`, so the default never returns.
 ## Persistence
 
 Bindings persist as JSON strings under `hotkey.<action>` UserDefaults keys, computed in one place —

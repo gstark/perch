@@ -202,8 +202,6 @@ final class AppSettings {
         palettePositions[display] = [offset.x, offset.y]
     }
 
-    // Feature switches, off out of the box, and off means fully off.
-
     /// Off means fully off: no launcher entries, and a still-registered shortcut moves nothing.
     var windowManagementEnabled: Bool {
         didSet {
@@ -304,13 +302,9 @@ final class AppSettings {
             as? [String: [Double]] ?? [:]
         paletteExpandedCenterDisplays =
             Set(defaults.stringArray(forKey: Key.paletteExpandedCenterDisplays.rawValue) ?? [])
-        // Unset seeds home; a stored empty array is a cleared list that searches nothing.
-        // These default on, so absence must be distinguished from a stored `false`.
-        // Opt-in, unlike its siblings: until it is asked for, nothing about extensions is loaded.
-        // Opt-in, like extensions: until it is asked for, EventKit is never loaded.
-        // No case is zero, so an unset key falls through to the default.
-        // Both default to their zero case, so an unset key needs no presence check.
-        windowManagementEnabled = defaults.bool(forKey: Key.windowManagementEnabled.rawValue)
+        windowManagementEnabled =
+            defaults.object(forKey: Key.windowManagementEnabled.rawValue) == nil
+            || defaults.bool(forKey: Key.windowManagementEnabled.rawValue)
         windowManagementShowInLauncher =
             defaults.object(forKey: Key.windowManagementShowInLauncher.rawValue) == nil
             || defaults.bool(forKey: Key.windowManagementShowInLauncher.rawValue)

@@ -262,6 +262,7 @@ run hotkey-test Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
                 Tinycast/Platform/ASCIIKeyboardLayout.swift \
                 Tinycast/Features/HotKeys/Service/KeyShortcut.swift \
                 Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
+                Tinycast/Features/HotKeys/Model/HotKeyDefaults.swift \
                 Tinycast/Features/Launcher/Model/CommandID.swift \
                 Tinycast/Platform/LinkDestination.swift \
                 Tinycast/Features/WindowManagement/Model/WindowCommand.swift

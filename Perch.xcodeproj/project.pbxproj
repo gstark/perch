@@ -24,6 +24,7 @@
 		0EF72E3951C5C29F5DEAE7FD /* ASCIIKeyboardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953BD1A8C84B395D539A1F9F /* ASCIIKeyboardLayout.swift */; };
 		0F9CC37F80C75821B5E59426 /* EmojiGridGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F037E3B78FEB00DAFF88B3 /* EmojiGridGeometry.swift */; };
 		1272A7FF39275E964FA806D4 /* FeatureCommandsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0214D46A2DF67E11BE1209DA /* FeatureCommandsSection.swift */; };
+		147ADB34251A1CD126956FEC /* HotKeyDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE95BDAB6DC4E979F2E6AB99 /* HotKeyDefaults.swift */; };
 		15A491CD8BE42EBF2490F93F /* AXWindowAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C914D6712FB6D769EED796F /* AXWindowAccess.swift */; };
 		1620E9E0170EE0F4BAF3AADD /* ClipboardTextHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E8C3B22DB53A9CCE8B632AF /* ClipboardTextHelper.swift */; };
 		167A88EB20A20DFDC7EF95F8 /* CalcMath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BE3F3B3176E98DF40CB6123 /* CalcMath.swift */; };
@@ -613,6 +614,7 @@
 		FCD88F88F49DDAC71CBF99EA /* SettingsSearchCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSearchCatalog.swift; sourceTree = "<group>"; };
 		FD55D99FE5A34CB284CACD4A /* LinkOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkOpener.swift; sourceTree = "<group>"; };
 		FD976293D0C8DE093007D413 /* AppPickerPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPickerPopover.swift; sourceTree = "<group>"; };
+		FE95BDAB6DC4E979F2E6AB99 /* HotKeyDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyDefaults.swift; sourceTree = "<group>"; };
 		FF005E63C53BC03E1D3DC675 /* tinycast.icon */ = {isa = PBXFileReference; lastKnownFileType = wrapper.icon; path = tinycast.icon; sourceTree = "<group>"; };
 		FF317F6E18F38E8EE34DC5B6 /* MessageHUDView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageHUDView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -1133,6 +1135,7 @@
 				8908D3156C884CA5BB102355 /* DoubleTapModifier.swift */,
 				0CE88A46ADF7F304410FDC58 /* HotKeyAction.swift */,
 				CEAE9494503B6A70E1E87235 /* HotKeyBinding.swift */,
+				FE95BDAB6DC4E979F2E6AB99 /* HotKeyDefaults.swift */,
 				E322F0409417BC1E52570937 /* HotKeySpelling.swift */,
 				BD3D15F2615A86EF8017B532 /* HyperKey.swift */,
 				71CBDBC2747CCF75FABFC500 /* ModifierKey.swift */,
@@ -1561,6 +1564,7 @@
 				BB3AD29DDEBC35890EC484B6 /* HotKeyAction.swift in Sources */,
 				F250EABDC26EB9B468E15730 /* HotKeyBinding.swift in Sources */,
 				3C722CF952347AE7814D68F6 /* HotKeyCenter.swift in Sources */,
+				147ADB34251A1CD126956FEC /* HotKeyDefaults.swift in Sources */,
 				49C39F74FB224100B4000D9B /* HotKeyManager.swift in Sources */,
 				26CC472D0D84013D4C5DA0B4 /* HotKeySettingsFile.swift in Sources */,
 				A68373AEF1EC12E0F3F61FC4 /* HotKeySpelling.swift in Sources */,

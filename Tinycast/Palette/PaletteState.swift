@@ -70,7 +70,6 @@ final class PaletteState {
 
     func noteVisible(_ visible: Bool) {
         isVisible = visible
-        // Ordering out leaves the tree mounted, and a preview must not outlive the window.
     }
 
     var canGoBack: Bool { !backStack.isEmpty }

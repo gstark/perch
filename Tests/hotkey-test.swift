@@ -326,6 +326,19 @@ struct DoubleTapDetectorTests {
     // MARK: - Built-in command mappings
 
     static func commandActions() {
+        let space = KeyShortcut(carbonKeyCode: kVK_Space, carbonModifiers: cmdKey)
+        expect(
+            HotKeyDefaults.binding(for: .togglePalette) == .combo(space),
+            "a fresh install opens the launcher with ⌘Space")
+        let halves: [WindowCommand.ID] = [.leftHalf, .rightHalf, .topHalf, .bottomHalf, .maximize]
+        expect(
+            halves.allSatisfy { HotKeyDefaults.binding(for: .windowCommand(id: $0)) != nil },
+            "the four halves and Maximize start bound")
+        let defaults = halves.compactMap { HotKeyDefaults.binding(for: .windowCommand(id: $0)) }
+        expect(Set(defaults).count == defaults.count, "no two default window shortcuts collide")
+        expect(
+            HotKeyDefaults.binding(for: .windowCommand(id: .center)) == nil,
+            "every other window command starts unbound")
         let unbindable = Set(CommandID.allCases.filter { $0.hotKeyAction == nil })
         expect(
             unbindable == [.openInBrowser, .quit],

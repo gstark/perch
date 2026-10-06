@@ -22,7 +22,6 @@ enum PaletteMode: String, CaseIterable, Identifiable {
         case .clipboard: return "Type to filter entries…"
         case .calculatorHistory: return "Do math, convert units, or search your past calculations…"
         case .emoji: return "Search emoji and symbols…"
-        // Replaced by the command's own `searchBarPlaceholder` whenever it declares one.
         }
     }
 }

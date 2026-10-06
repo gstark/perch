@@ -93,11 +93,11 @@ final class HotKeyManager {
     func binding(for action: HotKeyAction) -> HotKeyBinding? { bindings[action] }
 
     private func storedBinding(for action: HotKeyAction) -> HotKeyBinding? {
-        // The stored value is a JSON string; anything else reads as unbound.
-        guard
-            let json = UserDefaults.standard.string(forKey: action.defaultsKey),
-            let data = json.data(using: .utf8)
-        else { return nil }
+        // Nothing stored means never touched, which is the one case a default applies to.
+        guard let json = UserDefaults.standard.string(forKey: action.defaultsKey) else {
+            return HotKeyDefaults.binding(for: action)
+        }
+        guard json != HotKeyDefaults.unbound, let data = json.data(using: .utf8) else { return nil }
         return try? decoder.decode(HotKeyBinding.self, from: data)
     }
 
@@ -112,7 +112,11 @@ final class HotKeyManager {
             UserDefaults.standard.set(json, forKey: action.defaultsKey)
         } else {
             bindings[action] = nil
-            UserDefaults.standard.removeObject(forKey: action.defaultsKey)
+            if HotKeyDefaults.binding(for: action) == nil {
+                UserDefaults.standard.removeObject(forKey: action.defaultsKey)
+            } else {
+                UserDefaults.standard.set(HotKeyDefaults.unbound, forKey: action.defaultsKey)
+            }
         }
         revision &+= 1
         // Unregister unconditionally: the previous binding may have been a combo.
