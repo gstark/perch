@@ -51,7 +51,6 @@ extension SettingsTab {
     var ownedCommands: [CommandID] {
         switch self {
         case .fileSearch: [.searchFiles]
-        case .notes: [.showNotes, .createNote, .searchNotes]
         case .snippets: [.searchSnippets, .createSnippet]
         case .navigation: [.switchWindows, .searchMenuItems]
         case .windowManagement:

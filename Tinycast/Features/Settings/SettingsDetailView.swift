@@ -15,7 +15,6 @@ struct SettingsDetailView: View {
             case .commands: CommandsSettingsView()
             case .appleShortcuts: AppleShortcutsSettingsView()
             case .fileSearch: FileSearchSettingsView()
-            case .notes: NotesSettingsView()
             case .snippets: SnippetsSettingsView()
             case .navigation: NavigationSettingsView()
             case .windowManagement: WindowManagementSettingsView()

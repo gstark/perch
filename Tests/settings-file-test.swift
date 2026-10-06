@@ -48,7 +48,7 @@ struct SettingsFileTest {
             SettingsFileKey.sections == [
                 "general", "appearance", "hyperKey", "calculator", "search", "applications",
                 "systemSettings", "systemActions", "commands", "appleShortcuts",
-                "fileSearch", "notes", "snippets", "navigation",
+                "fileSearch", "snippets", "navigation",
                 "windowManagement", "clipboard", "emoji", "calendar", "extensions"
             ])
 
@@ -173,13 +173,13 @@ struct SettingsFileTest {
             check("a file that is not an object throws", error == .notAnObject(nil))
         }
 
-        let text = #"{"bogus": {}, "general": {"nope": 1, "showInMenuBar": false}, "notes": 3}"#
+        let text = #"{"bogus": {}, "general": {"nope": 1, "showInMenuBar": false}, "windowManagement": 3}"#
         let parsed = try? SettingsFileFormat.parse(Data(text.utf8))
         check("a known key reads", parsed?.values[.showInMenuBar] == false)
         check(
             "unknown sections and keys, and a section that is no object, are each reported",
             parsed?.issues == [
-                .unknownSetting("bogus"), .unknownSetting("general.nope"), .notAnObject("notes")
+                .unknownSetting("bogus"), .unknownSetting("general.nope"), .notAnObject("windowManagement")
             ])
         check(
             "the HUD line names the first issue and counts the rest",

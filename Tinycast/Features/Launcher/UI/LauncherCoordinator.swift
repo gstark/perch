@@ -15,7 +15,6 @@ final class LauncherCoordinator {
     private let fileSearchCoordinator: FileSearchCoordinator
     private let menuSearchCoordinator: MenuSearchCoordinator
     private let windowSwitchCoordinator: WindowSwitchCoordinator
-    private let notesCoordinator: NotesCoordinator
     private let extensionCoordinator: ExtensionCoordinator
     private let calendarCoordinator: CalendarCoordinator
     /// The backup commands only, which need the live stores to gather from and apply to.
@@ -34,7 +33,6 @@ final class LauncherCoordinator {
         fileSearchCoordinator: FileSearchCoordinator,
         menuSearchCoordinator: MenuSearchCoordinator,
         windowSwitchCoordinator: WindowSwitchCoordinator,
-        notesCoordinator: NotesCoordinator,
         extensionCoordinator: ExtensionCoordinator,
         calendarCoordinator: CalendarCoordinator,
         core: AppCore
@@ -51,7 +49,6 @@ final class LauncherCoordinator {
         self.fileSearchCoordinator = fileSearchCoordinator
         self.menuSearchCoordinator = menuSearchCoordinator
         self.windowSwitchCoordinator = windowSwitchCoordinator
-        self.notesCoordinator = notesCoordinator
         self.extensionCoordinator = extensionCoordinator
         self.calendarCoordinator = calendarCoordinator
         self.core = core
@@ -176,15 +173,6 @@ final class LauncherCoordinator {
             calendarCoordinator.openNextMeetingInCalendar()
         case .createEvent:
             calendarCoordinator.createEvent()
-        case .showNotes:
-            dismissPalette()
-            notesCoordinator.toggle()
-        case .createNote:
-            dismissPalette()
-            notesCoordinator.createNote()
-        case .searchNotes:
-            dismissPalette()
-            notesCoordinator.searchNotes()
         case .searchSnippets:
             snippetCoordinator.showSnippets()
         case .createSnippet:

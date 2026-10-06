@@ -96,8 +96,6 @@ struct InterfaceMetrics: Equatable, Sendable {
         var emojiGridInset: CGFloat { scaledPoints(Theme.Size.emojiGridInset, scale) }
         var emojiCell: CGFloat { scaledPoints(Theme.Size.emojiCell, scale) }
 
-        var markdownListMarker: CGFloat { scaledPoints(Theme.Size.markdownListMarker, scale) }
-        var markdownQuoteBar: CGFloat { scaledPoints(Theme.Size.markdownQuoteBar, scale) }
 
 
         var dialogCompactWidth: CGFloat { scaledPoints(Theme.Size.dialogCompactWidth, scale) }
@@ -153,7 +151,6 @@ struct InterfaceMetrics: Equatable, Sendable {
                 ? Theme.Typography.code
                 : .system(size: nsFont(.callout).pointSize, design: .monospaced)
         }
-        var inlineCode: Font { font(Theme.Typography.inlineCode, .body).monospaced() }
         var bar: Font { font(Theme.Typography.bar, .callout, .medium) }
         var chip: Font { font(Theme.Typography.chip, .callout) }
         @MainActor var chipNSFont: NSFont { scale == 1 ? Theme.Typography.chipNSFont : nsFont(.callout) }
