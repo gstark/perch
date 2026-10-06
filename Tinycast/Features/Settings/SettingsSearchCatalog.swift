@@ -108,8 +108,7 @@ enum SettingsSearchCatalog {
     // Pane order, then section order within a pane, so this reads as a table of contents.
 
     static let entries: [SettingsSearchEntry] =
-        general + applications + systemSettings + systemActions + commands + clipboard + snippets + fileSearch + windowManagement
-        + navigation + calendar + emoji + permissions
+        general + applications + systemSettings + systemActions + commands + clipboard + snippets + fileSearch + windowManagement + calendar + emoji + permissions
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -255,24 +254,6 @@ enum SettingsSearchCatalog {
         .init(
             .snippetsLibrary, "Snippets Folder",
             keywords: ["reveal", "finder", "markdown", "files", "location", "path", "dotfiles"])
-    ]
-
-    private static let navigation: [SettingsSearchEntry] = [
-        .init(
-            pane: .navigation,
-            keywords: ["window", "switch", "menu bar", "focus", "raise"]),
-        .init(
-            .navigationNavigation, "Enable navigation",
-            keywords: ["window switcher", "menu bar", "accessibility"]),
-        .init(
-            group: .navigationCommands, "Navigation commands",
-            keywords: ["shortcut", "hotkey", "alias", "launcher"]),
-        .init(
-            .navigationMenuSearch, "Show Apple menu items",
-            keywords: ["apple menu", "about this mac", "recent items", "sleep", "logo"]),
-        .init(
-            .navigationMenuSearch, "Disabled Applications",
-            keywords: ["exclude", "password manager", "ignore", "privacy", "menu bar"])
     ]
 
     private static let windowManagement: [SettingsSearchEntry] = [

@@ -50,8 +50,6 @@ final class AppCore {
     let palette = PaletteState()
     let fileSearch = FileSearchSession()
     let dictionary = DictionarySession()
-    let menuSearch = MenuSearchSession()
-    let windowSwitch = WindowSwitchSession()
     let activationPolicy = ActivationPolicy()
 
     /// Set when a snippet editor should open with Settings; the pane consumes it.
@@ -68,7 +66,7 @@ final class AppCore {
 
     @ObservationIgnored private(set) lazy var paletteCoordinator = PaletteCoordinator(
         palette: palette, settings: settings, appIndex: appIndex,
-        fileSearch: fileSearch, menuSearch: menuSearch, windowSwitch: windowSwitch,
+        fileSearch: fileSearch,
         windowController: windowController)
     /// Its own window and lifecycle: neither coordinator shows or closes the other's surface.
     @ObservationIgnored private(set) lazy var settingsCoordinator = SettingsCoordinator(core: self)
@@ -109,8 +107,6 @@ final class AppCore {
         windowCommandCoordinator: windowCommandCoordinator,
         windowLayoutCoordinator: windowLayoutCoordinator,
         snippetCoordinator: snippetCoordinator, fileSearchCoordinator: fileSearchCoordinator,
-        menuSearchCoordinator: menuSearchCoordinator,
-        windowSwitchCoordinator: windowSwitchCoordinator,
         calendarCoordinator: calendarCoordinator,
         core: self)
     @ObservationIgnored private(set) lazy var clipboardCoordinator = ClipboardCoordinator(
@@ -128,12 +124,6 @@ final class AppCore {
     @ObservationIgnored private(set) lazy var fileSearchCoordinator = FileSearchCoordinator(
         settings: settings, appIndex: appIndex, session: fileSearch, palette: palette,
         paletteCoordinator: paletteCoordinator, windowController: windowController, core: self)
-    @ObservationIgnored private(set) lazy var menuSearchCoordinator = MenuSearchCoordinator(
-        settings: settings, appIndex: appIndex, session: menuSearch, palette: palette,
-        paletteCoordinator: paletteCoordinator, core: self)
-    @ObservationIgnored private(set) lazy var windowSwitchCoordinator = WindowSwitchCoordinator(
-        settings: settings, appIndex: appIndex, session: windowSwitch, palette: palette,
-        paletteCoordinator: paletteCoordinator, core: self)
     @ObservationIgnored private(set) lazy var cameraCoordinator = CameraCoordinator(core: self)
     @ObservationIgnored private(set) lazy var dictionaryCoordinator = DictionaryCoordinator(
         paletteCoordinator: paletteCoordinator)
@@ -179,8 +169,6 @@ final class AppCore {
             appIndex.start(settings: settings)
             clipboardCoordinator.applyEnabled()
             fileSearchCoordinator.applyEnabled()
-            windowSwitchCoordinator.applyEnabled()
-            menuSearchCoordinator.applyEnabled()
             fileSearchCoordinator.applyPolicy()
             customCommands.onChange = { [weak self] _ in
                 self?.customCommandCoordinator.applyCustomCommandsPresence()
@@ -201,8 +189,6 @@ final class AppCore {
             roomCoordinator.recoverParkedWindows()
             paletteCoordinator.onScreenOpening = { [weak self] mode in
                 switch mode {
-                case .menuSearch: self?.menuSearchCoordinator.load()
-                case .switchWindows: self?.windowSwitchCoordinator.load()
                 case .rooms, .roomWindows: self?.roomCoordinator.load()
                 default: break
                 }
@@ -389,13 +375,6 @@ final class AppCore {
         track(
             { _ = $0.clipboardTextSearchEnabled }, reproject: { $0.applyClipboardTextSearch() })
         track({ _ = $0.fileSearchEnabled }, reproject: { $0.fileSearchCoordinator.applyEnabled() })
-        // Two features, one switch: each coordinator gates only its own command and mode.
-        track(
-            { _ = $0.navigationEnabled },
-            reproject: {
-                $0.windowSwitchCoordinator.applyEnabled()
-                $0.menuSearchCoordinator.applyEnabled()
-            })
         track({ _ = $0.calendarEnabled }, reproject: { $0.calendarCoordinator.applyEnabled() })
         track(
             {

@@ -13,8 +13,6 @@ final class LauncherCoordinator {
     private let windowLayoutCoordinator: WindowLayoutCoordinator
     private let snippetCoordinator: SnippetCoordinator
     private let fileSearchCoordinator: FileSearchCoordinator
-    private let menuSearchCoordinator: MenuSearchCoordinator
-    private let windowSwitchCoordinator: WindowSwitchCoordinator
     private let calendarCoordinator: CalendarCoordinator
     /// The backup commands only, which need the live stores to gather from and apply to.
     private unowned let core: AppCore
@@ -30,8 +28,6 @@ final class LauncherCoordinator {
         windowLayoutCoordinator: WindowLayoutCoordinator,
         snippetCoordinator: SnippetCoordinator,
         fileSearchCoordinator: FileSearchCoordinator,
-        menuSearchCoordinator: MenuSearchCoordinator,
-        windowSwitchCoordinator: WindowSwitchCoordinator,
         calendarCoordinator: CalendarCoordinator,
         core: AppCore
     ) {
@@ -45,8 +41,6 @@ final class LauncherCoordinator {
         self.windowLayoutCoordinator = windowLayoutCoordinator
         self.snippetCoordinator = snippetCoordinator
         self.fileSearchCoordinator = fileSearchCoordinator
-        self.menuSearchCoordinator = menuSearchCoordinator
-        self.windowSwitchCoordinator = windowSwitchCoordinator
         self.calendarCoordinator = calendarCoordinator
         self.core = core
     }
@@ -139,10 +133,6 @@ final class LauncherCoordinator {
             paletteCoordinator.togglePalette(mode: .emoji)
         case .searchFiles:
             fileSearchCoordinator.show()
-        case .searchMenuItems:
-            menuSearchCoordinator.show()
-        case .switchWindows:
-            windowSwitchCoordinator.show()
         case .openCamera:
             dismissPalette()
             Task { await core.cameraCoordinator.show() }

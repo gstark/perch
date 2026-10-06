@@ -52,7 +52,6 @@ extension SettingsTab {
         switch self {
         case .fileSearch: [.searchFiles]
         case .snippets: [.searchSnippets, .createSnippet]
-        case .navigation: [.switchWindows, .searchMenuItems]
         case .windowManagement:
             [.createWindowLayout, .captureWindowLayout, .switchRoom, .createRoom]
         case .clipboard: [.clipboardHistory, .pasteSequentially]
