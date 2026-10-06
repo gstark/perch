@@ -565,7 +565,6 @@ final class AppIndex {
         LauncherOrder.Signals(
             alias: aliases.alias(for: entry.preferenceKey).map { SearchText($0, transliterated: false) },
             usage: usage.usage(for: entry.preferenceKey),
-            priority: entry.kind.descriptor.rankPriority, title: entry.name,
-            boostedTerms: CommandCatalog.command(for: entry)?.boostedTerms ?? [])
+            priority: entry.kind.descriptor.rankPriority, title: entry.name)
     }
 }

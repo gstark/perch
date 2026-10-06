@@ -1,6 +1,5 @@
 enum SettingsTab: CaseIterable, Identifiable {
-    case general, applications, systemSettings, commands,
-        clipboard, windowManagement, emoji,
+    case general, applications, systemSettings, commands, clipboard, windowManagement, emoji,
         permissions
     /// The case, never an index: a selectable `List` flattens section and row IDs together.
     var id: Self { self }
@@ -52,11 +51,7 @@ enum SettingsSection: CaseIterable, Identifiable {
         case .launcher:
             return [.applications, .systemSettings, .commands]
         case .features:
-            // Everyday tools first.
-            return [
-                .clipboard, .windowManagement,
-                .emoji
-            ]
+            return [.clipboard, .windowManagement, .emoji]
         }
     }
 }

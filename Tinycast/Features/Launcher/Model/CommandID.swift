@@ -47,9 +47,6 @@ enum CommandID: String, CaseIterable, Sendable {
     }
 
 
-    /// Queries this command wins until the user opens a rival more.
-    var boostedTerms: Set<String> { [] }
-
     /// Suggested, highest first, until the user's own habits fill the section.
     var suggestionPriority: Int? {
         switch self {
