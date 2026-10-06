@@ -3,7 +3,7 @@ import UniformTypeIdentifiers
 
 extension UTType {
     /// Not per-channel: a UTI names an interchange format, so Dev must read stable's exports.
-    static let tinycastBackup = UTType(exportedAs: "com.tinycast.backup")
+    static let tinycastBackup = UTType(exportedAs: "com.gstark.perch.backup")
 }
 
 /// The backup flows' entry points, shared by the Settings pane and the commands.

@@ -5,7 +5,7 @@ final class DictationWorker: Sendable {
     private let input: FileHandle
     private let output: FileHandle
     private let exit: ProcessExit
-    private let queue = DispatchQueue(label: "com.tinycast.dictation-worker", qos: .userInitiated)
+    private let queue = DispatchQueue(label: "com.gstark.perch.dictation-worker", qos: .userInitiated)
 
     init(executable: URL = DictationWorker.executable, arguments: [String] = []) throws {
         let process = Process()

@@ -88,10 +88,10 @@ enum CommandID: String, CaseIterable, Sendable {
         case .importSettings: return "Import Backup"
         case .importFromRaycast: return "Import from Raycast"
         case .checkForUpdates: return "Check for Updates"
-        case .settings: return "Tinycast Settings"
-        case .about: return "About Tinycast"
-        case .support: return "Support Tinycast"
-        case .quit: return "Quit Tinycast"
+        case .settings: return "Perch Settings"
+        case .about: return "About Perch"
+        case .support: return "Support Perch"
+        case .quit: return "Quit Perch"
         }
     }
 

@@ -273,7 +273,7 @@ final class ModifierTapMonitor: HealthCheckable {
         else {
             // Even a listen-only tap needs Accessibility; the health timer retries until granted.
             if !loggedTapFailure {
-                NSLog("Tinycast: Failed to create modifier event tap")
+                NSLog("Perch: Failed to create modifier event tap")
                 loggedTapFailure = true
             }
             needsAccessibility = true

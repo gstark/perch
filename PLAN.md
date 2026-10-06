@@ -126,7 +126,8 @@ Put the code in `Features/CPUMeter/`:
 
 ## Build and tools
 
-- Convert the main target to an Xcode synchronized folder (`PBXFileSystemSynchronizedRootGroup`) before you delete any feature.
+- XcodeGen owns the project. `project.yml` lists source folders, so a deleted folder leaves the project after `xcodegen generate`. Commit `project.yml` and the generated `Perch.xcodeproj` together.
+- Keep the `Tinycast/` source folder and the Tinycast type names. Then upstream cherry-picks apply to the same paths.
 - Sign every build with `Developer ID Application: Gavin Stark (JBRC9C74U7)`. A stable signature keeps the Accessibility permission across rebuilds.
 - Do not notarize.
 - Keep the `swiftc` test harnesses in `Tests/` for the kept features. Delete the harnesses for deleted features.
@@ -136,9 +137,11 @@ Put the code in `Features/CPUMeter/`:
 | Recipe | Action |
 |---|---|
 | `default` | List the recipes. |
+| `generate` | Run `xcodegen generate`. |
 | `build` | Build the Release configuration with `xcodebuild` into `build/`. |
 | `test` | Run `Scripts/run-tests.sh`. |
-| `lint` | Run `Scripts/lint.sh` and `Scripts/format.sh`. |
+| `lint` | Run `Scripts/lint.sh`. |
+| `format` | Run `Scripts/format.sh`. |
 | `install` | Build, quit the running Perch, copy it to `/Applications`, and open it. |
 | `upstream` | Fetch `upstream` and show new commits that touch the kept feature folders. |
 
@@ -148,7 +151,7 @@ Each step must end with a clean build, a passing `just test`, and one commit.
 
 ```mermaid
 flowchart TD
-  A[1. Merge Tinycast history, add upstream remote] --> B[2. Convert to synchronized folders]
+  A[1. Merge Tinycast history, add upstream remote] --> B[2. Confirm XcodeGen output and baseline]
   B --> C[3. Rename app, bundle ID, AppPaths, signing, justfile]
   C --> D[4. Delete features, one per commit]
   D --> E[5. Cut Settings to 8 tabs, delete onboarding]
@@ -161,8 +164,8 @@ flowchart TD
 ### Step notes
 
 1. Start from the current Tinycast `main`. Record the commit hash in the merge commit message.
-2. Make sure that the build output is the same before and after the conversion.
-3. Replace every `com.tinycast.app` fallback in `Platform/AppPaths.swift`. Replace the `tinycast` config folder name.
+2. `xcodegen generate` must reproduce the committed project. The baseline build, the 93 harnesses, and lint must pass.
+3. Replace every `com.tinycast.app` fallback in `Platform/AppPaths.swift`. Replace the `tinycast` config folder name. Register only the `perch://` URL scheme, so Perch never takes `tinycast://` or `raycast://` links from the installed apps.
 4. Delete leaf features first: AI, Dictation, Notes, Extensions, MCP. Delete features that `AppCore.swift` uses heavily last.
 5. Check the Navigation tab before you delete it.
 6. Remove "Check for Updates" and "Support" from the menu.

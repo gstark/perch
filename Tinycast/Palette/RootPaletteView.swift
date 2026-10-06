@@ -200,10 +200,10 @@ struct RootPaletteView: View {
                         openURL(url)
                     }
                 },
-                PopoverMenuItem(title: "About Tinycast", systemImage: "info.circle") {
+                PopoverMenuItem(title: "About Perch", systemImage: "info.circle") {
                     core.settingsCoordinator.showAbout()
                 },
-                PopoverMenuItem(title: "Support Tinycast", systemImage: "heart") {
+                PopoverMenuItem(title: "Support Perch", systemImage: "heart") {
                     core.supportCoordinator.showSupport()
                 },
                 PopoverMenuItem(title: "Settings", systemImage: "gearshape", shortcut: "⌘,") {

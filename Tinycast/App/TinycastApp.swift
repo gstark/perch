@@ -4,7 +4,7 @@ import SwiftUI
 struct TinycastApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
 
-    // Channel-aware: "Tinycast", "Tinycast Dev", or "Tinycast Beta".
+    // Channel-aware: "Perch" or "Perch Dev".
     private let appName = Bundle.main.appDisplayName
 
     /// Two independent items: one preference each, no state either can read off the other.

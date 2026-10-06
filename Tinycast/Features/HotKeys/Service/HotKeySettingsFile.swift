@@ -58,7 +58,7 @@ final class HotKeySettingsFile {
             }
             guard let binding = spelling.binding(from: text) else {
                 issues.append(
-                    .invalidEntry(key, "\(item.label): “\(text)” isn't a shortcut Tinycast can bind"))
+                    .invalidEntry(key, "\(item.label): “\(text)” isn't a shortcut Perch can bind"))
                 continue
             }
             guard binding != current else { continue }

@@ -222,7 +222,7 @@ final class CalendarCoordinator {
         AppEntry(
             id: meeting.entryID, name: meeting.title,
             url: URL(
-                string: "tinycast://meeting/"
+                string: "perch://meeting/"
                     + (meeting.id.addingPercentEncoding(withAllowedCharacters: .alphanumerics)
                         ?? ""))!,
             bundleID: nil, kind: .meeting,

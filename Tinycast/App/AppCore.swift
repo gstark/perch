@@ -98,7 +98,7 @@ final class AppCore {
         confirmEnable: { [unowned self] in
             await self.confirm(
                 title: "Enable Dictation?",
-                message: "Tinycast needs microphone access for dictation and Accessibility to paste into "
+                message: "Perch needs microphone access for dictation and Accessibility to paste into "
                     + "other apps. Audio is processed on this Mac.",
                 symbol: "waveform", confirmTitle: "Continue", tone: .neutral,
                 confirmRole: .standard)

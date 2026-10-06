@@ -904,7 +904,7 @@ struct ExtensionTests {
             ExtensionOAuthSession.handleCallbackURL(nonOAuthURL) == .ignored)
 
         // A callback with nothing waiting for it is reported, not silently dropped.
-        let strayURL = URL(string: "tinycast://oauth?code=abc&state=xyz")!
+        let strayURL = URL(string: "perch://oauth?code=abc&state=xyz")!
         check(
             "handleCallbackURL reports an expired callback",
             ExtensionOAuthSession.handleCallbackURL(strayURL) == .expired)
@@ -924,8 +924,8 @@ struct ExtensionTests {
             String(describing: canonical?.extensionCandidates))
 
         let tiny = ExtensionDeepLink.parse(
-            url: URL(string: "tinycast://extensions/linear/linear/create-issue")!)
-        check("deeplink mirrors raycast:// as tinycast://", tiny == canonical)
+            url: URL(string: "perch://extensions/linear/linear/create-issue")!)
+        check("deeplink mirrors raycast:// as perch://", tiny == canonical)
 
         let bare = ExtensionDeepLink.parse(url: URL(string: "raycast://extensions/demo/search")!)
         check(

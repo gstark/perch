@@ -100,9 +100,9 @@ struct UpdatesTests {
     // MARK: - ReleaseChannel
 
     static func derivesChannels() {
-        let stable = ReleaseChannel(bundleID: "com.tinycast.app")
-        let beta = ReleaseChannel(bundleID: "com.tinycast.app.beta")
-        let dev = ReleaseChannel(bundleID: "com.tinycast.app.dev")
+        let stable = ReleaseChannel(bundleID: "com.gstark.perch")
+        let beta = ReleaseChannel(bundleID: "com.gstark.perch.beta")
+        let dev = ReleaseChannel(bundleID: "com.gstark.perch.dev")
 
         expect(stable == .stable, "the stable bundle id is the stable channel")
         expect(beta == .beta, "the beta bundle id is the beta channel")

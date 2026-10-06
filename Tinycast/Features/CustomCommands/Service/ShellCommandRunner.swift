@@ -66,7 +66,7 @@ enum ShellCommandRunner {
     private static let stopGrace: DispatchTimeInterval = .seconds(2)
     /// The exit wait blocks, so it stays off the cooperative pool; concurrent, not serial.
     private static let queue = DispatchQueue(
-        label: "com.tinycast.shell-command", qos: .userInitiated, attributes: .concurrent)
+        label: "com.gstark.perch.shell-command", qos: .userInitiated, attributes: .concurrent)
 
     /// Fire-and-forget, keeping only the error tail; shown output goes through `stream`.
     nonisolated static func run(

@@ -105,7 +105,7 @@ private struct CaptureSessionBox: @unchecked Sendable {
 private final class AudioCollector: NSObject, AVCaptureAudioDataOutputSampleBufferDelegate,
     @unchecked Sendable
 {
-    let queue = DispatchQueue(label: "com.tinycast.dictation.audio")
+    let queue = DispatchQueue(label: "com.gstark.perch.dictation.audio")
     private var samples: [Float] = []
     private var displayedLevels: [Float]
     private let spectrum: DictationSpectrum

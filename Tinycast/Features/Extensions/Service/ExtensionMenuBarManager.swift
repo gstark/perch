@@ -414,7 +414,7 @@ final class ExtensionMenuBarManager: ExtensionRuntimeDelegate {
 
     func runtime(_ runtime: ExtensionRuntime, log level: String, message: String) {
         if level == "error" {
-            Logger(subsystem: "com.tinycast", category: "extension-menu-bar").error(
+            Logger(subsystem: "com.gstark.perch", category: "extension-menu-bar").error(
                 "\(message, privacy: .public)")
         }
     }

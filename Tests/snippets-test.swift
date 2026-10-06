@@ -204,13 +204,13 @@ struct SnippetsTests {
 
         let channelRoot = root.appendingPathComponent("channels", isDirectory: true)
         let stable = SnippetRepository(
-            bundleIdentifier: "com.tinycast.app",
+            bundleIdentifier: "com.gstark.perch",
             applicationSupportRoot: channelRoot)
         let beta = SnippetRepository(
-            bundleIdentifier: "com.tinycast.app.beta",
+            bundleIdentifier: "com.gstark.perch.beta",
             applicationSupportRoot: channelRoot)
         let dev = SnippetRepository(
-            bundleIdentifier: "com.tinycast.app.dev",
+            bundleIdentifier: "com.gstark.perch.dev",
             applicationSupportRoot: channelRoot)
 
         check(
@@ -231,7 +231,7 @@ struct SnippetsTests {
 
         let chosenFolder = root.appendingPathComponent("dotfiles/snippets", isDirectory: true)
         let chosen = SnippetRepository(
-            bundleIdentifier: "com.tinycast.app", applicationSupportRoot: channelRoot,
+            bundleIdentifier: "com.gstark.perch", applicationSupportRoot: channelRoot,
             snippetsDirectory: chosenFolder)
         let signOff = try chosen.create(Snippet(name: "Sign-off", text: "Thanks"))
         let stableAfter = try stable.load()
@@ -1973,7 +1973,7 @@ private final class StubPasteboard: PasteboardAccess {
 
 @MainActor
 final class ClipboardManager {
-    static let internalType = NSPasteboard.PasteboardType("com.tinycast.internal")
+    static let internalType = NSPasteboard.PasteboardType("com.gstark.perch.internal")
     func prepareForTinycastPasteboardMutation() {}
     func synchronizeAfterTinycastPasteboardMutation(changeCount: Int) {}
 }

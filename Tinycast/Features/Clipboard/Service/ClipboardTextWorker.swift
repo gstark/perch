@@ -9,7 +9,7 @@ nonisolated enum ClipboardTextWorker {
     private static let readSize = 4096
     /// The read loop and the exit wait block, so they stay off the cooperative pool.
     private static let queue = DispatchQueue(
-        label: "com.tinycast.clipboard-text", qos: .background, attributes: .concurrent)
+        label: "com.gstark.perch.clipboard-text", qos: .background, attributes: .concurrent)
 
     static func extract(_ item: ClipboardItem) async throws -> String {
         guard let path = item.imagePath ?? item.filePath else { return "" }

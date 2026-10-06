@@ -1,7 +1,6 @@
 # Development
 
-The local loop: set up, build, run, regenerate. Shipping a build is [release.md](release.md);
-verifying a change is [testing.md](testing.md).
+The local loop: set up, build, run, regenerate. Verifying a change is [testing.md](testing.md).
 
 ## Requirements
 
@@ -14,9 +13,8 @@ verifying a change is [testing.md](testing.md).
 
 ## First-time setup
 
-Create the `Tinycast Self-Signed` code-signing identity once — builds sign with it, which is what keeps
-macOS from forgetting the Accessibility grant on every rebuild. Follow **[signing.md](signing.md) §1**,
-a few `openssl`/`security` commands.
+Builds sign with the `Developer ID Application` identity of team `JBRC9C74U7`. A stable identity
+keeps macOS from forgetting the Accessibility grant on every rebuild.
 
 That is the whole required setup. Editor configuration is personal and the repo does not prescribe it;
 the section below is a note for anyone who wants it, not a step.
@@ -24,20 +22,20 @@ the section below is a note for anyone who wants it, not a step.
 ## Build & run
 
 ```sh
-open Tinycast.xcodeproj    # then ⌘R
+open Perch.xcodeproj    # then ⌘R
 ```
 
 Or from the command line:
 
 ```sh
-xcodebuild -project Tinycast.xcodeproj -scheme Tinycast -configuration Debug build
+xcodebuild -project Perch.xcodeproj -scheme Perch -configuration Debug build
 ```
 
 `xcodebuild` uses whatever `xcode-select` points at; if that's the Command Line Tools rather than
 Xcode, prefix with `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer` (the SwiftUI
 `@State`/`@FocusState` macros need Xcode's macOS platform).
 
-`Tinycast.xcodeproj` is committed and generated from `project.yml` via XcodeGen — after changing
+`Perch.xcodeproj` is committed and generated from `project.yml` via XcodeGen — after changing
 project settings in `project.yml`, run `xcodegen generate` and commit the result. There is no
 `Package.swift`, and `Bundle.module` must never be used.
 
@@ -45,19 +43,19 @@ The app target builds and embeds `ClipboardTextHelper` under `Contents/Helpers`,
 Build the app scheme to include it; copying only the main executable omits OCR support. The helper's
 executable name stays fixed even when release builds override the app's product name for a channel.
 
-Dictation similarly embeds its Swift/Core ML helper, named `Tinycast Dev Dictation` in Debug and
-`Tinycast Dictation` in Release, in an accessory `.app` bundle without a bundled icon. Model weights
+Dictation similarly embeds its Swift/Core ML helper, named `Perch Dev Dictation` in Debug and
+`Perch Dictation` in Release, in an accessory `.app` bundle without a bundled icon. Model weights
 download on demand; none are app resources.
 
 ### The dev channel
 
-Debug builds are a separate channel: **`Tinycast Dev.app`**, bundle id `com.tinycast.app.dev`. Every
+Debug builds are a separate channel: **`Perch Dev.app`**, bundle id `com.gstark.perch.dev`. Every
 persisted thing is keyed by bundle id — `~/Library/Preferences/<id>.plist` (settings and hotkey
 bindings), `~/Library/Application Support/<id>/` (the onboarding marker, Notes, snippets, quicklinks,
 clipboard history, calculator history, launch ranking and frequent emoji; Notes and snippets unless
 a folder is chosen),
 `~/Library/Caches/<id>/` (exchange rates, the update check, staged downloads), the opt-in
-`~/.config/tinycast-dev/settings.json` (`tinycast` on stable), the `SMAppService`
+`~/.config/perch-dev/settings.json` (`perch` on stable), the `SMAppService`
 login item, and the Accessibility / Input Monitoring (TCC) grants — so a local build can neither read
 nor clobber an installed app's state, and both run side by side.
 
@@ -69,7 +67,7 @@ Consequences worth knowing:
 
 - The dev build asks for Accessibility on its own the first time, and starts with **no** hotkeys bound
   and onboarding unseen. Grant and bind once; it persists across rebuilds, because the fixed build path
-  and the `Tinycast Self-Signed` identity keep the TCC grant alive.
+  and the Developer ID identity keep the TCC grant alive.
 - Don't bind the same global hotkey in both — whichever registered first wins.
 - The Hyper Key's Caps Lock remap is `hidutil` state, which is **system-wide, not per-bundle**: quitting
   one build clears the remap for the other, which then needs a rebind or a relaunch to restore it.
@@ -85,14 +83,14 @@ and the flag database:
 
 ```sh
 brew install xcode-build-server
-xcodebuild -project Tinycast.xcodeproj -scheme Tinycast -configuration Debug \
+xcodebuild -project Perch.xcodeproj -scheme Perch -configuration Debug \
     -derivedDataPath build/DerivedData build 2>&1 | tee /tmp/tinycast-build.log
 ./Scripts/sync-lsp.sh /tmp/tinycast-build.log
 ```
 
 Both files are git-ignored because they embed absolute paths, and `sourcekit-lsp` looks for
 `buildServer.json` at the workspace root by name, so it cannot live in a subfolder. After this the
-**Build Tinycast.app (debug)** task (⌘⇧B) and **F5** re-run the script on every build, so new and
+**Build Perch.app (debug)** task (⌘⇧B) and **F5** re-run the script on every build, so new and
 renamed files keep resolving.
 
 **Do not run `xcode-build-server config`.** It writes `kind: xcode`, and in that mode the server ignores

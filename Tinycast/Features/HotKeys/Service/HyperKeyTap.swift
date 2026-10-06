@@ -51,7 +51,7 @@ private enum CapsLockRemap {
     private static let mappingOff = #"{"UserKeyMapping":[]}"#
 
     // Serial, so rapid on→off→on toggles apply in call order rather than racing.
-    private static let queue = DispatchQueue(label: "com.tinycast.capslock-remap", qos: .utility)
+    private static let queue = DispatchQueue(label: "com.gstark.perch.capslock-remap", qos: .utility)
 
     static func setEnabled(_ enabled: Bool) {
         let mapping = enabled ? mappingOn : mappingOff
@@ -72,10 +72,10 @@ private enum CapsLockRemap {
         do {
             try process.runObservingExit().wait()
             if process.terminationStatus != 0 {
-                NSLog("Tinycast: hidutil remap exited %d", process.terminationStatus)
+                NSLog("Perch: hidutil remap exited %d", process.terminationStatus)
             }
         } catch {
-            NSLog("Tinycast: hidutil caps lock remap failed: %@", error.localizedDescription)
+            NSLog("Perch: hidutil caps lock remap failed: %@", error.localizedDescription)
         }
     }
 }

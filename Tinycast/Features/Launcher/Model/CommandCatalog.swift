@@ -42,7 +42,7 @@ enum CommandCatalog {
     }
 
     nonisolated private static func placeholderURL(_ id: CommandID) -> URL {
-        URL(string: "tinycast://" + id.rawValue.replacingOccurrences(of: ":", with: "/"))!
+        URL(string: "perch://" + id.rawValue.replacingOccurrences(of: ":", with: "/"))!
     }
 }
 

@@ -15,7 +15,7 @@ final class DictationAudioDucker {
         var volume: DictationVolumeSnapshot
     }
 
-    private static let logger = Logger(subsystem: "com.tinycast", category: "DictationVolume")
+    private static let logger = Logger(subsystem: "com.gstark.perch", category: "DictationVolume")
     private let fileURL: URL
     private let defaultOutput: () throws -> Output?
     private let resolveOutput: (String) throws -> Output?

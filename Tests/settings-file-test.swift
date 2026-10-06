@@ -337,7 +337,7 @@ struct SettingsFileTest {
     // MARK: - Paths
 
     private static func testContentFolders() throws {
-        let bundleID = "com.tinycast.settings-file-test.\(UUID().uuidString)"
+        let bundleID = "com.gstark.perch.settings-file-test.\(UUID().uuidString)"
         let standard = AppPaths.applicationSupport(bundleID: bundleID)
         defer { try? FileManager.default.removeItem(at: standard) }
         let home = FileManager.default.homeDirectoryForCurrentUser.standardizedFileURL.path
@@ -377,8 +377,8 @@ struct SettingsFileTest {
 
     private static func testPaths() {
         let expected = [
-            ("com.tinycast.app", "tinycast"), ("com.tinycast.app.dev", "tinycast-dev"),
-            ("com.tinycast.app.beta", "tinycast-beta"), ("org.example.cast", "org.example.cast")
+            ("com.gstark.perch", "perch"), ("com.gstark.perch.dev", "perch-dev"),
+            ("com.gstark.perch.beta", "perch-beta"), ("org.example.cast", "org.example.cast")
         ]
         for (bundleID, folder) in expected {
             check(

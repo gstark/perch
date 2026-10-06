@@ -37,7 +37,7 @@ final class ExtensionRuntime: @unchecked Sendable {
     /// `runtimeURL` overrides the bundled runtime; only the harness passes it.
     init(hostAPI: ExtensionHostAPI, runtimeURL: URL? = nil, priority: DispatchQoS = .userInitiated) {
         queue = DispatchQueue(
-            label: "com.tinycast.extensions.js", qos: priority, autoreleaseFrequency: .workItem)
+            label: "com.gstark.perch.extensions.js", qos: priority, autoreleaseFrequency: .workItem)
         self.hostAPI = hostAPI
         self.runtimeOverride = runtimeURL
     }

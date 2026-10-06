@@ -318,7 +318,7 @@ final class DictationAudioDucker {
 
 @MainActor
 final class ClipboardManager {
-    static let internalType = NSPasteboard.PasteboardType("com.tinycast.internal")
+    static let internalType = NSPasteboard.PasteboardType("com.gstark.perch.internal")
     func prepareForTinycastPasteboardMutation() {}
     func synchronizeAfterTinycastPasteboardMutation(changeCount: Int) {}
 }

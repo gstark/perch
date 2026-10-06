@@ -10,7 +10,7 @@ struct CalendarSettingsView: View {
         Form {
             FeatureSwitchSection(
                 anchor: .calendarCalendar,
-                enableTitle: "Join meetings from Tinycast",
+                enableTitle: "Join meetings from Perch",
                 enableSubtitle:
                     "Reads \(settings.calendarSpan.possessivePhrase) events for join links. "
                     + "Nothing leaves this Mac.",

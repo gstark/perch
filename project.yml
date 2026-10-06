@@ -1,6 +1,6 @@
-name: Tinycast
+name: Perch
 options:
-  bundleIdPrefix: com.tinycast
+  bundleIdPrefix: com.gstark
   deploymentTarget:
     macOS: "26.0"
   createIntermediateGroups: true
@@ -11,19 +11,18 @@ settings:
     MARKETING_VERSION: "0.1.0"
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "6.0"
-    DEVELOPMENT_TEAM: ""
+    DEVELOPMENT_TEAM: JBRC9C74U7
     CODE_SIGN_STYLE: Manual
-    # Stable self-signed identity so macOS keeps the Accessibility grant across rebuilds.
-    # Create it once — see docs/signing.md.
-    CODE_SIGN_IDENTITY: "Tinycast Self-Signed"
+    # A stable Developer ID identity so macOS keeps the Accessibility grant across rebuilds.
+    CODE_SIGN_IDENTITY: "Developer ID Application"
     SWIFT_STRICT_CONCURRENCY: complete
-    TINYCAST_BUNDLE_IDENTIFIER: com.tinycast.app
+    TINYCAST_BUNDLE_IDENTIFIER: com.gstark.perch
   configs:
     Debug:
-      TINYCAST_BUNDLE_IDENTIFIER: com.tinycast.app.dev
-      DICTATION_EXECUTABLE_NAME: Tinycast Dev Dictation
+      TINYCAST_BUNDLE_IDENTIFIER: com.gstark.perch.dev
+      DICTATION_EXECUTABLE_NAME: Perch Dev Dictation
     Release:
-      DICTATION_EXECUTABLE_NAME: Tinycast Dictation
+      DICTATION_EXECUTABLE_NAME: Perch Dictation
       # Release-only: library validation refuses Debug's `.debug.dylib`, whose team never matches.
       ENABLE_HARDENED_RUNTIME: YES
       # Strip the shipped binary (dSYM is still generated first) and drop unused code.
@@ -33,7 +32,7 @@ settings:
       DEAD_CODE_STRIPPING: YES
 
 targets:
-  Tinycast:
+  Perch:
     type: application
     platform: macOS
     sources:
@@ -85,7 +84,7 @@ targets:
         # locally-run build gets its own prefs, caches, TCC grants and login item instead of
         # inheriting — and corrupting — the installed app's state.
         Debug:
-          PRODUCT_NAME: Tinycast Dev
+          PRODUCT_NAME: Perch Dev
 
   ClipboardTextHelper:
     type: tool

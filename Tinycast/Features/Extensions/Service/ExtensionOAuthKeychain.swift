@@ -10,7 +10,7 @@ protocol ExtensionOAuthTokenStore: Sendable {
 }
 
 struct KeychainOAuthTokenStore: ExtensionOAuthTokenStore {
-    private let serviceName = "com.tinycast.extensions.oauth"
+    private let serviceName = "com.gstark.perch.extensions.oauth"
 
     func get(account: String) -> String? {
         let query: [String: Any] = [

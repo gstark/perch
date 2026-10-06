@@ -534,7 +534,7 @@ final class RoomCoordinator {
 
     private func reportPermissionFailure() async {
         let openSettings = await core.reportFailure(
-            title: "Tinycast Needs Accessibility Access",
+            title: "Perch Needs Accessibility Access",
             message: "Rooms move and hide other apps' windows.",
             symbol: Room.sfSymbol, recovery: "Open Settings")
         if openSettings { Permissions.openAccessibilitySettings() }

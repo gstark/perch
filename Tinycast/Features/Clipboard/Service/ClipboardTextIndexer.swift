@@ -13,7 +13,7 @@ final class ClipboardTextIndexer {
     private var waitingForRetry = false
     /// Recognition only starts in a lull, and a busy Mac is rechecked no sooner than the same lull.
     private static let idleWindow: TimeInterval = 2
-    private static let logger = Logger(subsystem: "com.tinycast", category: "ClipboardText")
+    private static let logger = Logger(subsystem: "com.gstark.perch", category: "ClipboardText")
 
     init(
         store: ClipboardStore, delay: Duration = .milliseconds(250), retryDelay: TimeInterval = 30,

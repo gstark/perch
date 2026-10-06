@@ -7,7 +7,7 @@ struct CustomCommandTests {
     static func main() async {
         // The app has no controlling terminal; an inherited one gets `zsh -i` stopped by SIGTTOU.
         setsid()
-        let suiteName = "com.tinycast.custom-command-tests"
+        let suiteName = "com.gstark.perch.custom-command-tests"
         let defaults = isolatedDefaults(suiteName)
 
         var failures = 0

@@ -3,7 +3,7 @@ import os
 /// Coarse permanent intervals; free at runtime unless an Instruments session is attached.
 enum Signposts {
     private static let signposter = OSSignposter(
-        subsystem: "com.tinycast.perf", category: "Performance")
+        subsystem: "com.gstark.perch.perf", category: "Performance")
 
     /// Own the `defer`: `withIntervalSignpost` skips its end event when the wrapped work throws.
     static func interval<T>(_ name: StaticString, around work: () throws -> T) rethrows -> T {
