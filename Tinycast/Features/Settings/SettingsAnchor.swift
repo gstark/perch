@@ -25,11 +25,6 @@ extension SettingsAnchor {
     static let commandsCommands = Self(tab: .commands, title: "Commands")
     static let commandsCustomCommands = Self(tab: .commands, title: "Custom Commands")
 
-    static let fileSearchFileSearch = Self(tab: .fileSearch, title: "File Search")
-    static let fileSearchCommands = Self(tab: .fileSearch, title: "Commands")
-    static let fileSearchSearchScopes = Self(tab: .fileSearch, title: "Search Scopes")
-    static let fileSearchIgnorePatterns = Self(tab: .fileSearch, title: "Ignore Patterns")
-
     static let snippetsSnippets = Self(tab: .snippets, title: "Snippets")
     static let snippetsCommands = Self(tab: .snippets, title: "Commands")
     static let snippetsLibrary = Self(tab: .snippets, title: "Library")

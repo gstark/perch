@@ -108,7 +108,7 @@ enum SettingsSearchCatalog {
     // Pane order, then section order within a pane, so this reads as a table of contents.
 
     static let entries: [SettingsSearchEntry] =
-        general + applications + systemSettings + systemActions + commands + clipboard + snippets + fileSearch + windowManagement + calendar + emoji + permissions
+        general + applications + systemSettings + systemActions + commands + clipboard + snippets + windowManagement + calendar + emoji + permissions
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -218,24 +218,6 @@ enum SettingsSearchCatalog {
         .init(
             .commandsCustomCommands, "Import Raycast Scripts",
             keywords: ["raycast", "script", "folder", "directory", "migrate"])
-    ]
-
-    private static let fileSearch: [SettingsSearchEntry] = [
-        .init(
-            pane: .fileSearch,
-            keywords: ["spotlight", "files", "folders", "find"]),
-        .init(
-            .fileSearchFileSearch, "Enable File Search",
-            keywords: ["spotlight", "index"]),
-        .init(
-            group: .fileSearchCommands, "File search commands",
-            keywords: ["shortcut", "launcher"]),
-        .init(
-            group: .fileSearchSearchScopes, "Search Scopes",
-            keywords: ["folders", "locations", "home", "add folder"]),
-        .init(
-            group: .fileSearchIgnorePatterns, "Ignore Patterns",
-            keywords: ["exclude", "glob", "node_modules", "skip"])
     ]
 
     private static let snippets: [SettingsSearchEntry] = [

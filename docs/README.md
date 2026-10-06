@@ -27,8 +27,6 @@ open with an `## Invariants` section; read it before changing anything in that a
 [calendar](features/calendar.md) ·
 [camera](features/camera.md) ·
 [emoji](features/emoji.md) ·
-[dictionary](features/dictionary.md) ·
-[file search](features/file-search.md) ·
 [snippets](features/snippets.md) ·
 [hotkeys](features/hotkeys.md) ·
 [window management](features/window-management.md) ·

@@ -12,7 +12,6 @@ final class LauncherCoordinator {
     private let windowCommandCoordinator: WindowCommandCoordinator
     private let windowLayoutCoordinator: WindowLayoutCoordinator
     private let snippetCoordinator: SnippetCoordinator
-    private let fileSearchCoordinator: FileSearchCoordinator
     private let calendarCoordinator: CalendarCoordinator
     /// The backup commands only, which need the live stores to gather from and apply to.
     private unowned let core: AppCore
@@ -27,7 +26,6 @@ final class LauncherCoordinator {
         windowCommandCoordinator: WindowCommandCoordinator,
         windowLayoutCoordinator: WindowLayoutCoordinator,
         snippetCoordinator: SnippetCoordinator,
-        fileSearchCoordinator: FileSearchCoordinator,
         calendarCoordinator: CalendarCoordinator,
         core: AppCore
     ) {
@@ -40,7 +38,6 @@ final class LauncherCoordinator {
         self.windowCommandCoordinator = windowCommandCoordinator
         self.windowLayoutCoordinator = windowLayoutCoordinator
         self.snippetCoordinator = snippetCoordinator
-        self.fileSearchCoordinator = fileSearchCoordinator
         self.calendarCoordinator = calendarCoordinator
         self.core = core
     }
@@ -131,13 +128,9 @@ final class LauncherCoordinator {
             core.clipboardCoordinator.pasteNextInSequence()
         case .searchEmoji:
             paletteCoordinator.togglePalette(mode: .emoji)
-        case .searchFiles:
-            fileSearchCoordinator.show()
         case .openCamera:
             dismissPalette()
             Task { await core.cameraCoordinator.show() }
-        case .define:
-            core.dictionaryCoordinator.show()
         case .openInBrowser, .runShellCommand:
             break  // Query-driven: each runs where the typed text is, never through this funnel.
         case .joinNextMeeting:

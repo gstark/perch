@@ -48,7 +48,7 @@ struct SettingsFileTest {
             SettingsFileKey.sections == [
                 "general", "appearance", "hyperKey", "calculator", "search", "applications",
                 "systemSettings", "systemActions", "commands",
-                "fileSearch", "snippets",
+                "snippets",
                 "windowManagement", "clipboard", "emoji", "calendar"
             ])
 
@@ -117,7 +117,6 @@ struct SettingsFileTest {
             .searchScopes: .array(["/Applications", "~/Applications"]),
             .showInMenuBar: true,
             .escapeKeyBehavior: "say \"hi\"\\ / é\n\t\u{01}",
-            .fileSearchIgnorePatterns: .array([]),
             .popToRootTimeout: 5,
             .windowGap: .number(-1.5)
         ]
@@ -134,9 +133,6 @@ struct SettingsFileTest {
                   "/Applications",
                   "~/Applications"
                 ]
-              },
-              "fileSearch": {
-                "ignorePatterns": []
               },
               "windowManagement": {
                 "gap": -1.5,

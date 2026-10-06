@@ -6,11 +6,9 @@ enum CommandID: String, CaseIterable, Sendable {
     case clipboardHistory = "command:clipboard-history"
     case pasteSequentially = "command:paste-sequentially"
     case searchEmoji = "command:search-emoji"
-    case searchFiles = "command:search-files"
     case openCamera = "command:open-camera"
     case openInBrowser = "command:open-in-browser"
     case runShellCommand = "command:run-shell-command"
-    case define = "command:define"
     case joinNextMeeting = "command:join-next-meeting"
     case mySchedule = "command:my-schedule"
     case createEvent = "command:create-event"
@@ -31,11 +29,9 @@ enum CommandID: String, CaseIterable, Sendable {
         case .clipboardHistory: return "Clipboard History"
         case .pasteSequentially: return "Paste Sequentially"
         case .searchEmoji: return "Search Emoji & Symbols"
-        case .searchFiles: return "Search Files"
         case .openCamera: return "Open Camera"
         case .openInBrowser: return "Open in Browser"
         case .runShellCommand: return "Run Shell Command"
-        case .define: return "Define Word"
         case .joinNextMeeting: return "Join Next Meeting"
         case .mySchedule: return "My Schedule"
         case .createEvent: return "Create Event"
@@ -58,11 +54,9 @@ enum CommandID: String, CaseIterable, Sendable {
         case .clipboardHistory: return "doc.on.clipboard"
         case .pasteSequentially: return "list.bullet.clipboard"
         case .searchEmoji: return "face.smiling"
-        case .searchFiles: return "doc.text.magnifyingglass"
         case .openCamera: return "camera"
         case .openInBrowser: return "globe"
         case .runShellCommand: return "terminal"
-        case .define: return "book.closed"
         case .joinNextMeeting: return "video.fill"
         case .mySchedule: return "calendar"
         case .createEvent: return "calendar.badge.plus"
@@ -87,7 +81,6 @@ enum CommandID: String, CaseIterable, Sendable {
     var suggestionPriority: Int? {
         switch self {
         case .clipboardHistory: 80
-        case .searchFiles: 70
         case .mySchedule: 60
         case .searchEmoji: 50
         case .createSnippet: 30
