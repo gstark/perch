@@ -126,12 +126,7 @@ struct InterfaceSizeTests {
         expect(
             m.size.dialogSymbolContainer, Theme.Size.dialogSymbolContainer,
             "size.dialogSymbolContainer")
-        expect(m.size.dialogIcon, Theme.Size.dialogIcon, "size.dialogIcon")
         expect(m.size.hudMaxWidth, Theme.Size.hudMaxWidth, "size.hudMaxWidth")
-        expect(m.size.hudWidth, Theme.Size.hudWidth, "size.hudWidth")
-        expect(m.size.hudHeight, Theme.Size.hudHeight, "size.hudHeight")
-        expect(m.size.volumeTrackHeight, Theme.Size.volumeTrackHeight, "size.volumeTrackHeight")
-        expect(m.size.volumeReadout, Theme.Size.volumeReadout, "size.volumeReadout")
 
         expect(m.typography.searchFieldSize, Theme.Typography.searchFieldSize, "typography.searchField")
         expect(
@@ -275,11 +270,7 @@ struct InterfaceSizeTests {
             ("size.dialogButtonHeight", m.size.dialogButtonHeight),
             ("size.dialogSymbol", m.size.dialogSymbol),
             ("size.dialogSymbolContainer", m.size.dialogSymbolContainer),
-            ("size.dialogIcon", m.size.dialogIcon),
-            ("size.hudMaxWidth", m.size.hudMaxWidth), ("size.hudWidth", m.size.hudWidth),
-            ("size.hudHeight", m.size.hudHeight),
-            ("size.volumeTrackHeight", m.size.volumeTrackHeight),
-            ("size.volumeReadout", m.size.volumeReadout)
+            ("size.hudMaxWidth", m.size.hudMaxWidth),
         ]
     }
 }

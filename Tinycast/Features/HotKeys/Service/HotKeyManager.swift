@@ -8,7 +8,6 @@ final class HotKeyManager {
     /// The launcher's own command funnel, so a shortcut and a palette row run the same thing.
     var onRunCommand: ((CommandID) -> Void)?
     var onRunCustomCommand: ((UUID) -> Void)?
-    var onRunSystemAction: ((SystemAction.ID) -> Void)?
     var onRunWindowCommand: ((WindowCommand.ID) -> Void)?
     var onRunWindowLayout: ((UUID) -> Void)?
     var onEnterRoom: ((UUID) -> Void)?
@@ -171,7 +170,7 @@ final class HotKeyManager {
             index(id, bound: binding != nil, key: boundCustomWindowSizeKey)
         case .snippet(let id):
             index(id, bound: binding != nil, key: boundSnippetKey)
-        case .togglePalette, .command, .systemAction, .windowCommand:
+        case .togglePalette, .command, .windowCommand:
             break
         }
         candidateActionsCache = nil
@@ -215,7 +214,6 @@ final class HotKeyManager {
         actions += boundWindowRoomIDs.map { .windowRoom(id: $0) }
         actions += boundCustomWindowSizeIDs.map { .customWindowSize(id: $0) }
         actions += boundSnippetIDs.map { .snippet(id: $0) }
-        actions += SystemAction.ID.allCases.map { .systemAction(id: $0) }
         actions += WindowCommand.ID.allCases.map { .windowCommand(id: $0) }
         candidateActionsCache = actions
         return actions
@@ -231,8 +229,6 @@ final class HotKeyManager {
             return displayName?(action) ?? bundleID
         case .customCommand:
             return displayName?(action) ?? "Custom Command"
-        case .systemAction(let id):
-            return SystemActionCatalog.action(id: id).name
         case .windowCommand(let id):
             return WindowCommandCatalog.command(id: id)?.name ?? "Window Command"
         case .windowLayout:
@@ -273,7 +269,6 @@ final class HotKeyManager {
         case .app(let bundleID): AppLauncher.toggle(bundleID: bundleID)
         case .settingsPane(let bundleID): AppLauncher.openSettingsPane(bundleID: bundleID)
         case .customCommand(let id): onRunCustomCommand?(id)
-        case .systemAction(let id): onRunSystemAction?(id)
         case .windowCommand(let id): onRunWindowCommand?(id)
         case .windowLayout(let id): onRunWindowLayout?(id)
         case .windowRoom(let id): onEnterRoom?(id)

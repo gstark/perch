@@ -108,7 +108,7 @@ enum SettingsSearchCatalog {
     // Pane order, then section order within a pane, so this reads as a table of contents.
 
     static let entries: [SettingsSearchEntry] =
-        general + applications + systemSettings + systemActions + commands + clipboard + snippets + windowManagement + emoji + permissions
+        general + applications + systemSettings + commands + clipboard + snippets + windowManagement + emoji + permissions
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -191,15 +191,6 @@ enum SettingsSearchCatalog {
         .init(
             .systemSettingsSystemSettings, "Enable System Settings",
             keywords: ["hide panes", "visibility"])
-    ]
-
-    private static let systemActions: [SettingsSearchEntry] = [
-        .init(
-            pane: .systemActions,
-            keywords: ["sleep", "lock", "restart", "shut down", "empty trash"]),
-        .init(
-            .systemActionsSystemActions, "Enable System Actions",
-            keywords: ["hide", "visibility"])
     ]
 
     private static let commands: [SettingsSearchEntry] = [

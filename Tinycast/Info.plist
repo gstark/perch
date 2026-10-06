@@ -27,7 +27,7 @@
 	<key>NSAutoFillRequiresTextContentTypeForOneTimeCodeOnMac</key>
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
-	<string>Perch uses automation to perform system actions you explicitly run.</string>
+	<string>Perch asks Finder to show Get Info for an app you choose.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Perch uses Bluetooth access only when you run the Toggle Bluetooth action.</string>
 	<key>NSHumanReadableCopyright</key>

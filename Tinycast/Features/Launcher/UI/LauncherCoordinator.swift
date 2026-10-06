@@ -8,7 +8,6 @@ final class LauncherCoordinator {
     private let paletteCoordinator: PaletteCoordinator
     private let settingsCoordinator: SettingsCoordinator
     private let customCommandCoordinator: CustomCommandCoordinator
-    private let systemActionCoordinator: SystemActionCoordinator
     private let windowCommandCoordinator: WindowCommandCoordinator
     private let windowLayoutCoordinator: WindowLayoutCoordinator
     private let snippetCoordinator: SnippetCoordinator
@@ -21,7 +20,6 @@ final class LauncherCoordinator {
         paletteCoordinator: PaletteCoordinator,
         settingsCoordinator: SettingsCoordinator,
         customCommandCoordinator: CustomCommandCoordinator,
-        systemActionCoordinator: SystemActionCoordinator,
         windowCommandCoordinator: WindowCommandCoordinator,
         windowLayoutCoordinator: WindowLayoutCoordinator,
         snippetCoordinator: SnippetCoordinator,
@@ -32,7 +30,6 @@ final class LauncherCoordinator {
         self.paletteCoordinator = paletteCoordinator
         self.settingsCoordinator = settingsCoordinator
         self.customCommandCoordinator = customCommandCoordinator
-        self.systemActionCoordinator = systemActionCoordinator
         self.windowCommandCoordinator = windowCommandCoordinator
         self.windowLayoutCoordinator = windowLayoutCoordinator
         self.snippetCoordinator = snippetCoordinator
@@ -64,11 +61,6 @@ final class LauncherCoordinator {
         if app.kind == .customCommand {
             guard let id = CustomCommand.id(fromEntryID: app.id) else { return }
             customCommandCoordinator.runCustomCommand(id: id, values: arguments)
-            return
-        }
-        if app.kind == .systemAction {
-            guard let action = SystemActionCatalog.action(forEntryID: app.id) else { return }
-            systemActionCoordinator.runSystemAction(id: action.id)
             return
         }
         if app.kind == .windowCommand {
@@ -103,7 +95,7 @@ final class LauncherCoordinator {
         case .snippet:
             guard let snippetID = StoredSnippet.id(fromEntryID: app.id) else { return }
             snippetCoordinator.expandSnippet(id: snippetID, target: previous)
-        case .command, .customCommand, .systemAction, .windowCommand, .windowLayout,
+        case .command, .customCommand, .windowCommand, .windowLayout,
             .windowRoom:
             break  // handled above
         }

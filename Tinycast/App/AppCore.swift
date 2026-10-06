@@ -65,8 +65,6 @@ final class AppCore {
         windowController: windowController)
     /// Its own window and lifecycle: neither coordinator shows or closes the other's surface.
     @ObservationIgnored private(set) lazy var settingsCoordinator = SettingsCoordinator(core: self)
-    @ObservationIgnored private(set) lazy var systemActionCoordinator = SystemActionCoordinator(
-        paletteCoordinator: paletteCoordinator, core: self)
     @ObservationIgnored private(set) lazy var windowCommandCoordinator = WindowCommandCoordinator(
         settings: settings, paletteCoordinator: paletteCoordinator, windowMover: windowMover,
         spaceSwitcher: spaceSwitcher, customSizes: customWindowSizes)
@@ -98,7 +96,6 @@ final class AppCore {
         paletteCoordinator: paletteCoordinator,
         settingsCoordinator: settingsCoordinator,
         customCommandCoordinator: customCommandCoordinator,
-        systemActionCoordinator: systemActionCoordinator,
         windowCommandCoordinator: windowCommandCoordinator,
         windowLayoutCoordinator: windowLayoutCoordinator,
         snippetCoordinator: snippetCoordinator,
@@ -189,9 +186,6 @@ final class AppCore {
             hotKeys.onRunCustomCommand = { [weak self] id in
                 self?.customCommandCoordinator.runCustomCommand(id: id)
             }
-            hotKeys.onRunSystemAction = { [weak self] id in
-                self?.systemActionCoordinator.runSystemAction(id: id)
-            }
             hotKeys.onRunWindowCommand = { [weak self] id in
                 self?.windowCommandCoordinator.runWindowCommand(id: id)
             }
@@ -225,9 +219,6 @@ final class AppCore {
             KeyShortcut.displayedHyperChord = { [settings] in
                 guard settings.hyperKey != .none else { return nil }
                 return KeyShortcut.hyperChord(includesShift: settings.hyperKeyIncludesShift)
-            }
-            SystemActionRunner.onAsyncFailure = { [weak self] id, failure in
-                self?.systemActionCoordinator.presentSystemActionFailure(id: id, failure: failure)
             }
             hotKeys.start(
                 customCommandIDs: Set(customCommands.commands.map(\.id)),
@@ -280,7 +271,7 @@ final class AppCore {
             return customWindowSizes.size(id: id)?.name
         case .snippet(let id):
             return snippetsStore.record(id: id)?.snippet.name
-        case .togglePalette, .command, .systemAction, .windowCommand:
+        case .togglePalette, .command, .windowCommand:
             return nil
         }
     }
@@ -506,11 +497,6 @@ final class AppCore {
 
     func hideProgress() {
         messageHUD.dismiss()
-    }
-
-    /// The volume slider, so `dialogs` stays the single owner of every prompt in the app.
-    func pickVolume(current: Float32) async -> Float32? {
-        await dialogs.pickVolume(current: current)
     }
 
     /// The snippet argument prompt, for the same reason.

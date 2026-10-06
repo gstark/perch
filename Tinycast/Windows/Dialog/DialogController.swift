@@ -62,20 +62,6 @@ final class DialogController: NSObject, NSWindowDelegate {
         return await present(request) == recoveryIndex
     }
 
-    func pickVolume(current: Float32) async -> Float32? {
-        let volume = VolumeState(level: Double(current))
-        let request = DialogRequest(
-            title: "Set Volume", message: "Choose the output volume.", symbol: "speaker.wave.2",
-            tone: .neutral,
-            actions: [
-                DialogAction(title: "Set Volume"),
-                DialogAction(title: "Cancel", role: .cancel)
-            ],
-            defaultIndex: 0, cancelIndex: 1, accessory: .volume(volume))
-        guard await present(request) == 0 else { return nil }
-        return Float32(volume.level)
-    }
-
     func fillSnippetArguments(
         snippetName: String, arguments: [SnippetTemplateEngine.MissingArgument]
     ) async -> [String: String]? {
@@ -100,7 +86,7 @@ final class DialogController: NSObject, NSWindowDelegate {
             onPresentationChanged(true)
             let width =
                 switch request.accessory {
-                case nil, .volume: metrics.size.dialogCompactWidth
+                case nil: metrics.size.dialogCompactWidth
                 case .snippetArguments: metrics.size.dialogWidth
                 }
             let content = hostingView(
@@ -111,7 +97,6 @@ final class DialogController: NSObject, NSWindowDelegate {
                     }),
                 width: width, minHeight: 0)
             let panel = DialogPanel(content: content, cornerRadius: metrics.radius.panel)
-            panel.handlesArrowKeys = request.accessory?.claimsArrowKeys ?? false
             panel.delegate = self
             panel.onKey = { [weak self] key in
                 guard let self else { return }
@@ -120,10 +105,6 @@ final class DialogController: NSObject, NSWindowDelegate {
                     finish(request.cancelIndex)
                 case .confirm:
                     finish(request.defaultIndex)
-                case .increment, .decrement:
-                    // Keying the slider lands on the same values Volume Up/Down produce.
-                    guard case .volume(let volume) = request.accessory else { return }
-                    volume.level = VolumeLevel.stepped(volume.level, up: key == .increment)
                 }
             }
             self.panel = panel

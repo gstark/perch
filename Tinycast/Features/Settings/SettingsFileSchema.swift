@@ -48,8 +48,6 @@ enum SettingsFileSchema {
         case .applications: return launcher.appsBinding(for: key)
         case .systemSettingsEnabled: return launcher.kindBinding(for: key, kind: .systemSettings)
         case .systemSettings: return launcher.panesBinding(for: key)
-        case .systemActionsEnabled: return launcher.kindBinding(for: key, kind: .systemAction)
-        case .systemActions: return launcher.systemActionsBinding(for: key)
         case .builtInCommandsEnabled: return launcher.kindBinding(for: key, kind: .command)
         case .builtInCommands: return launcher.commandsBinding(for: key, owner: nil)
         case .customCommandsEnabled: return bind(settings, \.customCommandsEnabled)

@@ -52,15 +52,6 @@ final class LauncherSettingsFile {
         bundlesBinding(for: key, .pane)
     }
 
-    func systemActionsBinding(for key: SettingsFileKey) -> SettingsFileBinding {
-        let items = SystemActionCatalog.all.map { action in
-            Item(
-                name: action.id.rawValue, preferenceKey: action.entryID,
-                action: .systemAction(id: action.id))
-        }
-        return catalogBinding(for: key, items: items, noun: "system action")
-    }
-
     /// The built-in commands `owner` lists; nil is the Commands pane's own.
     func commandsBinding(for key: SettingsFileKey, owner: SettingsTab?) -> SettingsFileBinding {
         let items = CommandID.allCases.filter { $0.owner == owner && !$0.isQueryDriven }.map { id in

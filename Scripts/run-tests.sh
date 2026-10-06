@@ -144,7 +144,6 @@ run launcher-settings-file-test $L/LauncherFileFormat.swift \
                                 Tinycast/Features/HotKeys/Model/HyperKey.swift \
                                 Tinycast/Platform/ASCIIKeyboardLayout.swift \
                                 Tinycast/Platform/LinkDestination.swift \
-                                Tinycast/Features/SystemActions/Model/SystemAction.swift \
                                 Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
                                 Tinycast/Features/Snippets/Model/Snippet.swift
 run calc-test              Tinycast/Features/Calculator/Model/*.swift
@@ -271,7 +270,6 @@ run hotkey-test Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
                 Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
                 Tinycast/Features/Launcher/Model/CommandID.swift \
                 Tinycast/Platform/LinkDestination.swift \
-                Tinycast/Features/SystemActions/Model/SystemAction.swift \
                 Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
                 Tinycast/Features/Snippets/Model/Snippet.swift
 run callout-test          Tinycast/Platform/Appearance.swift \
@@ -283,10 +281,6 @@ run icon-cache-test        Tinycast/Platform/Appearance.swift \
 run entry-icon-test        Tinycast/Platform/Appearance.swift \
                            Tinycast/Platform/Images/IconCache.swift \
                            Tinycast/Platform/Images/FileIconStamp.swift
-run system-action-test     Tinycast/Features/SystemActions/Model/SystemAction.swift
-run microphone-mute-test   Tinycast/Features/SystemActions/Service/SystemActionFailure.swift \
-                           Tinycast/Features/SystemActions/Service/SystemActionRunner+Microphone.swift
-run volume-test            Tinycast/Features/SystemActions/Model/VolumeLevel.swift
 run window-command-test    Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
                            Tinycast/Features/WindowManagement/Model/WindowCycle.swift \
                            Tinycast/Features/WindowManagement/Model/WindowPlacementEngine.swift \

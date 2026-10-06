@@ -7,7 +7,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case command
         case customCommand
         case snippet
-        case systemAction
         case windowCommand
         case windowLayout
         case windowRoom
@@ -39,11 +38,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
                     label: "Snippet", sectionTitle: "Snippets",
                     openVerb: "Paste Snippet", canHideFromSearch: false,
                     canRevealInFinder: true, canDragOut: false, isSymbolIcon: true, rankPriority: 3)
-            case .systemAction:
-                return KindDescriptor(
-                    label: "System Action", sectionTitle: "System Actions",
-                    openVerb: "Run System Action", canHideFromSearch: true,
-                    canRevealInFinder: false, canDragOut: false, isSymbolIcon: true, rankPriority: 3)
             case .windowCommand:
                 return KindDescriptor(
                     label: "Window Command", sectionTitle: "Window Management",
@@ -144,8 +138,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
             return bundleID.map { .settingsPane(bundleID: $0) }
         case .customCommand:
             return CustomCommand.id(fromEntryID: id).map { .customCommand(id: $0) }
-        case .systemAction:
-            return SystemActionCatalog.action(forEntryID: id).map { .systemAction(id: $0.id) }
         case .windowCommand:
             if let command = WindowCommandCatalog.command(forEntryID: id) {
                 return .windowCommand(id: command.id)
@@ -181,7 +173,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case .snippet: return "text.quote"
         case .customCommand: return CustomCommand.sfSymbol
         case .command: return CommandCatalog.command(for: self)?.sfSymbol ?? "questionmark"
-        case .systemAction: return SystemActionCatalog.action(forEntryID: id)?.sfSymbol ?? "questionmark"
         case .windowCommand:
             return WindowCommandCatalog.command(forEntryID: id)?.sfSymbol
                 ?? CustomWindowSize.sfSymbol
@@ -285,15 +276,6 @@ final class AppIndex {
     @ObservationIgnored private var resultsMemo = Memo<ResultsKey, Results>()
     /// Bumped whenever `apps` changes, so both memos above name the entry set they were built from.
     private var entriesRevision = 0
-
-    private static let systemActionEntries: [AppEntry] = SystemActionCatalog.all
-        .map { command in
-            AppEntry(
-                id: command.entryID, name: command.name,
-                url: URL(string: "perch://system-action/" + command.id.rawValue)!,
-                bundleID: nil, kind: .systemAction)
-        }
-        .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
 
     private static let allWindowCommandEntries: [AppEntry] = WindowCommandCatalog.all
         .map { command in
@@ -536,7 +518,7 @@ final class AppIndex {
             discoveredEntries
             + Self.named(
                 snippetEntries
-                    + Self.systemActionEntries + windowLayoutEntries + windowRoomEntries
+                    + windowLayoutEntries + windowRoomEntries
                     + windowCommandEntries
                     + customWindowSizeEntries + customCommandEntries
                     + commandEntries)
