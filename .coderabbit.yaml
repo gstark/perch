@@ -53,7 +53,7 @@ reviews:
   path_filters:
     - "!**/*.generated.swift"
     - "!Tinycast/Resources/RaycastRuntime.generated.js"
-    - "!Tinycast.xcodeproj/**"
+    - "!Perch.xcodeproj/**"
     - "!Tinycast/Assets.xcassets/**"
     - "!Tinycast/tinycast.icon/**"
     - "!Tests/ai-fixtures/*.txt"
@@ -70,7 +70,7 @@ reviews:
   path_instructions:
     - path: "**/*.swift"
       instructions: |
-        Tinycast targets only macOS 26+, Xcode 26 and Swift 6 language mode.
+        Perch targets only macOS 26+, Xcode 26 and Swift 6 language mode.
 
         Repository authority:
         - Review against AGENTS.md and docs/standards.md; use docs/architecture.md, docs/ui.md
@@ -87,7 +87,7 @@ reviews:
         - Do not turn subjective style preferences into findings.
         - Do not repeat what SwiftLint already enforces unless there is an extra correctness concern.
         - Prefer a few high-confidence findings over speculative comments.
-        - Respect intentional Tinycast conventions even when they differ from generic Swift advice.
+        - Respect intentional Perch conventions even when they differ from generic Swift advice.
 
         Concurrency (Swift 6 strict; concurrency violations are defects):
         - @MainActor is the default. Flag any new custom actor or global actor; the app has one actor.
@@ -262,7 +262,7 @@ reviews:
     - path: "project.yml"
       instructions: |
         XcodeGen source of truth.
-        - Check Tinycast.xcodeproj was regenerated in the same PR.
+        - Check Perch.xcodeproj was regenerated in the same PR.
         - Keep Swift 6 language mode, strict concurrency, the macOS 26 deployment target and
           zero third-party dependencies.
         - Flag SwiftPM packages and Bundle.module.
@@ -343,7 +343,7 @@ reviews:
       - name: XcodeGen project in sync
         mode: error
         instructions: >-
-          Fail only if project.yml changed and Tinycast.xcodeproj/project.pbxproj
+          Fail only if project.yml changed and Perch.xcodeproj/project.pbxproj
           did not. A project.pbxproj change without a project.yml change is
           expected: XcodeGen globs source folders, so adding, moving or removing
           a file regenerates the project alone. Otherwise pass.

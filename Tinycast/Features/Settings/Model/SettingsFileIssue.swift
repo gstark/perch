@@ -1,6 +1,6 @@
 import Foundation
 
-/// Something in settings.json Tinycast could not use, said the way the HUD says it.
+/// Something in settings.json Perch could not use, said the way the HUD says it.
 enum SettingsFileIssue: Error, Equatable, Sendable {
     /// `JSONSerialization`'s own account, which names the line and column.
     case invalidJSON(String)

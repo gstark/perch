@@ -1,10 +1,10 @@
 import CoreGraphics
 import Foundation
 
-/// What Tinycast remembers per moved window. docs/features/window-management.md#cycling-and-restore
+/// What Perch remembers per moved window. docs/features/window-management.md#cycling-and-restore
 struct WindowActionMemory<Key: Hashable> {
     struct Record: Equatable, Sendable {
-        /// Where the window was before Tinycast first touched it.
+        /// Where the window was before Perch first touched it.
         var restoreFrame: CGRect
         /// Where we *observed* it after our last write — not what we asked for. See `decide`.
         var appliedFrame: CGRect

@@ -11,7 +11,7 @@
       // still blocks F5 / the run step.
       "label": "Build Perch.app (debug)",
       "type": "shell",
-      "command": "bash -c 'set -o pipefail; xcodebuild -project Perch.xcodeproj -scheme Perch -configuration Debug -derivedDataPath build/DerivedData build 2>&1 | tee \"${TMPDIR:-/tmp}/tinycast-build.log\"; ec=$?; ./Scripts/sync-lsp.sh \"${TMPDIR:-/tmp}/tinycast-build.log\" >/dev/null 2>&1 || true; exit $ec'",
+      "command": "bash -c 'set -o pipefail; xcodebuild -project Perch.xcodeproj -scheme Perch -configuration Debug -derivedDataPath build/DerivedData build 2>&1 | tee \"${TMPDIR:-/tmp}/perch-build.log\"; ec=$?; ./Scripts/sync-lsp.sh \"${TMPDIR:-/tmp}/perch-build.log\" >/dev/null 2>&1 || true; exit $ec'",
       "options": {
         "cwd": "${workspaceFolder}",
         "env": { "DEVELOPER_DIR": "/Applications/Xcode.app/Contents/Developer" }
@@ -21,7 +21,7 @@
     },
     {
       // Rebuild, then relaunch the menu-bar app. Default build task (⌘⇧B).
-      "label": "Build & Run Tinycast (debug)",
+      "label": "Build & Run Perch (debug)",
       "type": "shell",
       "command": "killall 'Perch Dev' 2>/dev/null; open 'build/DerivedData/Build/Products/Debug/Perch Dev.app'",
       "options": { "cwd": "${workspaceFolder}" },

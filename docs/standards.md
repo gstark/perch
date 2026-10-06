@@ -1,6 +1,6 @@
 # Engineering standards
 
-How code in Tinycast is written. This is **guidance** — it describes what the codebase already looks
+How code in Perch is written. This is **guidance** — it describes what the codebase already looks
 like so that new code reads like it was there all along, and a good reason to depart from it is a good
 reason. What is actually checked is the bar in
 [testing.md](testing.md#definition-of-done); the rules that may not be broken at all are the
@@ -16,7 +16,7 @@ reasoning and the concrete shape it takes.
 
 The reason it is worth being strict about: a compatibility floor is not a one-time cost. Every shim
 outlives the platform that needed it, gets copied by the next feature that sees it, and turns a
-one-line call into a layer nobody dares delete. Tinycast has no external API, no plugin surface and one
+one-line call into a layer nobody dares delete. Perch has no external API, no plugin surface and one
 supported OS, so it has nothing to be compatible *with* — which is the whole reason it stays this
 small. The version-gated code this project has deleted has consistently been larger than the feature it
 was gating.

@@ -189,6 +189,16 @@ struct GeneralSettingsView: View {
                 }
             } header: {
                 SettingsSectionHeader(.generalSearch)
+            } footer: {
+                // AGPL-3.0 §5(d): Tinycast showed these notices, so a modified version must too.
+                Text(
+                    "Perch is a fork of Tinycast. © 2026 Abue Ammar, © 2026 Gavin Stark. "
+                        + "Released under AGPL-3.0, without warranty."
+                )
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+                .frame(maxWidth: .infinity)
+                .padding(.top, Theme.Spacing.lg)
             }
         }
         .formStyle(.grouped)

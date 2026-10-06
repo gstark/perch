@@ -84,8 +84,8 @@ and the flag database:
 ```sh
 brew install xcode-build-server
 xcodebuild -project Perch.xcodeproj -scheme Perch -configuration Debug \
-    -derivedDataPath build/DerivedData build 2>&1 | tee /tmp/tinycast-build.log
-./Scripts/sync-lsp.sh /tmp/tinycast-build.log
+    -derivedDataPath build/DerivedData build 2>&1 | tee /tmp/perch-build.log
+./Scripts/sync-lsp.sh /tmp/perch-build.log
 ```
 
 Both files are git-ignored because they embed absolute paths, and `sourcekit-lsp` looks for

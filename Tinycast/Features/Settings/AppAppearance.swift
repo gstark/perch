@@ -1,6 +1,6 @@
 import AppKit
 
-/// Which appearance Tinycast renders in; an unset key reads as `.system`.
+/// Which appearance Perch renders in; an unset key reads as `.system`.
 enum AppAppearance: String, CaseIterable, Identifiable, Sendable {
     case system
     case light

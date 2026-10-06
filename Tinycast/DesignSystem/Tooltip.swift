@@ -5,7 +5,7 @@ private enum TooltipLabel {
     case keyCap(String)
 }
 
-/// A hover label in Tinycast's own vocabulary, replacing a system `.help()` tooltip.
+/// A hover label in Perch's own vocabulary, replacing a system `.help()` tooltip.
 private struct TooltipModifier: ViewModifier {
     let label: TooltipLabel?
     let alignment: HorizontalAlignment

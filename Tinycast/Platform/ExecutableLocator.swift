@@ -73,7 +73,7 @@ enum ExecutableLocator {
             process.executableURL = executable
             process.arguments = arguments
             process.currentDirectoryURL = FileManager.default.homeDirectoryForCurrentUser
-            process.environment = ProcessInfo.processInfo.environment.merging(["TINYCAST": "1"]) {
+            process.environment = ProcessInfo.processInfo.environment.merging(["PERCH": "1"]) {
                 _, new in new
             }
             process.standardInput = FileHandle.nullDevice
@@ -100,7 +100,7 @@ enum ExecutableLocator {
         }.value
     }
 
-    nonisolated private static let answerMarker = "tinycast-locator:"
+    nonisolated private static let answerMarker = "perch-locator:"
 
     /// fish binds `-c` arguments to `$argv`, not `$1`; any other shell falls back to zsh.
     nonisolated private static func lookup(_ command: String, in shell: URL) -> (URL, [String]) {
@@ -110,7 +110,7 @@ enum ExecutableLocator {
             return (shell, ["-ilc", script, command])
         case "zsh", "bash", "sh", "ksh", "dash":
             let script = #"printf '\#(answerMarker)%s\n' "$(command -v -- "$1")""#
-            return (shell, ["-ilc", script, "tinycast-locator", command])
+            return (shell, ["-ilc", script, "perch-locator", command])
         default:
             return lookup(command, in: URL(fileURLWithPath: "/bin/zsh"))
         }

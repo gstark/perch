@@ -174,5 +174,4 @@ flowchart TD
 
 ## Later
 
-- Rename the project directory from `needs-name` to `perch`.
 - Add a `release` recipe for the `gstark/tap` Homebrew cask, but only if Perch must run on a second Mac.

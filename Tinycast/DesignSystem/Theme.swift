@@ -10,7 +10,7 @@ enum Theme {
         static let md: CGFloat = 8
         static let lg: CGFloat = 10
         static let xl: CGFloat = 12
-        /// Outer inset of Tinycast's dialog content.
+        /// Outer inset of Perch's dialog content.
         static let dialogInset: CGFloat = 18
         static let xxl: CGFloat = 20
         /// Calculator answer card's roomier vertical breathing room.
@@ -205,7 +205,7 @@ enum Theme {
         static let initialOpacity: CGFloat = 0.08
     }
 
-    /// Motion owned by Tinycast's menus; extension-provided panels keep their own behavior.
+    /// Motion owned by Perch's menus; extension-provided panels keep their own behavior.
     @MainActor
     enum MenuMotion {
         static let entryScale: CGFloat = 0.94
@@ -268,7 +268,7 @@ enum Theme {
 
         /// The ramp's inverse: the scrim darkens the dark surface and lightens the light one.
         static let panelScrim = adaptive(dark: .srgbInk(0, alpha: 0.40), light: .srgbInk(1, alpha: 0.55))
-        /// Modal separation inside Tinycast: the launcher recedes while its dialog is in front.
+        /// Modal separation inside Perch: the launcher recedes while its dialog is in front.
         static let dialogDimming = adaptive(
             dark: .srgbInk(0, alpha: 0.34), light: .srgbInk(0, alpha: 0.34))
         /// Find's marks, the Mac's own yellow: every match faint, the current one solid.

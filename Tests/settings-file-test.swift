@@ -199,7 +199,7 @@ struct SettingsFileTest {
     private static func testRepository() async throws {
         let folder = scratchFolder()
         defer { try? FileManager.default.removeItem(at: folder) }
-        let url = folder.appending(path: "tinycast/settings.json")
+        let url = folder.appending(path: "perch/settings.json")
 
         let first = Fixture()
         first.seconds = 15
@@ -340,7 +340,7 @@ struct SettingsFileTest {
 
     private static func scratchFolder() -> URL {
         FileManager.default.temporaryDirectory.appending(
-            path: "tinycast-settings-file-test-\(UUID().uuidString)", directoryHint: .isDirectory)
+            path: "perch-settings-file-test-\(UUID().uuidString)", directoryHint: .isDirectory)
     }
 
     private static func write(_ text: String, to url: URL) throws {

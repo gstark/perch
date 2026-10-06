@@ -87,6 +87,8 @@ feature's doc, under its own `## Invariants`.
   `Resources/EmojiKeywords/` come from `node Scripts/gen-emoji.js`, `CurrencyData.generated.swift`
   from `node Scripts/gen-currencies.js`, and `CountryZoneData.generated.swift` from
   `node Scripts/gen-countries.js`. They are committed, so building the app never needs Node.
+- **The AGPL notices stay.** `LICENSE`, `NOTICE.md`, the copyright in `Info.plist` and the legal
+  footer of the General pane are licence obligations, so no feature cut may remove them.
 - **`DesignSystem/Scrolling/EdgeDissolve.swift` and `ThinScrollbar.swift` are off-limits.** Both are
   tuned by eye against the palette's floating bars, so any edit is a visual regression. Needing to touch
   one to fix a scroll bug means the real fix belongs elsewhere.

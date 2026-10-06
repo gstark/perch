@@ -1,7 +1,7 @@
 import AppKit
 import SwiftUI
 
-/// Tinycast's own dialogs; `NSAlert`'s nested run loop would let hotkeys stack them.
+/// Perch's own dialogs; `NSAlert`'s nested run loop would let hotkeys stack them.
 @MainActor
 final class DialogController: NSObject, NSWindowDelegate {
     private let settings: AppSettings

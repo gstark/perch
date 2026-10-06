@@ -115,7 +115,7 @@ final class AppSettings {
         didSet { defaults.set(escapeKeyBehavior.rawValue, forKey: Key.escapeKeyBehavior.rawValue) }
     }
 
-    /// Follow macOS, or pin Tinycast to one appearance. Applied by `AppCore.applyAppearance()`.
+    /// Follow macOS, or pin Perch to one appearance. Applied by `AppCore.applyAppearance()`.
     var appearance: AppAppearance {
         didSet { defaults.set(appearance.rawValue, forKey: Key.appearance.rawValue) }
     }

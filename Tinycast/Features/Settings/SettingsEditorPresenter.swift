@@ -385,7 +385,7 @@ extension EnvironmentValues {
 }
 
 extension View {
-    /// Presents editor content in Tinycast's activating child panel, not an opaque macOS sheet.
+    /// Presents editor content in Perch's activating child panel, not an opaque macOS sheet.
     func settingsEditorPanel<PanelContent: View>(
         isPresented: Binding<Bool>, @ViewBuilder content: @escaping () -> PanelContent
     ) -> some View {
