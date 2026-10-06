@@ -9,7 +9,6 @@ final class AppCore {
     let launcherRanking: LauncherRankingStore
     let appIndex: AppIndex
     let customCommands = CustomCommandStore()
-    let quicklinks = QuicklinkStore()
     let windowLayouts = WindowLayoutStore()
     let customWindowSizes = CustomWindowSizeStore()
     let rooms = RoomStore()
@@ -30,7 +29,7 @@ final class AppCore {
     let spaceSwitcher = SpaceSwitcher()
     let inputSourceSwitcher = InputSourceSwitcher()
     let settings: AppSettings
-    /// Mirrors settings into settings.json; nil while the Backup pane's switch is off.
+    /// Mirrors settings into settings.json; nil until the first app scan.
     @ObservationIgnored private var settingsFile: SettingsFileRepository?
     /// The file's launcher items, kept to apply a waiting record once its app is installed.
     @ObservationIgnored private var launcherSettingsFile: LauncherSettingsFile?
@@ -39,7 +38,6 @@ final class AppCore {
     let favorites = FavoritesStore()
     let visibility = VisibilityStore()
     let aliases = AliasStore()
-    let fallbacks = FallbackStore()
     let calcHistory = CalculatorHistoryStore()
     let currencyRates = CurrencyRateStore()
     let regionNumberFormat = RegionNumberFormatMonitor()
@@ -61,8 +59,6 @@ final class AppCore {
     let notesStore: NotesStore
     let extensions: ExtensionManager
 
-    /// Set when a quicklink editor should open with Settings; the pane consumes it.
-    var pendingQuicklinkEdit: QuicklinkEditRequest?
     /// Set when a snippet editor should open with Settings; the pane consumes it.
     var pendingSnippetEdit: SnippetEditRequest?
     /// Set when a layout editor should open with Settings; the pane consumes it.
@@ -74,14 +70,6 @@ final class AppCore {
         windowController: windowController, paletteCoordinator: paletteCoordinator,
         settingsCoordinator: settingsCoordinator,
         showMessage: { [unowned self] in self.showMessage($0) }, core: self)
-    @ObservationIgnored private(set) lazy var quicklinkCoordinator = QuicklinkCoordinator(
-        store: quicklinks, settings: settings,
-        appIndex: appIndex, injector: textInjector, hotKeys: hotKeys, favorites: favorites,
-        visibility: visibility, ranking: launcherRanking, aliases: aliases,
-        windowController: windowController,
-        paletteCoordinator: paletteCoordinator, settingsCoordinator: settingsCoordinator,
-        clipboardHistory: { [unowned self] in self.snippetCoordinator.clipboardHistoryForExpansion() },
-        core: self)
 
     @ObservationIgnored private(set) lazy var paletteCoordinator = PaletteCoordinator(
         palette: palette, settings: settings, appIndex: appIndex,
@@ -89,8 +77,6 @@ final class AppCore {
         windowController: windowController)
     /// Its own window and lifecycle: neither coordinator shows or closes the other's surface.
     @ObservationIgnored private(set) lazy var settingsCoordinator = SettingsCoordinator(core: self)
-    @ObservationIgnored private(set) lazy var onboardingCoordinator = OnboardingCoordinator(
-        core: self)
     @ObservationIgnored private(set) lazy var systemActionCoordinator = SystemActionCoordinator(
         paletteCoordinator: paletteCoordinator, core: self)
     @ObservationIgnored private(set) lazy var uninstallCoordinator = UninstallCoordinator(
@@ -147,7 +133,6 @@ final class AppCore {
         settingsCoordinator: settingsCoordinator,
         customCommandCoordinator: customCommandCoordinator,
         systemActionCoordinator: systemActionCoordinator,
-        quicklinkCoordinator: quicklinkCoordinator,
         windowCommandCoordinator: windowCommandCoordinator,
         windowLayoutCoordinator: windowLayoutCoordinator,
         snippetCoordinator: snippetCoordinator, fileSearchCoordinator: fileSearchCoordinator,
@@ -155,9 +140,6 @@ final class AppCore {
         windowSwitchCoordinator: windowSwitchCoordinator,
         notesCoordinator: notesCoordinator, extensionCoordinator: extensionCoordinator,
         calendarCoordinator: calendarCoordinator,
-        core: self)
-    @ObservationIgnored private(set) lazy var fallbackCoordinator = FallbackCoordinator(
-        store: fallbacks, quicklinks: quicklinks, settings: settings, visibility: visibility,
         core: self)
     @ObservationIgnored private(set) lazy var clipboardCoordinator = ClipboardCoordinator(
         clipboardStore: clipboardStore, clipboardManager: clipboardManager, settings: settings,
@@ -261,12 +243,6 @@ final class AppCore {
             roomCoordinator.applyRoomsPresence()
             // A crash can leave windows parked off-screen; they come home before anything else.
             roomCoordinator.recoverParkedWindows()
-            quicklinks.onChange = { [weak self] _ in
-                self?.quicklinkCoordinator.applyQuicklinksPresence()
-            }
-            // Before `hotKeys.start` even when off: the prune reads it. docs/features/quicklinks.md
-            quicklinks.load()
-            quicklinkCoordinator.applyQuicklinksPresence()
             appleShortcutCoordinator.applyPresence()
             paletteCoordinator.onLauncherShown = { [weak self] in
                 self?.appleShortcutCoordinator.refresh()
@@ -313,9 +289,6 @@ final class AppCore {
             hotKeys.onRunCustomWindowSize = { [weak self] id in
                 self?.windowCommandCoordinator.runCustomWindowSize(id: id)
             }
-            hotKeys.onOpenQuicklink = { [weak self] id in
-                self?.quicklinkCoordinator.openQuicklink(id: id)
-            }
             hotKeys.onRunAppleShortcut = { [weak self] id in
                 self?.appleShortcutCoordinator.run(id: id)
             }
@@ -332,8 +305,8 @@ final class AppCore {
                 guard let self else { return }
                 hotKeys.removeAppBindings(where: appIndex.isUninstalled)
                 // After the first scan, so the file's apps and panes have entries to match.
-                if settings.settingsFileEnabled, settingsFile == nil {
-                    startSettingsFile(importing: true)
+                if settingsFile == nil {
+                    startSettingsFile()
                 } else if let launcherSettingsFile {
                     reportSettingsFileIssues(launcherSettingsFile.applyInstalled())
                 }
@@ -354,7 +327,6 @@ final class AppCore {
             }
             hotKeys.start(
                 customCommandIDs: Set(customCommands.commands.map(\.id)),
-                quicklinkIDs: Set(quicklinks.quicklinks.map(\.id)),
                 windowLayoutIDs: Set(windowLayouts.layouts.map(\.id)),
                 windowRoomIDs: Set(rooms.rooms.map(\.id)),
                 customWindowSizeIDs: Set(customWindowSizes.sizes.map(\.id)))
@@ -376,19 +348,12 @@ final class AppCore {
             snippetCoordinator.applySnippetsLauncherPresence()
 
             observeFeatureSwitches()
-
-            // First launch binds no hotkey, so guide once; the marker is written at show-time.
-            if !OnboardingState.hasOnboarded {
-                OnboardingState.markShown()
-                onboardingCoordinator.showOnboarding()
-            }
         }
     }
 
     /// Clicking the Dock icon: raise whichever window is already open, else summon the launcher.
     func handleReopen() {
         if settingsCoordinator.focusExisting() { return }
-        if onboardingCoordinator.focusExisting() { return }
         if updateCoordinator.focusExisting() { return }
         if supportCoordinator.focusExisting() { return }
         if customCommandCoordinator.focusOutputWindow() { return }
@@ -424,8 +389,6 @@ final class AppCore {
                 .name
         case .customCommand(let id):
             return customCommands.command(id: id)?.name
-        case .quicklink(let id):
-            return quicklinks.quicklink(id: id)?.name
         case .windowLayout(let id):
             return windowLayouts.layout(id: id)?.name
         case .windowRoom(let id):
@@ -517,11 +480,6 @@ final class AppCore {
                 _ = $0.customCommandsEnabled
                 _ = $0.customCommandsShowInLauncher
             }, reproject: { $0.customCommandCoordinator.applyCustomCommandsPresence() })
-        track(
-            {
-                _ = $0.quicklinksEnabled
-                _ = $0.quicklinksShowInLauncher
-            }, reproject: { $0.quicklinkCoordinator.applyQuicklinksPresence() })
         track(
             { _ = $0.appleShortcutsEnabled },
             reproject: { $0.appleShortcutCoordinator.applyPresence() })
@@ -649,8 +607,8 @@ final class AppCore {
 
     // MARK: - Settings file
 
-    /// Mirrors settings into settings.json from now on; `importing` applies the file's own first.
-    func startSettingsFile(importing: Bool) {
+    /// Mirrors settings into settings.json from now on, applying the file's own first.
+    private func startSettingsFile() {
         guard settingsFile == nil else { return }
         let shortcuts = HotKeySettingsFile(hotKeys: hotKeys)
         let launcher = LauncherSettingsFile(
@@ -666,16 +624,7 @@ final class AppCore {
         file.onIssues = { [weak self] issues in self?.reportSettingsFileIssues(issues) }
         settingsFile = file
         launcherSettingsFile = launcher
-        settings.settingsFileEnabled = true
-        file.start(importing: importing)
-    }
-
-    /// Stops the mirror; the file stays on disk as last written.
-    func stopSettingsFile() {
-        settingsFile?.flush()
-        settingsFile = nil
-        launcherSettingsFile = nil
-        settings.settingsFileEnabled = false
+        file.start(importing: true)
     }
 
     private func reportSettingsFileIssues(_ issues: [SettingsFileIssue]) {

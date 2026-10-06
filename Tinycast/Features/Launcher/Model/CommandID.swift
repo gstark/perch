@@ -25,15 +25,8 @@ enum CommandID: String, CaseIterable, Sendable {
     case captureWindowLayout = "command:capture-window-layout"
     case switchRoom = "command:switch-room"
     case createRoom = "command:create-room"
-    case createQuicklink = "command:create-quicklink"
-    case searchQuicklinks = "command:search-quicklinks"
-    case importQuicklinks = "command:import-quicklinks"
-    case exportQuicklinks = "command:export-quicklinks"
     case searchSnippets = "command:search-snippets"
     case createSnippet = "command:create-snippet"
-    case exportSettings = "command:export-settings"
-    case importSettings = "command:import-settings"
-    case importFromRaycast = "command:import-from-raycast"
     case checkForUpdates = "command:check-for-updates"
     case settings = "command:settings"
     case about = "command:about"
@@ -65,15 +58,8 @@ enum CommandID: String, CaseIterable, Sendable {
         case .captureWindowLayout: return "Create Layout from Current Windows"
         case .switchRoom: return "Switch Room"
         case .createRoom: return "Create Room"
-        case .createQuicklink: return "Create Quicklink"
-        case .searchQuicklinks: return "Search Quicklinks"
-        case .importQuicklinks: return "Import Quicklinks"
-        case .exportQuicklinks: return "Export Quicklinks"
         case .searchSnippets: return "Search Snippets"
         case .createSnippet: return "Create Snippet"
-        case .exportSettings: return "Export Backup"
-        case .importSettings: return "Import Backup"
-        case .importFromRaycast: return "Import from Raycast"
         case .checkForUpdates: return "Check for Updates"
         case .settings: return "Perch Settings"
         case .about: return "About Perch"
@@ -107,15 +93,8 @@ enum CommandID: String, CaseIterable, Sendable {
         case .captureWindowLayout: return "macwindow.badge.plus"
         case .switchRoom: return "door.left.hand.open"
         case .createRoom: return "rectangle.stack.badge.plus"
-        case .createQuicklink: return "link.badge.plus"
-        case .searchQuicklinks: return Quicklink.sfSymbol
-        case .importQuicklinks: return "square.and.arrow.down"
-        case .exportQuicklinks: return "square.and.arrow.up"
         case .searchSnippets: return "curlybraces"
         case .createSnippet: return "plus.rectangle.on.rectangle"
-        case .exportSettings: return "square.and.arrow.up"
-        case .importSettings: return "square.and.arrow.down"
-        case .importFromRaycast: return "arrow.down.doc"
         case .checkForUpdates: return "arrow.down.circle"
         case .settings: return "gearshape"
         case .about: return "info.circle"
@@ -135,7 +114,7 @@ enum CommandID: String, CaseIterable, Sendable {
         case .searchFiles: 70
         case .mySchedule: 60
         case .searchEmoji: 50
-        case .createQuicklink, .createSnippet: 30
+        case .createSnippet: 30
         default: nil
         }
     }

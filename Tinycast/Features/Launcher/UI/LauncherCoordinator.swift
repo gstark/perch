@@ -9,7 +9,6 @@ final class LauncherCoordinator {
     private let settingsCoordinator: SettingsCoordinator
     private let customCommandCoordinator: CustomCommandCoordinator
     private let systemActionCoordinator: SystemActionCoordinator
-    private let quicklinkCoordinator: QuicklinkCoordinator
     private let windowCommandCoordinator: WindowCommandCoordinator
     private let windowLayoutCoordinator: WindowLayoutCoordinator
     private let snippetCoordinator: SnippetCoordinator
@@ -29,7 +28,6 @@ final class LauncherCoordinator {
         settingsCoordinator: SettingsCoordinator,
         customCommandCoordinator: CustomCommandCoordinator,
         systemActionCoordinator: SystemActionCoordinator,
-        quicklinkCoordinator: QuicklinkCoordinator,
         windowCommandCoordinator: WindowCommandCoordinator,
         windowLayoutCoordinator: WindowLayoutCoordinator,
         snippetCoordinator: SnippetCoordinator,
@@ -47,7 +45,6 @@ final class LauncherCoordinator {
         self.settingsCoordinator = settingsCoordinator
         self.customCommandCoordinator = customCommandCoordinator
         self.systemActionCoordinator = systemActionCoordinator
-        self.quicklinkCoordinator = quicklinkCoordinator
         self.windowCommandCoordinator = windowCommandCoordinator
         self.windowLayoutCoordinator = windowLayoutCoordinator
         self.snippetCoordinator = snippetCoordinator
@@ -123,12 +120,6 @@ final class LauncherCoordinator {
             calendarCoordinator.activateMeeting(id: id)
             return
         }
-        // Before the palette hides: an unfilled quicklink stays up to ask first.
-        if app.kind == .quicklink {
-            guard let id = Quicklink.id(fromEntryID: app.id) else { return }
-            quicklinkCoordinator.openQuicklink(id: id, values: arguments)
-            return
-        }
         if app.kind == .appleShortcut {
             guard let id = AppleShortcut.id(fromEntryID: app.id) else { return }
             core.appleShortcutCoordinator.run(id: id)
@@ -146,7 +137,7 @@ final class LauncherCoordinator {
             guard let snippetID = StoredSnippet.id(fromEntryID: app.id) else { return }
             snippetCoordinator.expandSnippet(id: snippetID, target: previous)
         case .command, .customCommand, .systemAction, .windowCommand, .windowLayout,
-            .windowRoom, .quicklink, .appleShortcut, .extensionCommand, .meeting:
+            .windowRoom, .appleShortcut, .extensionCommand, .meeting:
             break  // handled above
         }
     }
@@ -194,8 +185,6 @@ final class LauncherCoordinator {
         case .searchNotes:
             dismissPalette()
             notesCoordinator.searchNotes()
-        case .searchQuicklinks:
-            paletteCoordinator.togglePalette(mode: .quicklinks)
         case .searchSnippets:
             snippetCoordinator.showSnippets()
         case .createSnippet:
@@ -211,24 +200,6 @@ final class LauncherCoordinator {
             core.roomCoordinator.showRooms()
         case .createRoom:
             core.roomCoordinator.createRoom()
-        case .createQuicklink:
-            dismissPalette()
-            quicklinkCoordinator.editQuicklink(nil)
-        case .importQuicklinks:
-            dismissPalette()
-            Task { await quicklinkCoordinator.importQuicklinks() }
-        case .exportQuicklinks:
-            dismissPalette()
-            Task { await quicklinkCoordinator.exportQuicklinks() }
-        case .exportSettings:
-            dismissPalette()
-            Task { await BackupActions.runExportCommand(core: core) }
-        case .importSettings:
-            dismissPalette()
-            Task { await BackupActions.runImportCommand(core: core) }
-        case .importFromRaycast:
-            dismissPalette()
-            settingsCoordinator.showBackupSettings()
         case .checkForUpdates:
             dismissPalette()
             core.updateCoordinator.checkForUpdates()

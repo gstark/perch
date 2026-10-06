@@ -20,7 +20,6 @@ struct RootPaletteView: View {
     /// Observed so the join card's countdown redraws on the minute boundary.
     @Environment(MeetingClock.self) private var meetingClock
     @Environment(UninstallSession.self) private var uninstall
-    @Environment(QuicklinkStore.self) private var quicklinks
     @Environment(SnippetsStore.self) private var snippets
     @Environment(ExtensionManager.self) private var extensions
     @Environment(AppSettings.self) private var settings
@@ -59,10 +58,6 @@ struct RootPaletteView: View {
         case .uninstall:
             return UninstallScreen(
                 session: uninstall, core: core, vm: vm, openActions: openActions)
-        case .quicklinks:
-            return QuicklinkListScreen(
-                store: quicklinks, core: core, vm: vm, openActions: openActions,
-                openArgumentOptions: openArgumentOptions)
         case .snippets:
             return SnippetsScreen(
                 store: snippets, core: core, vm: vm, openActions: openActions)

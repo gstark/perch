@@ -56,12 +56,6 @@ enum SettingsFileSchema {
         case .builtInCommands: return launcher.commandsBinding(for: key, owner: nil)
         case .customCommandsEnabled: return bind(settings, \.customCommandsEnabled)
         case .customCommandsShowInLauncher: return bind(settings, \.customCommandsShowInLauncher)
-        case .quicklinksEnabled: return bind(settings, \.quicklinksEnabled)
-        case .quicklinksShowInLauncher: return bind(settings, \.quicklinksShowInLauncher)
-        case .quicklinkOpensNewWindow: return bind(settings, \.quicklinkOpensNewWindow)
-        case .quicklinkSelectionFallback: return bind(settings, \.quicklinkSelectionFallback)
-        case .quicklinkConfirmsBeforeDelete: return bind(settings, \.quicklinkConfirmsBeforeDelete)
-        case .quicklinkCommands: return launcher.commandsBinding(for: key, owner: .quicklinks)
         case .appleShortcutsEnabled: return bind(settings, \.appleShortcutsEnabled)
         case .fileSearchEnabled: return bind(settings, \.fileSearchEnabled)
         case .fileSearchScopes: return bind(settings, \.fileSearchScopes)
@@ -135,7 +129,6 @@ extension HyperKeyPhysicalKey: SettingsFileRawValue {}
 extension HyperKeyQuickPress: SettingsFileRawValue {}
 extension CalcNumberStyle: SettingsFileRawValue {}
 extension SearchSensitivity: SettingsFileRawValue {}
-extension QuicklinkSelectionFallback: SettingsFileRawValue {}
 extension WindowCycle: SettingsFileRawValue {}
 extension ClipboardDefaultAction: SettingsFileRawValue {}
 extension EmojiSkinTone: SettingsFileRawValue {}

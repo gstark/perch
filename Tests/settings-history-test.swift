@@ -57,8 +57,8 @@ struct SettingsHistoryTests {
         history.select(.general)
         expect(!history.canGoBack, "re-selecting the current pane pushes nothing")
 
-        history.select(.backup)
-        history.select(.backup)
+        history.select(.clipboard)
+        history.select(.clipboard)
         history.goBack()
         expect(history.current == .general, "and one Back still reaches the pane before it")
     }

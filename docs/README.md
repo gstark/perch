@@ -17,7 +17,7 @@ contradicts the code is a defect, so fix it in the commit that made it wrong.
 ## Features
 
 One document per feature, covering its invariants and internals. A few span more than one source
-folder — `palette.md` covers `Tinycast/Palette/`, `backup.md` covers two. Every one of them **must**
+folder — `palette.md` covers `Tinycast/Palette/`. Every one of them **must**
 open with an `## Invariants` section; read it before changing anything in that area.
 
 [palette](features/palette.md) ·
@@ -32,7 +32,6 @@ open with an `## Invariants` section; read it before changing anything in that a
 [menu search](features/menu-search.md) ·
 [notes](features/notes.md) ·
 [snippets](features/snippets.md) ·
-[quicklinks](features/quicklinks.md) ·
 [Apple Shortcuts](features/apple-shortcuts.md) ·
 [hotkeys](features/hotkeys.md) ·
 [navigation](features/navigation.md) ·
@@ -41,9 +40,7 @@ open with an `## Invariants` section; read it before changing anything in that a
 [rooms](features/window-rooms.md) ·
 [custom commands](features/custom-commands.md) ·
 [uninstall](features/uninstall.md) ·
-[backup](features/backup.md) ·
 [settings file](features/settings-file.md) ·
-[Raycast import](features/raycast-import.md) ·
 [Raycast extensions](features/extensions.md) ·
 [updates](features/updates.md) ·
 [support](features/support.md)

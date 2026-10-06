@@ -33,8 +33,6 @@ struct LauncherScreen: PaletteScreen {
     private let meetingCount: Int
     /// How many follow the meetings as Suggestions; zero unless the field is empty.
     private let suggestionCount: Int
-    /// The `Use "…" with` section, below every result; empty unless something is typed.
-    private let fallbacks: [(fallback: Fallback, entry: AppEntry)]
     /// Resolved in `init`: the palette indexes this several times per event, so it can't recompute.
     let rows: [Row]
 
@@ -76,15 +74,13 @@ struct LauncherScreen: PaletteScreen {
             ? CalcMemo.evaluate(vm.query, rates: currencyRates.rates, format: core.calcNumberFormat) : nil
         // After the calculator: `#FF5733` is never arithmetic, so the two can't both answer.
         let color = calc == nil && pinned == nil ? ColorValue.parse(vm.query) : nil
-        let fallbacks = core.fallbackCoordinator.entries(for: vm.query)
-        let entries = results.map(Row.entry) + fallbacks.map { Row.fallback($0.fallback, $0.entry) }
+        let entries = results.map(Row.entry)
         let pinsFavorites = vm.query.trimmingCharacters(in: .whitespaces).isEmpty
         // At most one of them leads, so the flat index keeps a single-row offset.
         let meeting = pinsFavorites ? meeting : nil
         self.meeting = meeting
         self.results = results
         self.calc = calc
-        self.fallbacks = fallbacks
         self.color = color
         self.showSections = pinsFavorites || AppEntry.Kind.named(by: vm.query) != nil
         self.pinsFavorites = pinsFavorites
@@ -108,8 +104,6 @@ struct LauncherScreen: PaletteScreen {
         case meeting(MeetingEvent)
         case color(ColorValue)
         case entry(AppEntry)
-        /// Prefixed, because the same command can also be a ranked hit above its own fallback row.
-        case fallback(Fallback, AppEntry)
 
         var id: String {
             switch self {
@@ -117,7 +111,6 @@ struct LauncherScreen: PaletteScreen {
             case .meeting: return "meeting-card"
             case .color: return "color-card"
             case .entry(let app): return app.id
-            case .fallback(let fallback, _): return "fallback-" + fallback.id
             }
         }
     }
@@ -135,7 +128,6 @@ struct LauncherScreen: PaletteScreen {
         case .meeting(let meeting):
             return meeting.link == nil ? "Open in Calendar" : "Join Meeting"
         case .entry(let app): return app.kind.descriptor.openVerb
-        case .fallback(let fallback, _): return fallback.openVerb
         case nil: return "Open Application"
         }
     }
@@ -151,13 +143,6 @@ struct LauncherScreen: PaletteScreen {
         -> PaletteHeaderAccessory?
     {
         guard let entry = entry(at: selection) else { return nil }
-        // A quicklink asks for its values in root search too, so the fallback never leaves it.
-        if entry.kind == .quicklink {
-            return QuicklinkArgumentsAccessory.make(
-                quicklink: quicklink(for: entry), core: core, vm: vm, focus: focus,
-                placement: .afterQuery, onOpenOptions: openArgumentOptions,
-                onSubmit: { activate(at: selection) })
-        }
         if entry.kind == .customCommand {
             return CustomCommandArgumentsAccessory.make(
                 command: core.customCommands.command(entryID: entry.id), vm: vm,
@@ -178,10 +163,6 @@ struct LauncherScreen: PaletteScreen {
 
     /// The typed values for one row, stripped of blanks — what gets handed to the command.
     private func argumentValues(for entry: AppEntry) -> [String: String] {
-        if entry.kind == .quicklink {
-            guard let quicklink = quicklink(for: entry) else { return [:] }
-            return QuicklinkArgumentsAccessory.values(for: quicklink, core: core, vm: vm)
-        }
         if entry.kind == .customCommand {
             guard let command = core.customCommands.command(entryID: entry.id) else { return [:] }
             return CustomCommandArgumentsAccessory.values(for: command, vm: vm)
@@ -194,10 +175,6 @@ struct LauncherScreen: PaletteScreen {
         return values
     }
 
-    private func quicklink(for entry: AppEntry) -> Quicklink? {
-        Quicklink.id(fromEntryID: entry.id).flatMap(core.quicklinks.quicklink)
-    }
-
     private func entry(at selection: Int) -> AppEntry? {
         guard case .entry(let app) = row(at: selection) else { return nil }
         return app
@@ -206,7 +183,7 @@ struct LauncherScreen: PaletteScreen {
     private func isCardSelected(_ selection: Int) -> Bool {
         switch row(at: selection) {
         case .calc, .meeting, .color: return true
-        case .entry, .fallback, nil: return false
+        case .entry, nil: return false
         }
     }
 
@@ -241,9 +218,6 @@ struct LauncherScreen: PaletteScreen {
                     if let index = rows.firstIndex(of: .entry(app)) { vm.selection = index }
                 },
                 onHideFromSearch: { _ = hideFromSearch(at: selection) })
-        case .fallback(let fallback, let app):
-            return FallbackActionsMenu.content(
-                fallback: fallback, entry: app, query: vm.query, core: core)
         case nil:
             return nil
         }
@@ -259,8 +233,6 @@ struct LauncherScreen: PaletteScreen {
         case .entry(let app):
             core.launcherCoordinator.launch(
                 app, searchQuery: vm.query, arguments: argumentValues(for: app))
-        case .fallback(let fallback, _):
-            core.fallbackCoordinator.run(fallback, query: vm.query)
         case nil: break
         }
     }
@@ -461,25 +433,8 @@ struct LauncherScreen: PaletteScreen {
                 if let index = rows.firstIndex(of: .entry(app)) { vm.selection = index }
                 openActions()
             },
-            onDropped: { core.paletteCoordinator.dragLanded() },
-            fallbacks: fallbackSection
+            onDropped: { core.paletteCoordinator.dragLanded() }
         )
     }
 
-    /// Nil when nothing is typed, which is the one state the section has no input for.
-    private var fallbackSection: LauncherList.FallbackSection? {
-        guard !fallbacks.isEmpty else { return nil }
-        return LauncherList.FallbackSection(
-            title: Fallback.sectionTitle(query: vm.query),
-            entries: fallbacks.map(\.entry),
-            onActivate: { activate(at: fallbackRow(at: $0)) },
-            onActions: {
-                vm.selection = fallbackRow(at: $0)
-                openActions()
-            },
-            onConfigure: core.fallbackCoordinator.showSettings)
-    }
-
-    /// Fallbacks are the tail of `rows`, so a click maps to its flat index without a search.
-    private func fallbackRow(at index: Int) -> Int { rows.count - fallbacks.count + index }
 }

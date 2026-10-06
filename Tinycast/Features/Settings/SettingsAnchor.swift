@@ -25,16 +25,8 @@ extension SettingsAnchor {
     static let commandsCommands = Self(tab: .commands, title: "Commands")
     static let commandsCustomCommands = Self(tab: .commands, title: "Custom Commands")
 
-    static let quicklinksQuicklinks = Self(tab: .quicklinks, title: "Quicklinks")
-    static let quicklinksCommands = Self(tab: .quicklinks, title: "Commands")
-    static let quicklinksBehaviour = Self(tab: .quicklinks, title: "Behaviour")
-    static let quicklinksImportExport = Self(tab: .quicklinks, title: "Import & Export")
-
     static let appleShortcutsAppleShortcuts = Self(tab: .appleShortcuts, title: "Apple Shortcuts")
     static let appleShortcutsShortcuts = Self(tab: .appleShortcuts, title: "Shortcuts")
-
-    static let fallbacksFallbacks = Self(tab: .fallbacks, title: "Fallbacks")
-
 
     static let fileSearchFileSearch = Self(tab: .fileSearch, title: "File Search")
     static let fileSearchCommands = Self(tab: .fileSearch, title: "Commands")
@@ -86,11 +78,6 @@ extension SettingsAnchor {
     static let permissionsAccessibility = Self(tab: .permissions, title: "Accessibility")
     static let permissionsCalendars = Self(tab: .permissions, title: "Calendars")
     static let permissionsMicrophone = Self(tab: .permissions, title: "Microphone")
-
-    static let backupExport = Self(tab: .backup, title: "Export")
-    static let backupImport = Self(tab: .backup, title: "Import")
-    static let backupImportFromRaycast = Self(tab: .backup, title: "Import from Raycast")
-    static let backupSettingsFile = Self(tab: .backup, title: "Settings File")
 
     static let aboutAbout = Self(tab: .about, title: "About")
     static let aboutLinks = Self(tab: .about, title: "Links")

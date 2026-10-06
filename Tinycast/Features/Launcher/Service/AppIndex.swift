@@ -11,7 +11,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case windowCommand
         case windowLayout
         case windowRoom
-        case quicklink
         case appleShortcut
         case extensionCommand
         case meeting
@@ -63,11 +62,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
                     label: "Room", sectionTitle: "Rooms", openVerb: "Enter Room",
                     canHideFromSearch: true, canRevealInFinder: false, canDragOut: false,
                     isSymbolIcon: true, rankPriority: 3)
-            case .quicklink:
-                return KindDescriptor(
-                    label: "Quicklink", sectionTitle: "Quicklinks",
-                    openVerb: "Open Quicklink", canHideFromSearch: false,
-                    canRevealInFinder: false, canDragOut: false, isSymbolIcon: true, rankPriority: 2)
             case .appleShortcut:
                 // File-backed so every row draws the Shortcuts app's own icon.
                 return KindDescriptor(
@@ -183,8 +177,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
             return WindowLayout.id(fromEntryID: id).map { .windowLayout(id: $0) }
         case .windowRoom:
             return Room.id(fromEntryID: id).map { .windowRoom(id: $0) }
-        case .quicklink:
-            return Quicklink.id(fromEntryID: id).map { .quicklink(id: $0) }
         case .appleShortcut:
             return AppleShortcut.id(fromEntryID: id).map { .appleShortcut(id: $0) }
         case .snippet:
@@ -212,7 +204,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
 
     private var kindSymbol: String {
         switch kind {
-        case .quicklink: return Quicklink.sfSymbol
         case .snippet: return "text.quote"
         case .customCommand: return CustomCommand.sfSymbol
         case .command: return CommandCatalog.command(for: self)?.sfSymbol ?? "questionmark"
@@ -267,16 +258,6 @@ extension AppEntry {
             id: command.entryID, name: command.name,
             url: URL(string: "perch://custom-command/" + command.id.uuidString)!,
             bundleID: nil, kind: .customCommand, symbolName: command.iconSymbol)
-    }
-
-    /// The one row a quicklink draws, wherever it is offered from.
-    init(_ quicklink: Quicklink) {
-        self.init(
-            id: quicklink.entryID, name: quicklink.name,
-            url: URL(string: "perch://quicklink/" + quicklink.id.uuidString)!,
-            bundleID: nil, kind: .quicklink,
-            symbolName: quicklink.iconSymbol
-                ?? QuicklinkDestination.detect(quicklink.link)?.defaultSymbol)
     }
 
     /// No bundle id: that would key every shortcut's alias and ranking to the Shortcuts app.
@@ -363,7 +344,6 @@ final class AppIndex {
     private var customWindowSizeEntries: [AppEntry] = []
     private var windowLayoutEntries: [AppEntry] = []
     private var windowRoomEntries: [AppEntry] = []
-    private var quicklinkEntries: [AppEntry] = []
     private var appleShortcutEntries: [AppEntry] = []
     private var extensionEntries: [AppEntry] = []
     private var meetingEntries: [AppEntry] = []
@@ -426,18 +406,6 @@ final class AppIndex {
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         guard entries != customCommandEntries else { return }
         customCommandEntries = entries
-        publishEntries()
-    }
-
-    /// Replaces the quicklink slice; a toggle can't split its entries from their section.
-    func setQuicklinks(_ quicklinks: [Quicklink]) {
-        let entries =
-            quicklinks
-            .filter { $0.isEnabled && $0.showsInRootSearch }
-            .sorted(by: Quicklink.precedes)
-            .map(AppEntry.init)
-        guard entries != quicklinkEntries else { return }
-        quicklinkEntries = entries
         publishEntries()
     }
 
@@ -625,7 +593,7 @@ final class AppIndex {
         let updated =
             Self.named(meetingEntries) + discoveredEntries
             + Self.named(
-                extensionEntries + quicklinkEntries + appleShortcutEntries + snippetEntries
+                extensionEntries + appleShortcutEntries + snippetEntries
                     + Self.systemActionEntries + windowLayoutEntries + windowRoomEntries
                     + windowCommandEntries
                     + customWindowSizeEntries + customCommandEntries

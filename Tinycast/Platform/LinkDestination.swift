@@ -1,7 +1,7 @@
 import Foundation
 
-/// What a resolved link points at, detected by shape alone. docs/features/quicklinks.md
-enum QuicklinkDestination: Hashable, Sendable {
+/// What a resolved link points at, detected by shape alone.
+enum LinkDestination: Hashable, Sendable {
     case web(URL)
     /// A mountable share: `smb://`, `afp://`, `nfs://`, `ftp://`, `sftp://`, `ftps://`.
     case network(URL)

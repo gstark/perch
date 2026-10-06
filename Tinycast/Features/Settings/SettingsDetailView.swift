@@ -13,9 +13,7 @@ struct SettingsDetailView: View {
             case .systemSettings: SystemSettingsSettingsView()
             case .systemActions: SystemActionsSettingsView()
             case .commands: CommandsSettingsView()
-            case .quicklinks: QuicklinksSettingsView()
             case .appleShortcuts: AppleShortcutsSettingsView()
-            case .fallbacks: FallbacksSettingsView()
             case .fileSearch: FileSearchSettingsView()
             case .notes: NotesSettingsView()
             case .snippets: SnippetsSettingsView()
@@ -26,7 +24,6 @@ struct SettingsDetailView: View {
             case .calendar: CalendarSettingsView()
             case .extensions: ExtensionsSettingsView()
             case .permissions: PermissionsSettingsView()
-            case .backup: BackupSettingsView()
             case .about: AboutView()
             }
         }

@@ -1,8 +1,8 @@
 import AppKit
 
-/// Opens a resolved destination; every platform effect the feature has lives here.
+/// Opens a resolved destination: a URL, a file path, or a deeplink.
 @MainActor
-enum QuicklinkLauncher {
+enum LinkOpener {
     enum Failure: LocalizedError, Equatable {
         case unresolvable(String)
         case missingFile(String)
@@ -16,7 +16,7 @@ enum QuicklinkLauncher {
             case .missingFile(let path):
                 return "Nothing exists at \(path) any more."
             case .missingApplication:
-                return "The app this quicklink opens with isn't installed any more."
+                return "The app this link opens with isn't installed any more."
             case .openFailed(let target, let detail):
                 return "macOS could not open \(target).\n\n\(detail)"
             }
@@ -36,7 +36,7 @@ enum QuicklinkLauncher {
     static func open(
         _ link: String, openWithBundleID: String?, inNewWindow: Bool
     ) async throws(Failure) {
-        guard let destination = QuicklinkDestination.detect(link) else {
+        guard let destination = LinkDestination.detect(link) else {
             throw .unresolvable(link)
         }
         let url: URL

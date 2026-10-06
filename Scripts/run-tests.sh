@@ -158,8 +158,7 @@ run launcher-settings-file-test $L/LauncherFileFormat.swift \
                                 Tinycast/Features/HotKeys/Model/ModifierKey.swift \
                                 Tinycast/Features/HotKeys/Model/HyperKey.swift \
                                 Tinycast/Platform/ASCIIKeyboardLayout.swift \
-                                Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                                Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
+                                Tinycast/Platform/LinkDestination.swift \
                                 Tinycast/Features/SystemActions/Model/SystemAction.swift \
                                 Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
                                 Tinycast/Features/Snippets/Model/Snippet.swift
@@ -174,7 +173,7 @@ run clipboard-test         Tinycast/Features/Clipboard/Model/ClipboardStore.swif
                            Tinycast/Features/Clipboard/Model/ColorFormat.swift \
                            Tinycast/Features/Clipboard/Model/ColorSpaces.swift
 # `Q` is the URL detector a drag payload builds its link with, rather than a second one.
-Q=Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift
+Q=Tinycast/Platform/LinkDestination.swift
 run clipboard-search-test  Tinycast/Features/Clipboard/Model/*.swift $Q
 run paste-sequence-test    Tinycast/Features/Clipboard/Model/*.swift $Q
 run clipboard-text-test    Tinycast/Features/Clipboard/Model/*.swift $Q \
@@ -236,63 +235,50 @@ run palette-placement-test Tinycast/Platform/Appearance.swift \
 run scroll-reveal-test     Tinycast/DesignSystem/Scrolling/SelectionReveal.swift
 run redaction-test         Tinycast/DesignSystem/RedactedPlaceholder.swift
 run keyboard-focus-test    Tinycast/DesignSystem/Interaction/KeyboardFocus.swift
-run hover-arming-test      Tinycast/Palette/HoverArming.swift \
-                           Tinycast/Palette/PaletteState.swift \
-                           Tinycast/Palette/PaletteMode.swift \
-                           Tinycast/Features/Emoji/Model/EmojiCatalog.swift \
-                           Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
-                           Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
-                           Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
-                           Tinycast/Features/FileSearch/Model/FileSearchFilter.swift \
-                           Tinycast/Features/Clipboard/Model/ColorValue.swift \
-                           Tinycast/Features/Clipboard/Model/ColorFormat.swift \
-                           Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
-                           Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-                           Tinycast/Features/CustomCommands/Model/CustomCommand.swift
-run palette-escape-test    Tinycast/Palette/PaletteMode.swift \
-                           Tinycast/Palette/PaletteEscapeAction.swift \
-                           Tinycast/Palette/CommandEscapeTap.swift \
-                           Tinycast/Features/Settings/EscapeKeyBehavior.swift \
-                           Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-                           Tinycast/Features/CustomCommands/Model/CustomCommand.swift
+run hover-arming-test Tinycast/Palette/HoverArming.swift \
+                      Tinycast/Palette/PaletteState.swift \
+                      Tinycast/Palette/PaletteMode.swift \
+                      Tinycast/Features/Emoji/Model/EmojiCatalog.swift \
+                      Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
+                      Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
+                      Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
+                      Tinycast/Features/FileSearch/Model/FileSearchFilter.swift \
+                      Tinycast/Features/Clipboard/Model/ColorValue.swift \
+                      Tinycast/Features/Clipboard/Model/ColorFormat.swift \
+                      Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
+                      Tinycast/Platform/LinkDestination.swift \
+                      Tinycast/Features/CustomCommands/Model/CustomCommand.swift
+run palette-escape-test Tinycast/Palette/PaletteMode.swift \
+                        Tinycast/Palette/PaletteEscapeAction.swift \
+                        Tinycast/Palette/CommandEscapeTap.swift \
+                        Tinycast/Features/Settings/EscapeKeyBehavior.swift \
+                        Tinycast/Platform/LinkDestination.swift \
+                        Tinycast/Features/CustomCommands/Model/CustomCommand.swift
 run palette-navigation-test Tinycast/Palette/PaletteState.swift \
-                           Tinycast/Palette/PaletteMode.swift \
-                           Tinycast/Palette/HoverArming.swift \
-                           Tinycast/Features/Emoji/Model/EmojiCatalog.swift \
-                           Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
-                           Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
-                           Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
-                           Tinycast/Features/FileSearch/Model/FileSearchFilter.swift \
-                           Tinycast/Features/Clipboard/Model/ColorValue.swift \
-                           Tinycast/Features/Clipboard/Model/ColorFormat.swift \
-                           Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
-                           Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-                           Tinycast/Features/CustomCommands/Model/CustomCommand.swift
-run palette-filter-test    Tinycast/Palette/PaletteMode.swift \
-                           Tinycast/Palette/PaletteFilterAction.swift \
-                           Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-                           Tinycast/Features/CustomCommands/Model/CustomCommand.swift
+                            Tinycast/Palette/PaletteMode.swift \
+                            Tinycast/Palette/HoverArming.swift \
+                            Tinycast/Features/Emoji/Model/EmojiCatalog.swift \
+                            Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
+                            Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
+                            Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
+                            Tinycast/Features/FileSearch/Model/FileSearchFilter.swift \
+                            Tinycast/Features/Clipboard/Model/ColorValue.swift \
+                            Tinycast/Features/Clipboard/Model/ColorFormat.swift \
+                            Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
+                            Tinycast/Platform/LinkDestination.swift \
+                            Tinycast/Features/CustomCommands/Model/CustomCommand.swift
+run palette-filter-test Tinycast/Palette/PaletteMode.swift \
+                        Tinycast/Palette/PaletteFilterAction.swift \
+                        Tinycast/Platform/LinkDestination.swift \
+                        Tinycast/Features/CustomCommands/Model/CustomCommand.swift
 run action-menu-search-test Tinycast/Palette/ActionMenuSearchQuery.swift \
                             Tinycast/Features/Launcher/Model/SearchRelevance.swift
 run palette-shortcut-test  Tinycast/Palette/PaletteShortcut.swift
 run ascii-layout-test      Tinycast/Platform/ASCIIKeyboardLayout.swift
-run palette-tab-test       Tinycast/Palette/PaletteMode.swift \
-                           Tinycast/Palette/PaletteTabAction.swift \
-                           Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-                           Tinycast/Features/CustomCommands/Model/CustomCommand.swift
-run fallback-test Tinycast/Features/Launcher/Model/Fallback.swift \
-                  Tinycast/Features/Launcher/Model/CommandID.swift \
-                  Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
-                  Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                  Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-                  Tinycast/Features/SystemActions/Model/SystemAction.swift \
-                  Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
-                  Tinycast/Features/Snippets/Model/Snippet.swift
+run palette-tab-test Tinycast/Palette/PaletteMode.swift \
+                     Tinycast/Palette/PaletteTabAction.swift \
+                     Tinycast/Platform/LinkDestination.swift \
+                     Tinycast/Features/CustomCommands/Model/CustomCommand.swift
 run dictionary-test        Tinycast/Features/Dictionary/Model/DictionaryEntry.swift \
                            Tinycast/Features/Dictionary/Model/DictionaryMarkup.swift
 run hotkey-test Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
@@ -306,8 +292,7 @@ run hotkey-test Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
                 Tinycast/Features/HotKeys/Service/KeyShortcut.swift \
                 Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
                 Tinycast/Features/Launcher/Model/CommandID.swift \
-                Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
+                Tinycast/Platform/LinkDestination.swift \
                 Tinycast/Features/SystemActions/Model/SystemAction.swift \
                 Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
                 Tinycast/Features/Snippets/Model/Snippet.swift
@@ -419,11 +404,6 @@ run uninstall-test         Tinycast/Features/Uninstall/Model/UninstallTarget.swi
                            Tinycast/Features/Uninstall/Model/UninstallRules.swift \
                            Tinycast/Features/Uninstall/Model/UninstallProtection.swift \
                            Tinycast/Features/Uninstall/Model/UninstallPlan.swift
-run quicklink-test         Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkStore.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkArchive.swift \
-                           Tinycast/Features/Quicklinks/Model/RaycastQuicklinkImport.swift
 run slow snippets-test     Tinycast/Platform/NotificationToken.swift \
                            Tinycast/Platform/HealthTicker.swift \
                            Tinycast/Platform/AccessibilityText.swift \
@@ -485,30 +465,10 @@ run -O index notes-editor-performance \
                            Tinycast/Features/Notes/UI/NoteTextViewEditing.swift \
                            Tinycast/Features/Notes/UI/NoteTextView.swift \
                            Tinycast/Features/Notes/UI/NoteEditorView.swift
-run slow -O raycast-test   Tinycast/Features/Backup/Model/RaycastImportError.swift \
-                           Tinycast/Features/Backup/Service/RaycastDecoder.swift \
-                           Tinycast/Features/Backup/Service/Scrypt.swift \
-                           Tinycast/Platform/Compression/Zlib.swift \
-                           Tinycast/Features/Clipboard/Model/RaycastClipboardImport.swift \
-                           Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
-                           Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
-                           Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
-                           Tinycast/Features/Clipboard/Model/ColorValue.swift \
-                           Tinycast/Features/Clipboard/Model/ColorFormat.swift \
-                           Tinycast/Features/Clipboard/Model/ColorSpaces.swift
-run settings-backup-test   Tinycast/Features/Settings/AppSettingsKey.swift \
-                           Tinycast/Features/Backup/Model/SettingsBackupCoverage.swift
 run settings-file-test     Tinycast/Features/Settings/Model/*.swift \
                            Tinycast/Features/Settings/Service/SettingsFileMonitor.swift \
                            Tinycast/Features/Settings/Service/SettingsFileRepository.swift \
                            Tinycast/Platform/AppPaths.swift
-run backup-archive-test    Tinycast/Platform/AppPaths.swift \
-                           Tinycast/Features/Backup/Model/BackupArchive.swift \
-                           Tinycast/Features/Backup/Model/BackupBundle.swift \
-                           Tinycast/Features/Backup/Model/BackupCategory.swift \
-                           Tinycast/Features/Backup/Model/BackupClipboardItem.swift \
-                           Tinycast/Features/Backup/Model/BackupManifest.swift \
-                           Tinycast/Features/Backup/Service/BackupStaging.swift
 E=Tinycast/Features/Extensions
 run symbols-test           $E/Service/SymbolCatalog.swift
 run ext-cleanup-test       $E/Service/ExtensionCleanup.swift \

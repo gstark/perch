@@ -108,10 +108,9 @@ enum SettingsSearchCatalog {
     // Pane order, then section order within a pane, so this reads as a table of contents.
 
     static let entries: [SettingsSearchEntry] =
-        general + applications + systemSettings + systemActions + commands + quicklinks
-        + appleShortcuts + fallbacks + clipboard + snippets + fileSearch + windowManagement
-        + navigation + notes + calendar + emoji + extensions + permissions
-        + backup + about
+        general + applications + systemSettings + systemActions + commands
+        + appleShortcuts + clipboard + snippets + fileSearch + windowManagement
+        + navigation + notes + calendar + emoji + extensions + permissions + about
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -226,34 +225,6 @@ enum SettingsSearchCatalog {
             keywords: ["raycast", "script", "folder", "directory", "migrate"])
     ]
 
-    private static let quicklinks: [SettingsSearchEntry] = [
-        .init(pane: .quicklinks, keywords: ["url", "bookmark", "link"]),
-        .init(
-            .quicklinksQuicklinks, "Enable quicklinks",
-            keywords: ["url", "bookmark"]),
-        .init(
-            .quicklinksQuicklinks, "Add Quicklink",
-            keywords: ["new", "url", "bookmark", "alias"]),
-        .init(
-            group: .quicklinksCommands, "Quicklink commands",
-            keywords: ["shortcut", "launcher", "search", "import", "export"]),
-        .init(
-            .quicklinksBehaviour, "Open in a new window",
-            keywords: ["browser", "tab"]),
-        .init(
-            .quicklinksBehaviour, "When there's no selected text",
-            keywords: ["selection", "fallback", "placeholder"]),
-        .init(
-            .quicklinksBehaviour, "Confirm before deleting",
-            keywords: ["ask", "delete", "prompt"]),
-        .init(
-            .quicklinksImportExport, "Import quicklinks",
-            keywords: ["json", "restore"]),
-        .init(
-            .quicklinksImportExport, "Export quicklinks",
-            keywords: ["json", "backup"])
-    ]
-
     private static let appleShortcuts: [SettingsSearchEntry] = [
         .init(pane: .appleShortcuts, keywords: ["shortcuts app", "automation", "workflow"]),
         .init(
@@ -262,12 +233,6 @@ enum SettingsSearchCatalog {
         .init(
             group: .appleShortcutsShortcuts, "Aliases and shortcuts",
             keywords: ["alias", "hotkey", "hide"])
-    ]
-
-    private static let fallbacks: [SettingsSearchEntry] = [
-        .init(
-            pane: .fallbacks,
-            keywords: ["no results", "empty", "search web", "order"])
     ]
 
     private static let fileSearch: [SettingsSearchEntry] = [
@@ -540,24 +505,6 @@ enum SettingsSearchCatalog {
         .init(
             .permissionsMicrophone, "Microphone",
             keywords: ["dictation", "recording", "privacy", "grant"])
-    ]
-
-    private static let backup: [SettingsSearchEntry] = [
-        .init(
-            pane: .backup,
-            keywords: ["export", "import", "restore", "migrate", "raycast"]),
-        .init(
-            .backupExport, "Export Backup",
-            keywords: ["save", "tinycast file", "archive"]),
-        .init(
-            .backupImport, "Backup File",
-            keywords: ["restore", "choose", "tinycast file"]),
-        .init(
-            .backupImportFromRaycast, "Raycast Export",
-            keywords: ["migrate", "rayconfig", "passphrase"]),
-        .init(
-            .backupSettingsFile, "Sync settings file",
-            keywords: ["settings.json", "config", "json", "dotfiles", ".config", "edit"])
     ]
 
     private static let about: [SettingsSearchEntry] = [

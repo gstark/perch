@@ -28,7 +28,7 @@ struct PaletteTabTests {
 
         // A sub-screen is reached by a command or a hotkey, so Tab leaves rather than ringing on.
         for mode in [
-            PaletteMode.emoji, .fileSearch, .calculatorHistory, .quicklinks, .snippets, .extensionCommand
+            PaletteMode.emoji, .fileSearch, .calculatorHistory, .snippets, .extensionCommand
         ] {
             expect(
                 PaletteTabAction.resolve(mode: mode, clipboardEnabled: true),

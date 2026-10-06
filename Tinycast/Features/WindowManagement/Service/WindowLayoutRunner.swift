@@ -15,7 +15,7 @@ enum WindowLayoutRunner {
         var skipped: [WindowLayoutPlan.Skipped] = []
         /// Apps that opened but never produced a window before the deadline.
         var neverAppeared: [String] = []
-        /// Launch failures, already localised by `QuicklinkLauncher`.
+        /// Launch failures, already localised by `LinkOpener`.
         var openFailures: [String] = []
         /// The grant is missing, which is the one failure the user must act on.
         var isBlockedOnPermission = false
@@ -157,8 +157,8 @@ enum WindowLayoutRunner {
                 continue
             }
             do {
-                // The same open a quicklink makes, so a path, a host and a deeplink all behave.
-                try await QuicklinkLauncher.open(
+                // One open for a path, a host and a deeplink alike.
+                try await LinkOpener.open(
                     argument, openWithBundleID: placement.bundleID, inNewWindow: false)
                 outcome.opened += 1
             } catch {
