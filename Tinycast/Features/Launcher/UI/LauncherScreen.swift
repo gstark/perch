@@ -10,8 +10,6 @@ struct LauncherScreen: PaletteScreen {
     /// Sampled by `openActions`, so Restart and Quit can't move while the menu is up.
     let running: Bool
     let openActions: () -> Void
-    /// Opens the palette's own menu for an `options=` field, keyed by argument name.
-    let openArgumentOptions: (String) -> Void
     /// Called when an action reorders the list, so the highlight scrolls back into view.
     let scrollToFollow: () -> Void
 
@@ -34,7 +32,7 @@ struct LauncherScreen: PaletteScreen {
     init(
         appIndex: AppIndex, favorites: FavoritesStore, visibility: VisibilityStore,
         currencyRates: CurrencyRateStore, core: AppCore, vm: PaletteState, running: Bool,
-        openActions: @escaping () -> Void, openArgumentOptions: @escaping (String) -> Void,
+        openActions: @escaping () -> Void,
         scrollToFollow: @escaping () -> Void
     ) {
         self.appIndex = appIndex
@@ -44,29 +42,21 @@ struct LauncherScreen: PaletteScreen {
         self.vm = vm
         self.running = running
         self.openActions = openActions
-        self.openArgumentOptions = openArgumentOptions
         self.scrollToFollow = scrollToFollow
 
-        // Listed even when hidden from search: the shortcut that opened it still has to be answered.
-        let pinned = vm.argumentEntryID.flatMap(core.customCommands.command(entryID:))
-            .map(AppEntry.init).flatMap { $0.name == vm.query ? $0 : nil }
-        let ordered =
-            pinned.map { AppIndex.Results(entries: [$0]) }
-            ?? appIndex.orderedResults(
-                query: vm.query, visibility: visibility, favorites: favorites, hotKeys: core.hotKeys)
+        let ordered = appIndex.orderedResults(
+            query: vm.query, visibility: visibility, favorites: favorites, hotKeys: core.hotKeys)
         var results = ordered.entries
         // A typed web address leads: nothing the index holds answers it better.
-        if pinned == nil, let browser = CommandCatalog.openInBrowser(for: vm.query),
+        if let browser = CommandCatalog.openInBrowser(for: vm.query),
             visibility.isVisible(browser)
         {
             results.insert(browser, at: 0)
         }
-        // No card over a pinned row: its fields hang off the selection, which must start on it.
-        let calc =
-            pinned == nil
-            ? CalcMemo.evaluate(vm.query, rates: currencyRates.rates, format: core.calcNumberFormat) : nil
+        let calc = CalcMemo.evaluate(
+            vm.query, rates: currencyRates.rates, format: core.calcNumberFormat)
         // After the calculator: `#FF5733` is never arithmetic, so the two can't both answer.
-        let color = calc == nil && pinned == nil ? ColorValue.parse(vm.query) : nil
+        let color = calc == nil ? ColorValue.parse(vm.query) : nil
         let entries = results.map(Row.entry)
         let pinsFavorites = vm.query.trimmingCharacters(in: .whitespaces).isEmpty
         self.results = results
@@ -117,27 +107,6 @@ struct LauncherScreen: PaletteScreen {
 
     private func row(at selection: Int) -> Row? {
         rows.indices.contains(selection) ? rows[selection] : nil
-    }
-
-    /// What the controls are is the owning feature's business; this only forwards.
-    func headerAccessory(
-        at selection: Int, focus: FocusState<String?>.Binding
-    )
-        -> PaletteHeaderAccessory?
-    {
-        guard let entry = entry(at: selection), entry.kind == .customCommand else { return nil }
-        return CustomCommandArgumentsAccessory.make(
-            command: core.customCommands.command(entryID: entry.id), vm: vm,
-            metrics: core.settings.interfaceSize.metrics, focus: focus,
-            onSubmit: { activate(at: selection) })
-    }
-
-    /// The typed values for one row, stripped of blanks — what gets handed to the command.
-    private func argumentValues(for entry: AppEntry) -> [String: String] {
-        guard entry.kind == .customCommand,
-            let command = core.customCommands.command(entryID: entry.id)
-        else { return [:] }
-        return CustomCommandArgumentsAccessory.values(for: command, vm: vm)
     }
 
     private func entry(at selection: Int) -> AppEntry? {
@@ -193,7 +162,7 @@ struct LauncherScreen: PaletteScreen {
             core.clipboardCoordinator.copyColor(color, as: ColorFormat.primary(for: color))
         case .entry(let app):
             core.launcherCoordinator.launch(
-                app, searchQuery: vm.query, arguments: argumentValues(for: app))
+                app, searchQuery: vm.query)
         case nil: break
         }
     }
@@ -371,7 +340,7 @@ struct LauncherScreen: PaletteScreen {
             },
             onActivate: {
                 core.launcherCoordinator.launch(
-                    $0, searchQuery: vm.query, arguments: argumentValues(for: $0))
+                    $0, searchQuery: vm.query)
             },
             onActions: { app in
                 if let index = rows.firstIndex(of: .entry(app)) { vm.selection = index }

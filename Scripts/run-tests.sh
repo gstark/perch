@@ -225,14 +225,12 @@ run hover-arming-test Tinycast/Palette/HoverArming.swift \
                       Tinycast/Features/Clipboard/Model/ColorValue.swift \
                       Tinycast/Features/Clipboard/Model/ColorFormat.swift \
                       Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
-                      Tinycast/Platform/LinkDestination.swift \
-                      Tinycast/Features/CustomCommands/Model/CustomCommand.swift
+                      Tinycast/Platform/LinkDestination.swift
 run palette-escape-test Tinycast/Palette/PaletteMode.swift \
                         Tinycast/Palette/PaletteEscapeAction.swift \
                         Tinycast/Palette/CommandEscapeTap.swift \
                         Tinycast/Features/Settings/EscapeKeyBehavior.swift \
-                        Tinycast/Platform/LinkDestination.swift \
-                        Tinycast/Features/CustomCommands/Model/CustomCommand.swift
+                        Tinycast/Platform/LinkDestination.swift
 run palette-navigation-test Tinycast/Palette/PaletteState.swift \
                             Tinycast/Palette/PaletteMode.swift \
                             Tinycast/Palette/HoverArming.swift \
@@ -243,20 +241,17 @@ run palette-navigation-test Tinycast/Palette/PaletteState.swift \
                             Tinycast/Features/Clipboard/Model/ColorValue.swift \
                             Tinycast/Features/Clipboard/Model/ColorFormat.swift \
                             Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
-                            Tinycast/Platform/LinkDestination.swift \
-                            Tinycast/Features/CustomCommands/Model/CustomCommand.swift
+                            Tinycast/Platform/LinkDestination.swift
 run palette-filter-test Tinycast/Palette/PaletteMode.swift \
                         Tinycast/Palette/PaletteFilterAction.swift \
-                        Tinycast/Platform/LinkDestination.swift \
-                        Tinycast/Features/CustomCommands/Model/CustomCommand.swift
+                        Tinycast/Platform/LinkDestination.swift
 run action-menu-search-test Tinycast/Palette/ActionMenuSearchQuery.swift \
                             Tinycast/Features/Launcher/Model/SearchRelevance.swift
 run palette-shortcut-test  Tinycast/Palette/PaletteShortcut.swift
 run ascii-layout-test      Tinycast/Platform/ASCIIKeyboardLayout.swift
 run palette-tab-test Tinycast/Palette/PaletteMode.swift \
                      Tinycast/Palette/PaletteTabAction.swift \
-                     Tinycast/Platform/LinkDestination.swift \
-                     Tinycast/Features/CustomCommands/Model/CustomCommand.swift
+                     Tinycast/Platform/LinkDestination.swift
 run hotkey-test Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
                 Tinycast/Features/HotKeys/Model/ModifierKey.swift \
                 Tinycast/Features/HotKeys/Model/ModifierKeyDetector.swift \
@@ -340,11 +335,6 @@ run window-file-test       Tinycast/Features/WindowManagement/Model/WindowComman
                            Tinycast/Features/WindowManagement/Model/WindowManagementFileFormat.swift \
                            Tinycast/Features/Settings/Model/SettingsFileJSON.swift \
                            Tinycast/Features/Settings/Model/SettingsFileIdentity.swift
-run custom-command-test    Tinycast/Platform/PseudoTerminal.swift \
-                           Tinycast/Platform/ProcessExit.swift \
-                           Tinycast/Features/CustomCommands/Model/CustomCommand.swift \
-                           Tinycast/Features/CustomCommands/Model/RaycastScriptImport.swift \
-                           Tinycast/Features/CustomCommands/Service/ShellCommandRunner.swift
 run settings-file-test     Tinycast/Features/Settings/Model/*.swift \
                            Tinycast/Features/Settings/Service/SettingsFileMonitor.swift \
                            Tinycast/Features/Settings/Service/SettingsFileRepository.swift \

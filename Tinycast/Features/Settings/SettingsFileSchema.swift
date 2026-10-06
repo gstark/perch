@@ -50,8 +50,6 @@ enum SettingsFileSchema {
         case .systemSettings: return launcher.panesBinding(for: key)
         case .builtInCommandsEnabled: return launcher.kindBinding(for: key, kind: .command)
         case .builtInCommands: return launcher.commandsBinding(for: key, owner: nil)
-        case .customCommandsEnabled: return bind(settings, \.customCommandsEnabled)
-        case .customCommandsShowInLauncher: return bind(settings, \.customCommandsShowInLauncher)
         case .windowManagementEnabled: return bind(settings, \.windowManagementEnabled)
         case .windowManagementShowInLauncher:
             return bind(settings, \.windowManagementShowInLauncher)

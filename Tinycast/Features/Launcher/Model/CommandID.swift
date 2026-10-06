@@ -7,7 +7,6 @@ enum CommandID: String, CaseIterable, Sendable {
     case pasteSequentially = "command:paste-sequentially"
     case searchEmoji = "command:search-emoji"
     case openInBrowser = "command:open-in-browser"
-    case runShellCommand = "command:run-shell-command"
     case createWindowLayout = "command:create-window-layout"
     case captureWindowLayout = "command:capture-window-layout"
     case switchRoom = "command:switch-room"
@@ -22,7 +21,6 @@ enum CommandID: String, CaseIterable, Sendable {
         case .pasteSequentially: return "Paste Sequentially"
         case .searchEmoji: return "Search Emoji & Symbols"
         case .openInBrowser: return "Open in Browser"
-        case .runShellCommand: return "Run Shell Command"
         case .createWindowLayout: return "Create Window Layout"
         case .captureWindowLayout: return "Create Layout from Current Windows"
         case .switchRoom: return "Switch Room"
@@ -39,7 +37,6 @@ enum CommandID: String, CaseIterable, Sendable {
         case .pasteSequentially: return "list.bullet.clipboard"
         case .searchEmoji: return "face.smiling"
         case .openInBrowser: return "globe"
-        case .runShellCommand: return "terminal"
         case .createWindowLayout: return "plus.rectangle.on.rectangle"
         case .captureWindowLayout: return "macwindow.badge.plus"
         case .switchRoom: return "door.left.hand.open"
@@ -64,7 +61,7 @@ enum CommandID: String, CaseIterable, Sendable {
 
     /// Query-driven: the typed text is their input, so they are built where offered, never listed.
     var isQueryDriven: Bool {
-        self == .openInBrowser || self == .runShellCommand
+        self == .openInBrowser
     }
 
     /// A chord carries no query, and none should be able to terminate the app outright.

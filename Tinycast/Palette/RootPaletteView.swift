@@ -17,16 +17,12 @@ struct RootPaletteView: View {
     @Environment(\.metrics) private var metrics
     @Environment(\.openURL) private var openURL
     @FocusState private var searchFocused: Bool
-    /// Kept apart from the search field's own focus. See docs/features/palette.md.
-    @FocusState private var argumentFocused: String?
     /// Which in-window menu is open; at most one, so the state cannot disagree with itself.
     @State private var openMenu: OpenMenu?
     /// Sampled once by `openActions`, so the running-only rows can't appear while the menu is up.
     @State private var selectionIsRunning = false
     /// Highlighted row of whichever menu is open; each open path sets where it starts.
     @State private var menuSelection = 0
-    /// The argument field whose choices are up, so `menuContent` can rebuild the same menu.
-    @State private var argumentOptionsField: String?
     @State private var menuPanel = MenuPanelController()
     /// The palette's own window, reported by `WindowReader`; the menu hangs off its frame.
     @State private var hostWindow: NSWindow?
@@ -43,7 +39,7 @@ struct RootPaletteView: View {
             return LauncherScreen(
                 appIndex: appIndex, favorites: favorites, visibility: visibility,
                 currencyRates: currencyRates, core: core, vm: vm, running: selectionIsRunning,
-                openActions: openActions, openArgumentOptions: openArgumentOptions,
+                openActions: openActions,
                 scrollToFollow: { scroll = ScrollIntent(kind: .follow) })
         case .emoji:
             return EmojiScreen(
@@ -146,11 +142,6 @@ struct RootPaletteView: View {
                 clipboardFilterContent, width: metrics.size.clipboardFilterMenuWidth)
         case .emojiCategory:
             return headerMenu(emojiCategoryContent, width: metrics.size.emojiCategoryMenuWidth)
-        case .argumentOptions:
-            guard let field = argumentOptionsField,
-                let popover = headerAccessory?.optionsMenu(field)
-            else { return nil }
-            return headerMenu(popover, width: metrics.size.menuWidth)
         case nil: return nil
         }
     }
@@ -193,10 +184,7 @@ struct RootPaletteView: View {
                 }
                 // The menu lives in its own window; this only reports the one to hang it from.
                 .background(
-                    WindowReader {
-                        hostWindow = $0
-                        installHeaderArrowHandler(in: $0)
-                    }
+                    WindowReader { hostWindow = $0 }
                 )
                 // The window's frame is the size source, so the glass and clip stay matched.
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
@@ -296,7 +284,6 @@ struct RootPaletteView: View {
             .onChange(of: vm.menuQuery) { menuQueryChanged() }
             .onDisappear {
                 menuPanel.hide()
-                (hostWindow as? PalettePanel)?.onHeaderFieldBoundaryArrow = nil
             }
             // The first show builds this view after `prepare`, so no handler saw that reset.
             .onAppear {
@@ -317,8 +304,6 @@ struct RootPaletteView: View {
             // Repeat included: holding the key keeps stepping, as the bare-key form does.
             .onKeyPress(keys: [.downArrow], phases: [.down, .repeat]) { press in
                 if let reorder = movePinnedOrFavorite(1, modifiers: press.modifiers) { return reorder }
-                // A control's own list owns every navigation key while it is up.
-                if vm.isControlListOpen { return .ignored }
                 if isCollapsed {
                     // The compact bar shows no selection, so Down reveals the list's first row.
                     vm.selection = 0
@@ -333,7 +318,6 @@ struct RootPaletteView: View {
             }
             .onKeyPress(keys: [.upArrow], phases: [.down, .repeat]) { press in
                 if let reorder = movePinnedOrFavorite(-1, modifiers: press.modifiers) { return reorder }
-                if vm.isControlListOpen { return .ignored }
                 if isCollapsed { return .ignored }
                 if menuOpen {
                     moveMenu(-1)
@@ -343,12 +327,10 @@ struct RootPaletteView: View {
             }
             // Horizontal arrows step the grid; elsewhere they stay with the caret.
             .onKeyPress(.leftArrow) {
-                if vm.isControlListOpen { return .ignored }
                 if menuOpen { return .handled }
                 return moveHorizontally(-1) ? .handled : .ignored
             }
             .onKeyPress(.rightArrow) {
-                if vm.isControlListOpen { return .ignored }
                 if menuOpen { return .handled }
                 return moveHorizontally(1) ? .handled : .ignored
             }
@@ -383,18 +365,14 @@ struct RootPaletteView: View {
             }
             .onKeyPress(.escape) {
                 if menuPanel.isClosing { return .handled }
-                // An open control list owns Escape before the palette beneath it.
-                if vm.isControlListOpen { return .ignored }
                 switch PaletteEscapeAction.resolve(
                     menuOpen: menuOpen, menuQuery: vm.menuQuery,
-                    argumentFocused: argumentFocused != nil, query: vm.query, mode: vm.mode,
+                    query: vm.query, mode: vm.mode,
                     canGoBack: vm.canGoBack,
                     behavior: settings.escapeKeyBehavior)
                 {
                 case .clearMenuQuery, .closeMenu:
                     escapeMenu()
-                case .leaveArgumentField:
-                    returnFocusToSearchField()
                 case .clearQuery:
                     vm.query = ""
                 case .goBack:
@@ -409,8 +387,6 @@ struct RootPaletteView: View {
                 return .handled
             }
             .onKeyPress(keys: [.tab], phases: .down) { press in
-                // ⇥ inside an open list belongs to the list, not to the form's field order.
-                if vm.isControlListOpen { return .handled }
                 if !menuOpen { advanceTabFocus(backwards: press.modifiers.contains(.shift)) }
                 return .handled
             }
@@ -419,12 +395,10 @@ struct RootPaletteView: View {
                 guard press.modifiers.contains(.command),
                     ASCIIKeyboardLayout.matches(press.key, character: "k")
                 else { return .ignored }
-                // A control's open list owns the screen, so a second panel may never open over it.
-                guard !vm.isControlListOpen else { return .handled }
                 // The Actions menu has no anchor in the compact bar, so swallow ⌘K there.
                 guard !isCollapsed else { return .handled }
                 let screen = screen
-                guard !screen.rows.isEmpty || screen.actsWithoutRows else { return .handled }
+                guard !screen.rows.isEmpty else { return .handled }
                 // An error calc card is the selection but has no actions — don't open an empty panel.
                 guard screen.hasPrimaryAction(at: selection(in: screen)) else { return .handled }
                 // Same for a menu the footer doesn't offer: ⌘K opens exactly what the bar advertises.
@@ -502,11 +476,6 @@ struct RootPaletteView: View {
             headerGutter(width: metrics.spacing.xl)
             // One structural position: a field inside a branch loses first responder when it flips.
             headerField
-            if let accessory = headerAccessory {
-                accessory.view
-                // Given room last: at the default priority it would split it with the field.
-                Spacer(minLength: 0).layoutPriority(-1)
-            }
             // Keyed off the mode, which says which screen is up; the field just flexes narrower.
             if !isCollapsed, vm.mode == .clipboard {
                 headerGutter(width: metrics.spacing.md)
@@ -544,16 +513,6 @@ struct RootPaletteView: View {
         .frame(height: metrics.size.headerHeight)
         .padding(.top, metrics.size.headerPadding)
         .frame(maxWidth: .infinity)
-        // Set after the show, so the field it names is focused rather than the search field.
-        .onChange(of: vm.pendingArgumentEntryID) { focusPendingArgument() }
-        .onChange(of: argumentFocused) { _, field in vm.noteEditingField(field != nil) }
-    }
-
-    /// Whichever screen offers one; the compact bar has no room for it.
-    private var headerAccessory: PaletteHeaderAccessory? {
-        guard !isCollapsed else { return nil }
-        let screen = screen
-        return screen.headerAccessory(at: selection(in: screen), focus: $argumentFocused)
     }
 
     /// True when the screen took the keyboard over, which leaves the header empty beside the chevron.
@@ -562,8 +521,6 @@ struct RootPaletteView: View {
     /// The field, kept mounted and hidden rather than swapped: a branch would tear its editor down.
     private var headerField: some View {
         searchField
-            // A ceiling, not a size, so the row squeezes a long query before the strip overruns.
-            .frame(minWidth: searchFieldFloor, maxWidth: searchFieldWidth)
             .opacity(hidesSearchField ? 0 : 1)
             .allowsHitTesting(!hidesSearchField)
             .accessibilityHidden(hidesSearchField)
@@ -573,34 +530,8 @@ struct RootPaletteView: View {
             }
     }
 
-    /// Fixed only where something shares the row: the accessory strip, or a screen's own title.
-    private var searchFieldWidth: CGFloat? {
-        if hidesSearchField { return nil }
-        return headerAccessory.map(searchFieldWidth)
-    }
-
-    private var searchFieldFloor: CGFloat? {
-        searchFieldWidth.map { min($0, metrics.size.searchFieldMinWidth) }
-    }
-
-    /// The field's own text, floored for the caret and capped so the strip stays on screen.
-    /// Empty, that is the prompt where one is drawn — which is what seats the strip right after it.
-    private func searchFieldWidth(for accessory: PaletteHeaderAccessory) -> CGFloat {
-        let font = metrics.typography.searchFieldNSFont
-        let text = vm.query.isEmpty ? searchPrompt : vm.query
-        let typed = (text as NSString).size(withAttributes: [.font: font]).width
-        let chrome = metrics.size.headerIconSlot + metrics.spacing.md * 3 + metrics.spacing.xl
-        let room = metrics.size.panelWidth - accessory.width - chrome
-        // +3pt so the caret sits after the last glyph rather than on top of it.
-        return min(
-            max(typed + metrics.scaled(3), metrics.scaled(18)),
-            max(room, metrics.size.searchFieldMinWidth))
-    }
-
     private var searchPrompt: String {
-        // Squeezed to the caret, the field has no room for a prompt; beside one it keeps it.
-        if headerAccessory?.placement == .afterQuery { return "" }
-        return vm.mode.placeholder
+        vm.mode.placeholder
     }
 
     /// The one search field — empty it's a drag handle, and any text hands every press to editing.
@@ -767,7 +698,6 @@ struct RootPaletteView: View {
     private func closeMenus() {
         menuPanel.hide()
         openMenu = nil
-        argumentOptionsField = nil
         vm.menuQuery = ""
         // Stated here rather than mirrored later: the window delegate reads it during this turn.
         vm.menuOpen = false
@@ -898,7 +828,6 @@ struct RootPaletteView: View {
         switch openMenu {
         case .app: .bottomLeading
         case .actions: .bottomTrailing
-        case .argumentOptions: .belowHeaderTrailing
         case .clipboardFilter, .emojiCategory:
             .belowHeaderTrailing
         case nil: nil
@@ -926,8 +855,6 @@ struct RootPaletteView: View {
         let screen = screen
         // A control editing with ↑/↓ keeps them; only ⇥ leaves it.
         guard !screen.ownsVerticalKeys(at: selection(in: screen)) else { return .ignored }
-        // Moving off a command takes its argument fields with it, so hand focus back first.
-        if argumentFocused != nil { returnFocusToSearchField() }
         guard let next = screen.move(delta, axis: .vertical, from: selection(in: screen)) else {
             move(delta, in: screen)
             return .handled
@@ -984,7 +911,7 @@ struct RootPaletteView: View {
         // Before the action: one opening a window must find the palette key again, or nothing hides it.
         closeMenus()
         // A mouse click on a row takes the caret with it; menus close back into the field.
-        if argumentFocused == nil { searchFocused = true }
+        searchFocused = true
         content.activate(index)
     }
 
@@ -1004,7 +931,7 @@ struct RootPaletteView: View {
         }
     }
 
-    /// Tab walks a screen's own fields first, then the inline arguments, then rings the modes.
+    /// Tab walks a screen's own fields first, then rings the modes.
     private func advanceTabFocus(backwards: Bool) {
         let screen = screen
         if screen.tab(at: selection(in: screen), backwards: backwards) { return }
@@ -1013,57 +940,7 @@ struct RootPaletteView: View {
             scroll = ScrollIntent(kind: .follow)
             return
         }
-        guard let accessory = headerAccessory, !accessory.fieldNames.isEmpty else {
-            return cycleMode()
-        }
-        // Read from the local value: a `@FocusState` set in this tick still reads back stale.
-        let next = accessory.field(after: argumentFocused, backwards: backwards)
-        argumentFocused = next
-        searchFocused = next == nil
-    }
-
-    /// Right at an inline field's end and Left at its start continue the same ring as Tab.
-    private func installHeaderArrowHandler(in window: NSWindow?) {
-        guard let panel = window as? PalettePanel else { return }
-        panel.onHeaderFieldBoundaryArrow = { boundary in
-            guard !menuOpen, !vm.isControlListOpen, !isCollapsed,
-                let accessory = headerAccessory, !accessory.fieldNames.isEmpty
-            else { return false }
-            switch boundary {
-            case .leading:
-                // Query's left edge keeps its normal caret behavior; an argument moves back.
-                guard argumentFocused != nil else { return false }
-                advanceTabFocus(backwards: true)
-            case .trailing:
-                advanceTabFocus(backwards: false)
-            }
-            return true
-        }
-    }
-
-    /// AppKit selects the whole query as the field editor comes back, which is the wanted reset.
-    private func returnFocusToSearchField() {
-        argumentFocused = nil
-        searchFocused = true
-    }
-
-    /// The palette was opened to fill one row's fields, so the caret starts in the first empty one.
-    private func focusPendingArgument() {
-        guard vm.pendingArgumentEntryID != nil,
-            let field = headerAccessory?.firstIncompleteField
-        else { return }
-        argumentFocused = field
-        searchFocused = false
-        vm.pendingArgumentEntryID = nil
-    }
-
-    /// An `options=` field is chosen from the palette's own menu, never typed into.
-    private func openArgumentOptions(_ field: String) {
-        guard let accessory = headerAccessory, accessory.optionsMenu(field) != nil else { return }
-        argumentFocused = field
-        searchFocused = false
-        argumentOptionsField = field
-        open(.argumentOptions, highlighting: 0)
+        cycleMode()
     }
 
     private var hasBackStep: Bool { vm.canGoBack }
@@ -1081,12 +958,6 @@ struct RootPaletteView: View {
     private func activateSelection() {
         // Nothing is visibly selected when collapsed, so launch via ⌘1–⌘5 or typing.
         guard !isCollapsed else { return }
-        // An unfilled field blocks the launch; focus it instead of acting on a half-typed row.
-        if let incomplete = headerAccessory?.firstIncompleteField {
-            argumentFocused = incomplete
-            searchFocused = false
-            return
-        }
         let screen = screen
         screen.activate(at: selection(in: screen))
     }
@@ -1096,8 +967,6 @@ struct RootPaletteView: View {
 /// The palette's in-window menus. One optional of these is the whole "only one is open" invariant.
 private enum OpenMenu {
     case actions
-    /// An `options=` argument field's choices, hung under the header where the chip sits.
-    case argumentOptions
     case app
     case clipboardFilter
     case emojiCategory

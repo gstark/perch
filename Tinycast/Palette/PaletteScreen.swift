@@ -109,8 +109,6 @@ private extension MenuPanelCorner {
     var primaryActionTitle: String { get }
     /// True when the screen owns the keyboard, so the header's field is hidden and unfocused.
     var hidesSearchField: Bool { get }
-    /// True when the footer and ⌘K still act with no rows — a form's action belongs to the screen.
-    var actsWithoutRows: Bool { get }
     /// Where an open, a new query or a new filter puts the highlight; past row 0 it is centred.
     var landingSelection: Int { get }
 
@@ -142,11 +140,6 @@ private extension MenuPanelCorner {
     func perform(_ shortcut: PaletteShortcut, at selection: Int) -> Bool
     /// The selection an arrow key lands on, or nil to leave the key to the palette's own default.
     func move(_ delta: Int, axis: PaletteAxis, from selection: Int) -> Int?
-    /// Controls the row wants beside the search field; `focus` is lent, never owned.
-    func headerAccessory(
-        at selection: Int, focus: FocusState<String?>.Binding
-    )
-        -> PaletteHeaderAccessory?
     @ViewBuilder func body(selection: Int, scroll: ScrollIntent) -> AnyView
 }
 
@@ -154,7 +147,6 @@ extension PaletteScreen {
     func hasPrimaryAction(at selection: Int) -> Bool { true }
     func hasActions(at selection: Int) -> Bool { true }
     var hidesSearchField: Bool { false }
-    var actsWithoutRows: Bool { false }
     var landingSelection: Int { 0 }
     func ownsVerticalKeys(at selection: Int) -> Bool { false }
     func tabTarget(from selection: Int, backwards: Bool) -> Int? { nil }
@@ -176,11 +168,6 @@ extension PaletteScreen {
     func pasteKeepingWindowOpen(at selection: Int) -> Bool { false }
     func perform(_ shortcut: PaletteShortcut, at selection: Int) -> Bool { false }
     func move(_ delta: Int, axis: PaletteAxis, from selection: Int) -> Int? { nil }
-    func headerAccessory(
-        at selection: Int, focus: FocusState<String?>.Binding
-    )
-        -> PaletteHeaderAccessory?
-    { nil }
 }
 
 extension PopoverMenuContent {
@@ -215,50 +202,5 @@ extension PopoverMenuContent {
             }
         }
         return (PopoverMenuContent(header: header, items: matches), bestMatch?.index)
-    }
-}
-
-/// Controls beside the search field, in terms the palette can act on without knowing what they are.
-struct PaletteHeaderAccessory {
-    /// Where the strip sits, which is the whole of what it does to the search field beside it.
-    enum Placement {
-        /// Right after the typed text, which the field therefore shrinks to fit — root search.
-        case afterQuery
-        /// Beside a search field that stays a search field, prompt and full width intact.
-        case besideSearchField
-    }
-
-    /// How much room the strip needs, so the search field can give it up.
-    let width: CGFloat
-    /// Focusable fields in visual order; Tab walks these before it leaves the header.
-    let fieldNames: [String]
-    /// The first field that still has to be filled before ↵ can act, if any.
-    let firstIncompleteField: String?
-    /// A field whose value is chosen rather than typed hands back its menu; nil means free text.
-    let optionsMenu: (String) -> PopoverMenuContent?
-    let placement: Placement
-    let view: AnyView
-
-    init(
-        width: CGFloat, fieldNames: [String], firstIncompleteField: String?,
-        optionsMenu: @escaping (String) -> PopoverMenuContent? = { _ in nil },
-        placement: Placement = .afterQuery,
-        view: AnyView
-    ) {
-        self.width = width
-        self.fieldNames = fieldNames
-        self.firstIncompleteField = firstIncompleteField
-        self.optionsMenu = optionsMenu
-        self.placement = placement
-        self.view = view
-    }
-
-    /// Adjacent Tab field, or nil once focus belongs back in the search field.
-    func field(after current: String?, backwards: Bool) -> String? {
-        guard let current, let index = fieldNames.firstIndex(of: current) else {
-            return backwards ? fieldNames.last : fieldNames.first
-        }
-        let next = index + (backwards ? -1 : 1)
-        return fieldNames.indices.contains(next) ? fieldNames[next] : nil
     }
 }

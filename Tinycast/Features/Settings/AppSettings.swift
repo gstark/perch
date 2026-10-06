@@ -204,18 +204,6 @@ final class AppSettings {
 
     // Feature switches, off out of the box, and off means fully off.
 
-    var customCommandsEnabled: Bool {
-        didSet { defaults.set(customCommandsEnabled, forKey: Key.customCommandsEnabled.rawValue) }
-    }
-
-    /// With the feature on, controls only whether its launcher section appears.
-    var customCommandsShowInLauncher: Bool {
-        didSet {
-            defaults.set(
-                customCommandsShowInLauncher, forKey: Key.customCommandsShowInLauncher.rawValue)
-        }
-    }
-
     /// Off means fully off: no launcher entries, and a still-registered shortcut moves nothing.
     var windowManagementEnabled: Bool {
         didSet {
@@ -331,11 +319,7 @@ final class AppSettings {
         paletteExpandedCenterDisplays =
             Set(defaults.stringArray(forKey: Key.paletteExpandedCenterDisplays.rawValue) ?? [])
         // Unset seeds home; a stored empty array is a cleared list that searches nothing.
-        customCommandsEnabled = defaults.bool(forKey: Key.customCommandsEnabled.rawValue)
         // These default on, so absence must be distinguished from a stored `false`.
-        customCommandsShowInLauncher =
-            defaults.object(forKey: Key.customCommandsShowInLauncher.rawValue) == nil
-            || defaults.bool(forKey: Key.customCommandsShowInLauncher.rawValue)
         // Opt-in, unlike its siblings: until it is asked for, nothing about extensions is loaded.
         // Opt-in, like extensions: until it is asked for, EventKit is never loaded.
         // No case is zero, so an unset key falls through to the default.

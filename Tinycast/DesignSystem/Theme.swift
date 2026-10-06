@@ -17,8 +17,6 @@ enum Theme {
         static let xxxl: CGFloat = 28
         /// Gap under a category header, shared by every palette list's `SectionHeader`.
         static let sectionHeaderBottom: CGFloat = 4
-        /// A stream grows the transcript as the reader descends, so an exact-bottom test runs away.
-        static let chatFollowTailSlack: CGFloat = 44
         /// Space above every header but the first, reading as the previous section's close.
         static let sectionSpacing: CGFloat = 12
         /// Emoji tiles need a little more separation so adjacent category grids stay distinct.
@@ -68,8 +66,6 @@ enum Theme {
         static let headerHeight: CGFloat = 44
         /// Fixed slot for the header glyph, so the field starts at one x in every mode.
         static let headerIconSlot: CGFloat = 22
-        /// The narrowest a strip squeezes the search field to: the caret and a few characters.
-        static let searchFieldMinWidth: CGFloat = 60
         /// Room above the search row, constant so typing never shifts the bar.
         static let headerPadding: CGFloat = 10
         /// Collapsed compact bar: the search row centered in symmetric `headerPadding` slack.
@@ -182,8 +178,6 @@ enum Theme {
         static let segmentLabelInset: CGFloat = 13
         /// Settings editor modals (Custom Commands, Snippets): fixed width, intrinsic height.
         static let editorSheetWidth: CGFloat = 480
-        /// The multi-line box inside those modals; it scrolls rather than grows the panel.
-        static let editorTextHeight: CGFloat = 120
         /// The confirmation HUD's width ceiling, and its distance above the screen bottom.
         static let hudMaxWidth: CGFloat = 420
         static let hudEdgeOffset: CGFloat = 48
@@ -222,7 +216,6 @@ enum Theme {
         static let hover: TimeInterval = 0.12
         /// A pop-up chevron turning between its closed and open directions.
         static let menuChevron: TimeInterval = 0.34
-        static let copyFeedback: TimeInterval = 1.2
         /// A Settings search result scrolling its section into view, then the pulse that marks it.
         static let settingsReveal: TimeInterval = 0.28
         static let settingsFlash: TimeInterval = 2.0

@@ -199,16 +199,7 @@ enum SettingsSearchCatalog {
             keywords: ["custom", "script", "shell", "terminal"]),
         .init(
             .commandsCommands, "Enable Commands",
-            keywords: ["hide", "visibility"]),
-        .init(
-            .commandsCustomCommands, "Enable custom commands",
-            keywords: ["script", "shell"]),
-        .init(
-            .commandsCustomCommands, "Add Custom Command",
-            keywords: ["new", "script", "shell", "shortcut"]),
-        .init(
-            .commandsCustomCommands, "Import Raycast Scripts",
-            keywords: ["raycast", "script", "folder", "directory", "migrate"])
+            keywords: ["hide", "visibility"])
     ]
 
     private static let windowManagement: [SettingsSearchEntry] = [

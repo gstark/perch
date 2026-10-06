@@ -8,7 +8,6 @@ final class AppCore {
 
     let launcherRanking: LauncherRankingStore
     let appIndex: AppIndex
-    let customCommands = CustomCommandStore()
     let windowLayouts = WindowLayoutStore()
     let customWindowSizes = CustomWindowSizeStore()
     let rooms = RoomStore()
@@ -72,17 +71,11 @@ final class AppCore {
         settings: settings, appIndex: appIndex, hotKeys: hotKeys, favorites: favorites,
         visibility: visibility, ranking: launcherRanking, aliases: aliases, palette: palette,
         paletteCoordinator: paletteCoordinator, core: self)
-    @ObservationIgnored private(set) lazy var customCommandCoordinator = CustomCommandCoordinator(
-        store: customCommands, settings: settings, appIndex: appIndex,
-        paletteCoordinator: paletteCoordinator, settingsCoordinator: settingsCoordinator,
-        hotKeys: hotKeys, favorites: favorites, visibility: visibility,
-        ranking: launcherRanking, aliases: aliases, activationPolicy: activationPolicy, core: self)
 
     @ObservationIgnored private(set) lazy var launcherCoordinator = LauncherCoordinator(
         ranking: launcherRanking, windowController: windowController,
         paletteCoordinator: paletteCoordinator,
         settingsCoordinator: settingsCoordinator,
-        customCommandCoordinator: customCommandCoordinator,
         windowCommandCoordinator: windowCommandCoordinator,
         windowLayoutCoordinator: windowLayoutCoordinator,
         core: self)
@@ -132,10 +125,6 @@ final class AppCore {
 
             appIndex.start(settings: settings)
             clipboardCoordinator.applyEnabled()
-            customCommands.onChange = { [weak self] _ in
-                self?.customCommandCoordinator.applyCustomCommandsPresence()
-            }
-            customCommandCoordinator.applyCustomCommandsPresence()
             applyWindowCommandsPresence()
             customWindowSizes.onChange = { [weak self] _ in
                 self?.customWindowSizeCoordinator.applyCustomWindowSizesPresence()
@@ -164,9 +153,6 @@ final class AppCore {
 
             hotKeys.onTogglePalette = { [weak self] in self?.paletteCoordinator.togglePalette() }
             hotKeys.onRunCommand = { [weak self] id in self?.launcherCoordinator.runCommand(id) }
-            hotKeys.onRunCustomCommand = { [weak self] id in
-                self?.customCommandCoordinator.runCustomCommand(id: id)
-            }
             hotKeys.onRunWindowCommand = { [weak self] id in
                 self?.windowCommandCoordinator.runWindowCommand(id: id)
             }
@@ -199,7 +185,6 @@ final class AppCore {
                 return KeyShortcut.hyperChord(includesShift: settings.hyperKeyIncludesShift)
             }
             hotKeys.start(
-                customCommandIDs: Set(customCommands.commands.map(\.id)),
                 windowLayoutIDs: Set(windowLayouts.layouts.map(\.id)),
                 windowRoomIDs: Set(rooms.rooms.map(\.id)),
                 customWindowSizeIDs: Set(customWindowSizes.sizes.map(\.id)))
@@ -213,7 +198,6 @@ final class AppCore {
     /// Clicking the Dock icon: raise whichever window is already open, else summon the launcher.
     func handleReopen() {
         if settingsCoordinator.focusExisting() { return }
-        if customCommandCoordinator.focusOutputWindow() { return }
         paletteCoordinator.showPalette(mode: .launcher, restoreAnyMode: true)
     }
 
@@ -225,8 +209,6 @@ final class AppCore {
         case .settingsPane(let bundleID):
             return appIndex.apps.first { $0.kind == .systemSettings && $0.bundleID == bundleID }?
                 .name
-        case .customCommand(let id):
-            return customCommands.command(id: id)?.name
         case .windowLayout(let id):
             return windowLayouts.layout(id: id)?.name
         case .windowRoom(let id):
@@ -296,11 +278,6 @@ final class AppCore {
                 _ = $0.windowManagementEnabled
                 _ = $0.windowRoomsShowInLauncher
             }, reproject: { $0.roomCoordinator.applyEnabled() })
-        track(
-            {
-                _ = $0.customCommandsEnabled
-                _ = $0.customCommandsShowInLauncher
-            }, reproject: { $0.customCommandCoordinator.applyCustomCommandsPresence() })
         track(
             { _ = $0.clipboardEnabled }, reproject: { $0.clipboardCoordinator.applyEnabled() })
         track(

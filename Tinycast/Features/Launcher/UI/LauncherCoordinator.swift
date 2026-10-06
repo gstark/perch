@@ -7,7 +7,6 @@ final class LauncherCoordinator {
     private let windowController: PaletteWindowController
     private let paletteCoordinator: PaletteCoordinator
     private let settingsCoordinator: SettingsCoordinator
-    private let customCommandCoordinator: CustomCommandCoordinator
     private let windowCommandCoordinator: WindowCommandCoordinator
     private let windowLayoutCoordinator: WindowLayoutCoordinator
     /// The backup commands only, which need the live stores to gather from and apply to.
@@ -18,7 +17,6 @@ final class LauncherCoordinator {
         windowController: PaletteWindowController,
         paletteCoordinator: PaletteCoordinator,
         settingsCoordinator: SettingsCoordinator,
-        customCommandCoordinator: CustomCommandCoordinator,
         windowCommandCoordinator: WindowCommandCoordinator,
         windowLayoutCoordinator: WindowLayoutCoordinator,
         core: AppCore
@@ -27,7 +25,6 @@ final class LauncherCoordinator {
         self.windowController = windowController
         self.paletteCoordinator = paletteCoordinator
         self.settingsCoordinator = settingsCoordinator
-        self.customCommandCoordinator = customCommandCoordinator
         self.windowCommandCoordinator = windowCommandCoordinator
         self.windowLayoutCoordinator = windowLayoutCoordinator
         self.core = core
@@ -36,7 +33,7 @@ final class LauncherCoordinator {
     // MARK: - Activation
 
     func launch(
-        _ app: AppEntry, searchQuery: String? = nil, arguments: [String: String] = [:]
+        _ app: AppEntry, searchQuery: String? = nil
     ) {
         // A category word is no search for the row: learning it would rank the row under "s".
         if !CommandCatalog.isQueryDriven(app) {
@@ -53,11 +50,6 @@ final class LauncherCoordinator {
                 return
             }
             runCommand(id)
-            return
-        }
-        if app.kind == .customCommand {
-            guard let id = CustomCommand.id(fromEntryID: app.id) else { return }
-            customCommandCoordinator.runCustomCommand(id: id, values: arguments)
             return
         }
         if app.kind == .windowCommand {
@@ -88,7 +80,7 @@ final class LauncherCoordinator {
         case .systemSettings:
             guard let bundleID = app.bundleID else { return }
             AppLauncher.openSettingsPane(bundleID: bundleID)
-        case .command, .customCommand, .windowCommand, .windowLayout,
+        case .command, .windowCommand, .windowLayout,
             .windowRoom:
             break  // handled above
         }
@@ -105,7 +97,7 @@ final class LauncherCoordinator {
             core.clipboardCoordinator.pasteNextInSequence()
         case .searchEmoji:
             paletteCoordinator.togglePalette(mode: .emoji)
-        case .openInBrowser, .runShellCommand:
+        case .openInBrowser:
             break  // Query-driven: each runs where the typed text is, never through this funnel.
         case .createWindowLayout:
             dismissPalette()

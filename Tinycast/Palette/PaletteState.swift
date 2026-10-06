@@ -48,22 +48,10 @@ final class PaletteState {
     var forceExpanded = false
     /// The paste target, mirrored on every show; `prepare` resets the screen, not this.
     var pasteTarget: PasteTarget?
-    /// Values typed into a row's inline argument fields, keyed by `argumentKey`.
-    var commandArguments: [String: String] = [:]
-    /// Set when the palette opens to fill one row's fields; the header focuses the first empty one.
-    var pendingArgumentEntryID: String?
-    /// The row a shortcut opened root search onto, listed alone while the query is its name.
-    var argumentEntryID: String?
     /// True once ⌘ has been *held*, which numbers the favorite rows. The panel is the only writer.
     private(set) var commandHeld = false
     /// A chord is a tap, so the numbering waits out the tap before it claims the trailing labels.
     @ObservationIgnored private var commandHoldTask: Task<Void, Never>?
-    /// True while a form field owns the keyboard, so the palette's own text keys stay out of it.
-    private(set) var isEditingField = false
-    /// True while a control inside a screen has a list open, which owns the arrows and ↵ whole.
-    private(set) var isControlListOpen = false
-    /// Bumped when a press lands outside an open control list, which is how the list learns of it.
-    private(set) var controlListDismissToken = UUID()
     /// True only once the pointer has moved of its own accord; untracked, so it never re-renders.
     @ObservationIgnored private(set) var hoverHighlightArmed = false
     /// Bumped when the highlight drops, so a lit row clears even though the pointer never left it.
@@ -139,11 +127,6 @@ final class PaletteState {
         query = ""
         selection = 0
         isComposing = false
-        isEditingField = false
-        isControlListOpen = false
-        commandArguments = [:]
-        pendingArgumentEntryID = nil
-        argumentEntryID = nil
         clipboardFilter = .all
         emojiCategoryFilter = .all
         emojiGridColumnsOverride = nil
@@ -156,11 +139,6 @@ final class PaletteState {
 
     /// Long enough that ⌘↵ or ⌘K never flashes the numbering, short enough to feel like a reveal.
     private static let commandHoldDelay = Duration.milliseconds(400)
-
-    /// U+0001 can't appear in an entry id or an argument name, so the halves stay unambiguous.
-    nonisolated static func argumentKey(_ entryID: String, _ name: String) -> String {
-        entryID + "\u{1}" + name
-    }
 
     func notePinChord() {
         pinChordToken = UUID()
@@ -198,23 +176,6 @@ final class PaletteState {
             guard !Task.isCancelled else { return }
             self?.commandHeld = true
         }
-    }
-
-    /// Set by whichever screen hands the keyboard to a control of its own.
-    func noteEditingField(_ editing: Bool) {
-        guard editing != isEditingField else { return }
-        isEditingField = editing
-    }
-
-    /// Set by a control whose own list is up; the palette leaves every navigation key to it.
-    func noteControlListOpen(_ open: Bool) {
-        guard open != isControlListOpen else { return }
-        isControlListOpen = open
-    }
-
-    func dismissControlList() {
-        guard isControlListOpen else { return }
-        controlListDismissToken = UUID()
     }
 
     /// The pointer moved, which re-lights the highlight once it has cleared the arming slop.

@@ -5,7 +5,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case application
         case systemSettings
         case command
-        case customCommand
         case windowCommand
         case windowLayout
         case windowRoom
@@ -26,11 +25,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
                 return KindDescriptor(
                     label: "Command", sectionTitle: "Commands",
                     openVerb: "Run Command", canHideFromSearch: true,
-                    canRevealInFinder: false, canDragOut: false, isSymbolIcon: true, rankPriority: 3)
-            case .customCommand:
-                return KindDescriptor(
-                    label: "Custom Command", sectionTitle: "Custom Commands",
-                    openVerb: "Run Custom Command", canHideFromSearch: false,
                     canRevealInFinder: false, canDragOut: false, isSymbolIcon: true, rankPriority: 3)
             case .windowCommand:
                 return KindDescriptor(
@@ -130,8 +124,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
             return bundleID.map { .app(bundleID: $0) }
         case .systemSettings:
             return bundleID.map { .settingsPane(bundleID: $0) }
-        case .customCommand:
-            return CustomCommand.id(fromEntryID: id).map { .customCommand(id: $0) }
         case .windowCommand:
             if let command = WindowCommandCatalog.command(forEntryID: id) {
                 return .windowCommand(id: command.id)
@@ -162,7 +154,6 @@ struct AppEntry: Identifiable, Hashable, Sendable {
 
     private var kindSymbol: String {
         switch kind {
-        case .customCommand: return CustomCommand.sfSymbol
         case .command: return CommandCatalog.command(for: self)?.sfSymbol ?? "questionmark"
         case .windowCommand:
             return WindowCommandCatalog.command(forEntryID: id)?.sfSymbol
@@ -205,14 +196,6 @@ extension AppEntry {
             id: size.entryID, name: size.name,
             url: URL(string: "perch://window-size/" + size.id.uuidString)!,
             bundleID: nil, kind: .windowCommand)
-    }
-
-    /// The one row a custom command draws, wherever it is offered from.
-    init(_ command: CustomCommand) {
-        self.init(
-            id: command.entryID, name: command.name,
-            url: URL(string: "perch://custom-command/" + command.id.uuidString)!,
-            bundleID: nil, kind: .customCommand, symbolName: command.iconSymbol)
     }
 
 }
@@ -276,7 +259,6 @@ final class AppIndex {
         .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
 
     private var discoveredEntries: [AppEntry] = []
-    private var customCommandEntries: [AppEntry] = []
     private var windowCommandEntries: [AppEntry] = []
     private var customWindowSizeEntries: [AppEntry] = []
     private var windowLayoutEntries: [AppEntry] = []
@@ -331,15 +313,6 @@ final class AppIndex {
             listed ? unlistedCommands.subtracting(commands) : unlistedCommands.union(commands)
         guard updated != unlistedCommands else { return }
         unlistedCommands = updated
-        publishEntries()
-    }
-
-    /// Replaces the command slice without rescanning, so Settings edits land at once.
-    func setCustomCommands(_ commands: [CustomCommand]) {
-        let entries = commands.filter(\.isEnabled).map(AppEntry.init)
-            .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
-        guard entries != customCommandEntries else { return }
-        customCommandEntries = entries
         publishEntries()
     }
 
@@ -489,7 +462,7 @@ final class AppIndex {
             + Self.named(
                 windowLayoutEntries + windowRoomEntries
                     + windowCommandEntries
-                    + customWindowSizeEntries + customCommandEntries
+                    + customWindowSizeEntries
                     + commandEntries)
         guard updated != apps else { return }
         apps = updated
