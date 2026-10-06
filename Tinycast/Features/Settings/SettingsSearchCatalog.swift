@@ -108,7 +108,7 @@ enum SettingsSearchCatalog {
     // Pane order, then section order within a pane, so this reads as a table of contents.
 
     static let entries: [SettingsSearchEntry] =
-        general + applications + systemSettings + systemActions + commands + clipboard + snippets + windowManagement + calendar + emoji + permissions
+        general + applications + systemSettings + systemActions + commands + clipboard + snippets + windowManagement + emoji + permissions
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -339,70 +339,13 @@ enum SettingsSearchCatalog {
             keywords: ["columns", "density", "zoom", "six", "eight", "ten"])
     ]
 
-    private static let calendar: [SettingsSearchEntry] = [
-        .init(
-            pane: .calendar,
-            keywords: ["meetings", "events", "zoom", "join", "schedule"]),
-        .init(
-            .calendarCalendar, "Join meetings from Perch",
-            keywords: ["zoom", "meet", "teams", "permission"]),
-        .init(
-            .calendarCalendar, "Upcoming meetings in launcher",
-            keywords: ["count", "limit", "events"]),
-        .init(
-            .calendarJoining, "Show the join card",
-            keywords: ["hud", "timing", "early", "reminder"]),
-        .init(
-            .calendarJoining, "Auto Join Meetings",
-            keywords: ["automatic", "start"]),
-        .init(
-            .calendarJoining, "Confirm before joining",
-            keywords: ["ask", "prompt"]),
-        .init(
-            .calendarJoining, "Camera Preview",
-            keywords: ["webcam", "mirror", "video", "check"]),
-        .init(
-            .calendarJoining, "Open Meeting Links In",
-            keywords: ["browser", "chrome", "safari", "firefox", "meet", "web"]),
-        .init(
-            .calendarMenuBar, "Calendar in Menu Bar",
-            keywords: ["status item", "menubar", "date"]),
-        .init(
-            .calendarMenuBar, "Days to Show",
-            keywords: ["tomorrow", "week", "next 7 days", "range", "agenda", "schedule"]),
-        .init(
-            .calendarMenuBar, "Show Upcoming Events",
-            keywords: ["menubar", "next event", "title"]),
-        .init(
-            .calendarMenuBar, "Only show events with meetings",
-            keywords: ["links", "filter", "menubar"]),
-        .init(
-            .calendarMenuBar, "Hide when there are no upcoming events",
-            keywords: ["empty", "idle", "menubar", "space"]),
-        .init(
-            .calendarMenuBar, "Hide Current Event",
-            keywords: ["started", "time left", "menubar"]),
-        .init(
-            group: .calendarCommands, "Calendar commands",
-            keywords: ["shortcut", "launcher", "join", "schedule", "create event"]),
-        .init(
-            group: .calendarCalendars, "Calendars",
-            keywords: ["accounts", "sources", "choose", "icloud", "google"])
-    ]
-
     private static let permissions: [SettingsSearchEntry] = [
         .init(
             pane: .permissions,
             keywords: ["privacy", "tcc", "access", "grant"]),
         .init(
             .permissionsAccessibility, "Accessibility",
-            keywords: ["paste", "keystrokes", "privacy", "grant"]),
-        .init(
-            .permissionsCalendars, "Calendars",
-            keywords: ["events", "privacy", "grant", "eventkit"]),
-        .init(
-            .permissionsMicrophone, "Microphone",
-            keywords: ["dictation", "recording", "privacy", "grant"])
+            keywords: ["paste", "keystrokes", "privacy", "grant"])
     ]
 
 }

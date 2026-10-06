@@ -1,8 +1,8 @@
 import Foundation
 
-/// Everything in Tinycast a global shortcut can be bound to.
+/// Everything in Perch a global shortcut can be bound to.
 enum HotKeyAction: Hashable, Sendable {
-    /// Fixed actions with no command row of their own.
+    /// The one fixed action with no command row of its own.
     case togglePalette
     /// Parameterised over the catalog, so a new built-in command is bindable with no case here.
     case command(CommandID)
@@ -15,7 +15,6 @@ enum HotKeyAction: Hashable, Sendable {
     case windowRoom(id: UUID)
     case customWindowSize(id: UUID)
     case snippet(id: StoredSnippet.ID)
-    /// Keyed by `AppEntry.id`, which is what survives a reinstall of the extension.
 
     /// The UserDefaults key, and the `HotKeyCenter` registration id: one per action.
     var defaultsKey: String {

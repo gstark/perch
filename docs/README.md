@@ -24,8 +24,6 @@ open with an `## Invariants` section; read it before changing anything in that a
 [launcher](features/launcher.md) ·
 [clipboard](features/clipboard.md) ·
 [calculator](features/calculator.md) ·
-[calendar](features/calendar.md) ·
-[camera](features/camera.md) ·
 [emoji](features/emoji.md) ·
 [snippets](features/snippets.md) ·
 [hotkeys](features/hotkeys.md) ·

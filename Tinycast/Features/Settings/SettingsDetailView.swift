@@ -17,7 +17,6 @@ struct SettingsDetailView: View {
             case .windowManagement: WindowManagementSettingsView()
             case .clipboard: ClipboardSettingsView()
             case .emoji: EmojiSettingsView()
-            case .calendar: CalendarSettingsView()
             case .permissions: PermissionsSettingsView()
             }
         }

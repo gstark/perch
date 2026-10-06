@@ -28,10 +28,6 @@
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>
 	<string>Perch uses automation to perform system actions you explicitly run.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>Perch shows a camera preview so you can check yourself, and take a photo to the clipboard.</string>
-	<key>NSCalendarsFullAccessUsageDescription</key>
-	<string>Perch reads today's and tomorrow's events so you can join a meeting from the palette.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Perch uses Bluetooth access only when you run the Toggle Bluetooth action.</string>
 	<key>NSHumanReadableCopyright</key>

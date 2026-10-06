@@ -7,7 +7,6 @@ struct TinycastApp: App {
     // Channel-aware: "Perch" or "Perch Dev".
     private let appName = Bundle.main.appDisplayName
 
-    /// Two independent items: one preference each, no state either can read off the other.
     var body: some Scene {
         MenuBarExtra(isInserted: menuBarInsertion) {
             MenuBarMenu(appName: appName)
@@ -15,12 +14,6 @@ struct TinycastApp: App {
             MenuBarLabel(appName: appName)
         }
         .commands { menuBarCommands }
-
-        MenuBarExtra(isInserted: calendarMenuBarInsertion) {
-            CalendarMenuBarMenu()
-        } label: {
-            CalendarMenuBarLabel(appName: appName)
-        }
     }
 
     /// Read in `body` for Observation; SwiftUI echoes the binding back, so only a change writes.
@@ -33,31 +26,6 @@ struct TinycastApp: App {
                 guard inserted != settings.showInMenuBar else { return }
                 settings.showInMenuBar = inserted
             })
-    }
-
-    /// Writes through `AppSettings`: dragging the item out must stop the clock and move the picker.
-    private var calendarMenuBarInsertion: Binding<Bool> {
-        let settings = AppCore.shared.settings
-        let isInserted = settings.calendarMenuBarDisplay != .disabled && !isCalendarMenuBarHiddenWhenEmpty
-        return Binding(
-            get: { isInserted },
-            set: { inserted in
-                if inserted {
-                    guard settings.calendarMenuBarDisplay == .disabled else { return }
-                    settings.calendarMenuBarDisplay = .meetingIcon
-                } else {
-                    // SwiftUI echoes our own removal back here; only a drag-out means "turn it off".
-                    guard !isCalendarMenuBarHiddenWhenEmpty, settings.calendarMenuBarDisplay != .disabled
-                    else { return }
-                    settings.calendarMenuBarDisplay = .disabled
-                }
-            })
-    }
-
-    /// Read in `body`, so Observation re-runs the scene when the coordinator's flag flips.
-    private var isCalendarMenuBarHiddenWhenEmpty: Bool {
-        AppCore.shared.settings.calendarMenuBarHidesWhenEmpty
-            && !AppCore.shared.calendarCoordinator.hasMenuBarEvent
     }
 
     /// Declared, not assigned to `NSApp.mainMenu`: SwiftUI rebuilds the menu on any scene change.

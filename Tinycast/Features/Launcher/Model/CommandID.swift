@@ -6,14 +6,8 @@ enum CommandID: String, CaseIterable, Sendable {
     case clipboardHistory = "command:clipboard-history"
     case pasteSequentially = "command:paste-sequentially"
     case searchEmoji = "command:search-emoji"
-    case openCamera = "command:open-camera"
     case openInBrowser = "command:open-in-browser"
     case runShellCommand = "command:run-shell-command"
-    case joinNextMeeting = "command:join-next-meeting"
-    case mySchedule = "command:my-schedule"
-    case createEvent = "command:create-event"
-    case copyMeetingLink = "command:copy-meeting-link"
-    case openInCalendar = "command:open-in-calendar"
     case createWindowLayout = "command:create-window-layout"
     case captureWindowLayout = "command:capture-window-layout"
     case switchRoom = "command:switch-room"
@@ -29,14 +23,8 @@ enum CommandID: String, CaseIterable, Sendable {
         case .clipboardHistory: return "Clipboard History"
         case .pasteSequentially: return "Paste Sequentially"
         case .searchEmoji: return "Search Emoji & Symbols"
-        case .openCamera: return "Open Camera"
         case .openInBrowser: return "Open in Browser"
         case .runShellCommand: return "Run Shell Command"
-        case .joinNextMeeting: return "Join Next Meeting"
-        case .mySchedule: return "My Schedule"
-        case .createEvent: return "Create Event"
-        case .copyMeetingLink: return "Copy Meeting Link"
-        case .openInCalendar: return "Open in Calendar"
         case .createWindowLayout: return "Create Window Layout"
         case .captureWindowLayout: return "Create Layout from Current Windows"
         case .switchRoom: return "Switch Room"
@@ -54,14 +42,8 @@ enum CommandID: String, CaseIterable, Sendable {
         case .clipboardHistory: return "doc.on.clipboard"
         case .pasteSequentially: return "list.bullet.clipboard"
         case .searchEmoji: return "face.smiling"
-        case .openCamera: return "camera"
         case .openInBrowser: return "globe"
         case .runShellCommand: return "terminal"
-        case .joinNextMeeting: return "video.fill"
-        case .mySchedule: return "calendar"
-        case .createEvent: return "calendar.badge.plus"
-        case .copyMeetingLink: return "link"
-        case .openInCalendar: return "calendar.badge.clock"
         case .createWindowLayout: return "plus.rectangle.on.rectangle"
         case .captureWindowLayout: return "macwindow.badge.plus"
         case .switchRoom: return "door.left.hand.open"
@@ -81,7 +63,6 @@ enum CommandID: String, CaseIterable, Sendable {
     var suggestionPriority: Int? {
         switch self {
         case .clipboardHistory: 80
-        case .mySchedule: 60
         case .searchEmoji: 50
         case .createSnippet: 30
         default: nil

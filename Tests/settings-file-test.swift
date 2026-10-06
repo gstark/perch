@@ -49,12 +49,12 @@ struct SettingsFileTest {
                 "general", "appearance", "hyperKey", "calculator", "search", "applications",
                 "systemSettings", "systemActions", "commands",
                 "snippets",
-                "windowManagement", "clipboard", "emoji", "calendar"
+                "windowManagement", "clipboard", "emoji"
             ])
 
         // A file that could switch one of these on would grant what only the app may ask for.
         let grantPaths = [
-            "snippets.enabled", "calendar.enabled",
+            "snippets.enabled",
             "calendar.autoJoinMeetings", "calendar.cameraPreview", "quickActions.enabled",
             "ai.mcpEnabled", "mcp.enabled", "clipboard.textSearchEnabled", "dictation.enabled"
         ]

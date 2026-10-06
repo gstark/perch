@@ -12,9 +12,7 @@ struct RootPaletteView: View {
     @Environment(CurrencyRateStore.self) private var currencyRates
     @Environment(EmojiIndex.self) private var emojiIndex
     @Environment(FrequentEmojiStore.self) private var frequentEmoji
-    @Environment(CalendarStore.self) private var calendarStore
     /// Observed so the join card's countdown redraws on the minute boundary.
-    @Environment(MeetingClock.self) private var meetingClock
     @Environment(SnippetsStore.self) private var snippets
     @Environment(AppSettings.self) private var settings
     @Environment(\.metrics) private var metrics
@@ -46,7 +44,6 @@ struct RootPaletteView: View {
             return LauncherScreen(
                 appIndex: appIndex, favorites: favorites, visibility: visibility,
                 currencyRates: currencyRates, core: core, vm: vm, running: selectionIsRunning,
-                meeting: core.calendarCoordinator.cardedMeeting, now: meetingClock.now,
                 openActions: openActions, openArgumentOptions: openArgumentOptions,
                 scrollToFollow: { scroll = ScrollIntent(kind: .follow) })
         case .snippets:
@@ -62,12 +59,6 @@ struct RootPaletteView: View {
         case .roomWindows:
             return RoomPickerScreen(
                 coordinator: core.roomCoordinator, session: core.roomSession, vm: vm)
-        case .schedule:
-            return ScheduleScreen(
-                store: calendarStore, clock: meetingClock, core: core, vm: vm,
-                openActions: openActions)
-        case .meetingDetails:
-            return MeetingDetailsScreen(store: calendarStore, core: core)
         case .clipboard:
             return ClipboardScreen(
                 store: store, core: core, vm: vm, openActions: openActions,
@@ -280,7 +271,6 @@ struct RootPaletteView: View {
                 if menuOpen { closeMenus() }
                 land()
                 searchFocused = !screen.hidesSearchField
-                if vm.mode != .meetingDetails { calendarStore.clearDetails() }
                 if vm.mode != .rooms, vm.mode != .roomWindows { core.roomCoordinator.screensDidClose() }
             }
             // `prepare` may change nothing else, so this still lands the list as freshly opened.

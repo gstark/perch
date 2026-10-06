@@ -18,93 +18,6 @@ enum PopToRootTimeout: Int, CaseIterable, Identifiable, Sendable {
     var interval: TimeInterval { TimeInterval(rawValue) }
 }
 
-/// How early the join card appears, and how long past the start it stays. See UpcomingWindow.
-enum JoinWindow: Int, CaseIterable, Identifiable, Sendable {
-    case one = 1
-    case two = 2
-    case five = 5
-    case ten = 10
-    case fifteen = 15
-
-    var id: Int { rawValue }
-
-    var title: String { rawValue == 1 ? "1 minute" : "\(rawValue) minutes" }
-}
-
-/// How early the calendar item picks the next event up. Zero, which `integer(forKey:)` also
-/// returns unset, keeps it for the rest of today.
-enum MenuBarEvents: Int, CaseIterable, Identifiable, Sendable {
-    case today = 0
-    case two = 2
-    case five = 5
-    case ten = 10
-    case thirty = 30
-
-    var id: Int { rawValue }
-
-    var title: String { self == .today ? "Today" : "\(rawValue) minutes before" }
-}
-
-/// The calendar's independent menu-bar presence. Zero matches an unset preference.
-enum CalendarMenuBarDisplay: Int, CaseIterable, Identifiable, Sendable {
-    case disabled = 0
-    case meetingIcon = 1
-    case meetingTitle = 2
-
-    var id: Int { rawValue }
-
-    var title: String {
-        switch self {
-        case .disabled: "Disabled"
-        case .meetingIcon: "Meeting Icon"
-        case .meetingTitle: "Meeting Title"
-        }
-    }
-}
-
-/// How long a started event holds the menu bar. Zero, the default, means it goes as it starts.
-enum CalendarLauncherLimit: Int, CaseIterable, Identifiable, Sendable {
-    case one = 1
-    case three = 3
-    case five = 5
-    case all = 0
-
-    var id: Int { rawValue }
-
-    var title: String {
-        switch self {
-        case .one: "1 next"
-        case .three: "3 next"
-        case .five: "5 next"
-        case .all: "All"
-        }
-    }
-
-    var maximum: Int? { self == .all ? nil : rawValue }
-}
-
-/// Whether a started event remains in the menu bar long enough to show its time left.
-enum HideCurrentEvent: Int, CaseIterable, Identifiable, Sendable {
-    case dontHide = -1
-    case automatically = 0
-    case afterFive = 5
-    case afterTen = 10
-    case afterThirty = 30
-
-    var id: Int { rawValue }
-
-    var title: String {
-        switch self {
-        case .dontHide: "Keep visible — show time left"
-        case .automatically: "Automatically"
-        default: "After \(rawValue) minutes"
-        }
-    }
-
-    var hidesAtStart: Bool { self == .automatically }
-    var minutes: Int? { rawValue > 0 ? rawValue : nil }
-}
-
 @MainActor
 @Observable
 final class AppSettings {
@@ -317,86 +230,6 @@ final class AppSettings {
         didSet { defaults.set(snippetsFolder, forKey: Key.snippetsFolder.rawValue) }
     }
 
-    /// Doubles as calendar-access consent, so only `CalendarCoordinator` may write it.
-    var calendarEnabled: Bool {
-        didSet { defaults.set(calendarEnabled, forKey: Key.calendarEnabled.rawValue) }
-    }
-
-    var calendarShowInLauncher: Bool {
-        didSet {
-            defaults.set(calendarShowInLauncher, forKey: Key.calendarShowInLauncher.rawValue)
-        }
-    }
-
-    var calendarLauncherLimit: CalendarLauncherLimit {
-        didSet {
-            defaults.set(calendarLauncherLimit.rawValue, forKey: Key.calendarLauncherLimit.rawValue)
-        }
-    }
-
-    /// Narrows the fetch itself rather than what is shown, so every surface reads the same days.
-    var calendarSpan: MeetingSpan {
-        didSet { defaults.set(calendarSpan.rawValue, forKey: Key.calendarSpan.rawValue) }
-    }
-
-    var joinWindowMinutes: JoinWindow {
-        didSet { defaults.set(joinWindowMinutes.rawValue, forKey: Key.joinWindowMinutes.rawValue) }
-    }
-
-    /// Arms the app to open meeting links unattended, so only the Calendar pane's switch writes it.
-    var autoJoinMeetings: Bool {
-        didSet { defaults.set(autoJoinMeetings, forKey: Key.autoJoinMeetings.rawValue) }
-    }
-
-    var autoJoinConfirms: Bool {
-        didSet { defaults.set(autoJoinConfirms, forKey: Key.autoJoinConfirms.rawValue) }
-    }
-
-    /// Doubles as camera consent, so only the Calendar pane's switch writes it.
-    var cameraPreview: Bool {
-        didSet { defaults.set(cameraPreview, forKey: Key.cameraPreview.rawValue) }
-    }
-
-    /// Nil opens meeting links in the default browser.
-    var meetingBrowserBundleID: String? {
-        didSet {
-            guard let meetingBrowserBundleID else {
-                defaults.removeObject(forKey: Key.meetingBrowser.rawValue)
-                return
-            }
-            defaults.set(meetingBrowserBundleID, forKey: Key.meetingBrowser.rawValue)
-        }
-    }
-
-    var menuBarEvents: MenuBarEvents {
-        didSet { defaults.set(menuBarEvents.rawValue, forKey: Key.menuBarEvents.rawValue) }
-    }
-
-    var calendarMenuBarDisplay: CalendarMenuBarDisplay {
-        didSet {
-            defaults.set(
-                calendarMenuBarDisplay.rawValue, forKey: Key.calendarMenuBarDisplay.rawValue)
-        }
-    }
-
-    var menuBarLinkedEventsOnly: Bool {
-        didSet {
-            defaults.set(
-                menuBarLinkedEventsOnly, forKey: Key.menuBarLinkedEventsOnly.rawValue)
-        }
-    }
-
-    var calendarMenuBarHidesWhenEmpty: Bool {
-        didSet {
-            defaults.set(
-                calendarMenuBarHidesWhenEmpty, forKey: Key.calendarMenuBarHidesWhenEmpty.rawValue)
-        }
-    }
-
-    var hideCurrentEvent: HideCurrentEvent {
-        didSet { defaults.set(hideCurrentEvent.rawValue, forKey: Key.hideCurrentEvent.rawValue) }
-    }
-
     /// Off means fully off: no launcher entries, and a still-registered shortcut moves nothing.
     var windowManagementEnabled: Bool {
         didSet {
@@ -524,42 +357,8 @@ final class AppSettings {
         snippetsFolder = defaults.string(forKey: Key.snippetsFolder.rawValue)
         // Opt-in, unlike its siblings: until it is asked for, nothing about extensions is loaded.
         // Opt-in, like extensions: until it is asked for, EventKit is never loaded.
-        calendarEnabled = defaults.bool(forKey: Key.calendarEnabled.rawValue)
-        calendarShowInLauncher =
-            defaults.object(forKey: Key.calendarShowInLauncher.rawValue) == nil
-            || defaults.bool(forKey: Key.calendarShowInLauncher.rawValue)
-        calendarLauncherLimit =
-            defaults.object(forKey: Key.calendarLauncherLimit.rawValue)
-            .flatMap { $0 as? Int }
-            .flatMap(CalendarLauncherLimit.init(rawValue:)) ?? .five
         // No case is zero, so an unset key falls through to the default.
-        calendarSpan =
-            MeetingSpan(rawValue: defaults.integer(forKey: Key.calendarSpan.rawValue))
-            ?? .todayAndTomorrow
-        joinWindowMinutes =
-            JoinWindow(rawValue: defaults.integer(forKey: Key.joinWindowMinutes.rawValue)) ?? .five
-        autoJoinMeetings = defaults.bool(forKey: Key.autoJoinMeetings.rawValue)
-        autoJoinConfirms =
-            defaults.object(forKey: Key.autoJoinConfirms.rawValue) == nil
-            || defaults.bool(forKey: Key.autoJoinConfirms.rawValue)
-        cameraPreview = defaults.bool(forKey: Key.cameraPreview.rawValue)
-        meetingBrowserBundleID = defaults.string(forKey: Key.meetingBrowser.rawValue)
         // Both default to their zero case, so an unset key needs no presence check.
-        menuBarEvents =
-            MenuBarEvents(rawValue: defaults.integer(forKey: Key.menuBarEvents.rawValue)) ?? .today
-        calendarMenuBarDisplay =
-            CalendarMenuBarDisplay(
-                rawValue: defaults.integer(forKey: Key.calendarMenuBarDisplay.rawValue))
-            ?? .disabled
-        menuBarLinkedEventsOnly =
-            defaults.object(forKey: Key.menuBarLinkedEventsOnly.rawValue) == nil
-            || defaults.bool(forKey: Key.menuBarLinkedEventsOnly.rawValue)
-        calendarMenuBarHidesWhenEmpty =
-            defaults.bool(forKey: Key.calendarMenuBarHidesWhenEmpty.rawValue)
-        hideCurrentEvent =
-            defaults.object(forKey: Key.hideCurrentEvent.rawValue)
-            .flatMap { $0 as? Int }
-            .flatMap(HideCurrentEvent.init(rawValue:)) ?? .dontHide
         windowManagementEnabled = defaults.bool(forKey: Key.windowManagementEnabled.rawValue)
         windowManagementShowInLauncher =
             defaults.object(forKey: Key.windowManagementShowInLauncher.rawValue) == nil

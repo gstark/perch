@@ -82,18 +82,6 @@ enum SettingsFileSchema {
         case .emojiSkinTone: return bind(settings, \.emojiSkinTone)
         case .emojiGridColumns: return bind(settings, \.emojiGridColumns)
         case .emojiCommands: return launcher.commandsBinding(for: key, owner: .emoji)
-        case .calendarShowInLauncher: return bind(settings, \.calendarShowInLauncher)
-        case .calendarLauncherLimit: return bind(settings, \.calendarLauncherLimit)
-        case .calendarSpan: return bind(settings, \.calendarSpan)
-        case .joinWindowMinutes: return bind(settings, \.joinWindowMinutes)
-        case .autoJoinConfirms: return bind(settings, \.autoJoinConfirms)
-        case .meetingBrowser: return bind(settings, \.meetingBrowserBundleID)
-        case .calendarMenuBarDisplay: return bind(settings, \.calendarMenuBarDisplay)
-        case .menuBarEvents: return bind(settings, \.menuBarEvents)
-        case .menuBarLinkedEventsOnly: return bind(settings, \.menuBarLinkedEventsOnly)
-        case .calendarMenuBarHidesWhenEmpty: return bind(settings, \.calendarMenuBarHidesWhenEmpty)
-        case .hideCurrentEvent: return bind(settings, \.hideCurrentEvent)
-        case .calendarCommands: return launcher.commandsBinding(for: key, owner: .calendar)
         }
     }
 
@@ -116,7 +104,6 @@ extension WindowCycle: SettingsFileRawValue {}
 extension ClipboardDefaultAction: SettingsFileRawValue {}
 extension EmojiSkinTone: SettingsFileRawValue {}
 extension EmojiGridColumns: SettingsFileRawValue {}
-extension JoinWindow: SettingsFileRawValue {}
 
 extension ClipboardRetention: SettingsFileToken {
     var settingsToken: SettingsFileJSON {
@@ -128,61 +115,6 @@ extension ClipboardRetention: SettingsFileToken {
         case .sixMonths: 180
         case .year: 365
         case .forever: "forever"
-        }
-    }
-}
-
-extension CalendarLauncherLimit: SettingsFileToken {
-    var settingsToken: SettingsFileJSON {
-        switch self {
-        case .one: 1
-        case .three: 3
-        case .five: 5
-        case .all: "all"
-        }
-    }
-}
-
-extension MeetingSpan: SettingsFileToken {
-    var settingsToken: SettingsFileJSON {
-        switch self {
-        case .today: "today"
-        case .todayAndTomorrow: "todayAndTomorrow"
-        case .nextSevenDays: "nextSevenDays"
-        }
-    }
-}
-
-extension CalendarMenuBarDisplay: SettingsFileToken {
-    var settingsToken: SettingsFileJSON {
-        switch self {
-        case .disabled: "disabled"
-        case .meetingIcon: "meetingIcon"
-        case .meetingTitle: "meetingTitle"
-        }
-    }
-}
-
-extension MenuBarEvents: SettingsFileToken {
-    var settingsToken: SettingsFileJSON {
-        switch self {
-        case .today: "today"
-        case .two: 2
-        case .five: 5
-        case .ten: 10
-        case .thirty: 30
-        }
-    }
-}
-
-extension HideCurrentEvent: SettingsFileToken {
-    var settingsToken: SettingsFileJSON {
-        switch self {
-        case .dontHide: "never"
-        case .automatically: 0
-        case .afterFive: 5
-        case .afterTen: 10
-        case .afterThirty: 30
         }
     }
 }

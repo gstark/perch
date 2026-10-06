@@ -91,9 +91,6 @@ enum Theme {
         static let resultRowIcon: CGFloat = 26
         /// Colour-codes a secondary label, as Calendar.app marks an event's calendar.
         static let colorDot: CGFloat = 8
-        /// The calendar-colour bar between a meeting row's icon and its title.
-        static let calendarBarWidth: CGFloat = 3
-        static let calendarBarHeight: CGFloat = 18
         static let keyCap: CGFloat = 18
         /// Settings shortcut-recorder keycap — smaller than the palette's `keyCap` chip.
         static let recorderKeyCap: CGFloat = 16
@@ -200,10 +197,6 @@ enum Theme {
         static let dialogSymbolContainer: CGFloat = 52
         /// Shared measurement for dialog accessories and the volume-HUD glyph.
         static let dialogIcon: CGFloat = 32
-        /// 16:9 at the dialog's own width, so the two surfaces read as siblings.
-        static let cameraPreview = CGSize(width: 420, height: 236)
-        /// 16:9 again, wider: the standalone camera is the surface, not a confirmation on one.
-        static let cameraStage = CGSize(width: 560, height: 315)
         /// Transient volume HUD shown after any volume or mute command.
         static let hudWidth: CGFloat = 200
         static let hudHeight: CGFloat = 100

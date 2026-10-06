@@ -41,8 +41,6 @@ final class AppCore {
     let calcHistory = CalculatorHistoryStore()
     let currencyRates = CurrencyRateStore()
     let regionNumberFormat = RegionNumberFormatMonitor()
-    let calendarStore = CalendarStore()
-    let meetingClock = MeetingClock()
     let emojiIndex = EmojiIndex()
     let frequentEmoji = FrequentEmojiStore()
     let pinnedEmoji = PinnedEmojiStore()
@@ -104,7 +102,6 @@ final class AppCore {
         windowCommandCoordinator: windowCommandCoordinator,
         windowLayoutCoordinator: windowLayoutCoordinator,
         snippetCoordinator: snippetCoordinator,
-        calendarCoordinator: calendarCoordinator,
         core: self)
     @ObservationIgnored private(set) lazy var clipboardCoordinator = ClipboardCoordinator(
         clipboardStore: clipboardStore, clipboardManager: clipboardManager, settings: settings,
@@ -115,10 +112,6 @@ final class AppCore {
         paletteCoordinator: paletteCoordinator)
     @ObservationIgnored private(set) lazy var calculatorCoordinator = CalculatorCoordinator(
         calcHistory: calcHistory, paletteCoordinator: paletteCoordinator, core: self)
-    @ObservationIgnored private(set) lazy var calendarCoordinator = CalendarCoordinator(
-        store: calendarStore, clock: meetingClock, appIndex: appIndex, settings: settings,
-        paletteCoordinator: paletteCoordinator, core: self)
-    @ObservationIgnored private(set) lazy var cameraCoordinator = CameraCoordinator(core: self)
 
     @ObservationIgnored private lazy var windowController = PaletteWindowController(core: self)
     @ObservationIgnored private lazy var messageHUD = MessageHUDController(settings: settings)
@@ -183,7 +176,6 @@ final class AppCore {
                 default: break
                 }
             }
-            calendarCoordinator.applyEnabled()
             Task { await appIndex.refresh() }
             Task { await emojiIndex.load(languages: Locale.preferredLanguages) }
             currencyRates.start()
@@ -364,23 +356,6 @@ final class AppCore {
             { _ = $0.clipboardEnabled }, reproject: { $0.clipboardCoordinator.applyEnabled() })
         track(
             { _ = $0.clipboardTextSearchEnabled }, reproject: { $0.applyClipboardTextSearch() })
-        track({ _ = $0.calendarEnabled }, reproject: { $0.calendarCoordinator.applyEnabled() })
-        track(
-            {
-                _ = $0.calendarShowInLauncher
-                _ = $0.calendarLauncherLimit
-            }, reproject: { $0.calendarCoordinator.publishEntries() })
-        track(
-            { _ = $0.calendarSpan },
-            reproject: { $0.calendarCoordinator.applySpan() })
-        track(
-            {
-                _ = $0.autoJoinMeetings
-                _ = $0.menuBarEvents
-                _ = $0.calendarMenuBarDisplay
-                _ = $0.menuBarLinkedEventsOnly
-                _ = $0.hideCurrentEvent
-            }, reproject: { $0.calendarCoordinator.applyClock() })
         track({ _ = $0.snippetsEnabled }, reproject: { $0.snippetCoordinator.applySnippetsEnabled() })
         // Not a feature switch, but the same re-projection: a combo has the chord's ⇧ bit baked in.
         track({ _ = $0.hyperKeyIncludesShift }, reproject: { $0.applyHyperChord() })
@@ -536,11 +511,6 @@ final class AppCore {
     /// The volume slider, so `dialogs` stays the single owner of every prompt in the app.
     func pickVolume(current: Float32) async -> Float32? {
         await dialogs.pickVolume(current: current)
-    }
-
-    /// The new-event prompt, for the same reason.
-    func createEvent() async -> EventDraft? {
-        await dialogs.createEvent()
     }
 
     /// The snippet argument prompt, for the same reason.

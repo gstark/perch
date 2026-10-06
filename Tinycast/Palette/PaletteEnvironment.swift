@@ -29,7 +29,5 @@ extension View {
             .environment(core.runningApps)
             .environment(core.hotKeys)
             .environment(core.snippetsStore)
-            .environment(core.calendarStore)
-            .environment(core.meetingClock)
     }
 }

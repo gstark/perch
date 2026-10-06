@@ -12,7 +12,6 @@ final class LauncherCoordinator {
     private let windowCommandCoordinator: WindowCommandCoordinator
     private let windowLayoutCoordinator: WindowLayoutCoordinator
     private let snippetCoordinator: SnippetCoordinator
-    private let calendarCoordinator: CalendarCoordinator
     /// The backup commands only, which need the live stores to gather from and apply to.
     private unowned let core: AppCore
 
@@ -26,7 +25,6 @@ final class LauncherCoordinator {
         windowCommandCoordinator: WindowCommandCoordinator,
         windowLayoutCoordinator: WindowLayoutCoordinator,
         snippetCoordinator: SnippetCoordinator,
-        calendarCoordinator: CalendarCoordinator,
         core: AppCore
     ) {
         self.ranking = ranking
@@ -38,7 +36,6 @@ final class LauncherCoordinator {
         self.windowCommandCoordinator = windowCommandCoordinator
         self.windowLayoutCoordinator = windowLayoutCoordinator
         self.snippetCoordinator = snippetCoordinator
-        self.calendarCoordinator = calendarCoordinator
         self.core = core
     }
 
@@ -95,11 +92,6 @@ final class LauncherCoordinator {
             windowLayoutCoordinator.runWindowLayout(id: id)
             return
         }
-        if app.kind == .meeting {
-            guard let id = MeetingEvent.id(fromEntryID: app.id) else { return }
-            calendarCoordinator.activateMeeting(id: id)
-            return
-        }
         let previous = windowController.previousTarget
         paletteCoordinator.hidePalette(restoreFocus: false)
         switch app.kind {
@@ -112,7 +104,7 @@ final class LauncherCoordinator {
             guard let snippetID = StoredSnippet.id(fromEntryID: app.id) else { return }
             snippetCoordinator.expandSnippet(id: snippetID, target: previous)
         case .command, .customCommand, .systemAction, .windowCommand, .windowLayout,
-            .windowRoom, .meeting:
+            .windowRoom:
             break  // handled above
         }
     }
@@ -128,21 +120,8 @@ final class LauncherCoordinator {
             core.clipboardCoordinator.pasteNextInSequence()
         case .searchEmoji:
             paletteCoordinator.togglePalette(mode: .emoji)
-        case .openCamera:
-            dismissPalette()
-            Task { await core.cameraCoordinator.show() }
         case .openInBrowser, .runShellCommand:
             break  // Query-driven: each runs where the typed text is, never through this funnel.
-        case .joinNextMeeting:
-            calendarCoordinator.joinNextMeeting()
-        case .copyMeetingLink:
-            calendarCoordinator.copyNextMeetingLink()
-        case .mySchedule:
-            calendarCoordinator.showSchedule()
-        case .openInCalendar:
-            calendarCoordinator.openNextMeetingInCalendar()
-        case .createEvent:
-            calendarCoordinator.createEvent()
         case .searchSnippets:
             snippetCoordinator.showSnippets()
         case .createSnippet:
