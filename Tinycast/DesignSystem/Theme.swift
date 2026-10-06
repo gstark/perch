@@ -18,12 +18,8 @@ enum Theme {
         static let xxxl: CGFloat = 28
         /// Gap under a category header, shared by every palette list's `SectionHeader`.
         static let sectionHeaderBottom: CGFloat = 4
-        /// Clearance under the last message, so its actions row belongs to it, not to the footer.
-        static let chatTranscriptBottom: CGFloat = 28
         /// A stream grows the transcript as the reader descends, so an exact-bottom test runs away.
         static let chatFollowTailSlack: CGFloat = 44
-        /// Extra leading between a transcript's lines, so a long reply reads as paragraphs.
-        static let chatLine: CGFloat = 4
         /// Space above every header but the first, reading as the previous section's close.
         static let sectionSpacing: CGFloat = 12
         /// Emoji tiles need a little more separation so adjacent category grids stay distinct.
@@ -48,8 +44,6 @@ enum Theme {
         static let thumbnail: CGFloat = 6
         /// A shape small enough that `thumbnail` would round it into a circle.
         static let glyph: CGFloat = 2
-        /// A pill holding a square thumbnail; a full capsule fights the thumbnail's own corners.
-        static let attachmentChip: CGFloat = 8
         static let card: CGFloat = 10
         /// A window-to-be in the room preview, rounded like a real window rather than a row.
         static let roomCard: CGFloat = 16
@@ -140,17 +134,10 @@ enum Theme {
         static let menuButton: CGFloat = 36
         static let noteGlyph: CGFloat = 16
         static let noteEmptyGlyph: CGFloat = 28
-        /// Hit target for a chat message footer glyph; its caption symbol floats inside it.
-        static let chatMessageAction: CGFloat = 16
         /// A one-pixel markdown rule and table header separator.
         static let hairline: CGFloat = 1
         static let markdownListMarker: CGFloat = 20
         static let markdownQuoteBar: CGFloat = 2
-        /// The chat composer's context ring, track and fill alike.
-        static let contextRingStroke: CGFloat = 2
-        /// The chat window's drop outline and the length of its dashes.
-        static let dropHintStroke: CGFloat = 2
-        static let dropHintDash: CGFloat = 6
         /// The uninstall list's leading checkbox / lock glyph.
         static let checkbox: CGFloat = 16
         static let clipboardListWidth: CGFloat = 290
@@ -181,15 +168,6 @@ enum Theme {
         static let menuBrandIcon: CGFloat = 14
         /// The same mark in a header bar button, matched to the callout symbol beside it.
         static let barBrandIcon: CGFloat = 12
-        /// A sent image in the transcript; a staged one is a small preview in a composer pill.
-        static let chatImageThumb: CGFloat = 96
-        static let chatAttachmentGlyph: CGFloat = 16
-        /// A staged file's preview in its pill, kept under the pill's height so it reads inside it.
-        static let chatAttachmentThumb: CGFloat = 18
-        /// The window composer's remove button; small, but what makes a mispaste recoverable.
-        static let chatAttachmentRemove: CGFloat = 14
-        /// Tighter than the gap inside the pill, so the thumbnail reads as filling it.
-        static let chatAttachmentInset: CGFloat = 3
         /// The clipboard preview's player; `VideoPlayer` expands unbounded without a height.
         static let clipboardMediaHeight: CGFloat = 260
         /// The preview pane is ~460pt wide, so 900px stays crisp at 2× without over-decoding.
@@ -205,27 +183,6 @@ enum Theme {
         static let settingsRowIcon: CGFloat = 20
         /// A sidebar glyph inside its tinted tile; the tile's inset brings it to the row icon's size.
         static let settingsSidebarGlyph: CGFloat = 14
-        /// AI Chat's opening size; the user owns it from there, autosaved.
-        static let aiChatWindow = CGSize(width: 960, height: 660)
-        static let aiChatWindowMinimum = CGSize(width: 680, height: 440)
-        static let aiChatSidebarMinimum: CGFloat = 240
-        static let aiChatSidebarMaximum: CGFloat = 340
-        /// The sidebar's search capsule, a row's height so it lines up with the list below it.
-        static let aiChatSearchField: CGFloat = 28
-        static let aiChatDetailMinimum: CGFloat = 440
-        /// The transcript and composer column; past this a line of prose stops being readable.
-        static let aiChatReadingWidth: CGFloat = 760
-        static let aiChatComposerMaxLines: CGFloat = 15
-        static let aiChatComposerHeightFraction: CGFloat = 0.30
-        /// Every control on the composer's row, Send included, so the row reads as one line.
-        static let aiChatComposerControl: CGFloat = 28
-        /// One slot for every glyph on that row, so a plus and a brand mark weigh the same.
-        static let aiChatComposerGlyph: CGFloat = 16
-        static let chatContextGauge: CGFloat = 14
-        /// A source chip's title before it middle-truncates, so three chips share a row.
-        static let chatSourceTitle: CGFloat = 200
-        /// The context card's width: a label column and a value one, with room for a model name.
-        static let chatContextCard: CGFloat = 300
         /// A grouped `Form` row's control height.
         static let settingsControlHeight: CGFloat = 28
         static let emojiSkinToneGlyph: CGFloat = 13
@@ -249,14 +206,8 @@ enum Theme {
         static let layoutPositionStroke: CGFloat = 1.5
         /// A position cell's clickable row; the glyph floats inside it, so the whole cell hits.
         static let layoutPositionCell: CGFloat = 34
-        /// AI Providers: Mail's Accounts shape, a provider list beside the selected one's detail.
-        static let aiProvidersPanel = CGSize(width: 840, height: 520)
-        static let aiProvidersList: CGFloat = 262
         /// What the system leaves either side of a segment's label once the control has settled.
         static let segmentLabelInset: CGFloat = 13
-        static let aiVariableName: CGFloat = 170
-        /// A Codex usage window's meter, beside its "72% left" readout.
-        static let aiUsageBar: CGFloat = 110
         /// Settings editor modals (Custom Commands, Snippets): fixed width, intrinsic height.
         static let editorSheetWidth: CGFloat = 480
         /// The multi-line box inside those modals; it scrolls rather than grows the panel.
@@ -278,16 +229,6 @@ enum Theme {
         static let cameraPreview = CGSize(width: 420, height: 236)
         /// 16:9 again, wider: the standalone camera is the surface, not a confirmation on one.
         static let cameraStage = CGSize(width: 560, height: 315)
-        /// Wider than a dialog: a Quick Action's result is prose to read, not a sentence to answer.
-        static let quickActionPanel: CGFloat = 520
-        /// Matched to the title's cap height; a row-sized glyph beside it reads as an error.
-        static let quickActionHeaderIcon: CGFloat = 14
-        /// The dissolve ramp below each bar's clear zone, measured against text behind the title.
-        static let quickActionScrollFade: CGFloat = 40
-        /// Past this the result scrolls, so a long summary cannot grow the panel off the screen.
-        static let quickActionPanelBody: CGFloat = 320
-        /// Keeps a two-word grammar fix from collapsing the panel to a slot.
-        static let quickActionPanelMinBody: CGFloat = 44
         /// Transient volume HUD shown after any volume or mute command.
         static let hudWidth: CGFloat = 200
         static let hudHeight: CGFloat = 100
@@ -328,7 +269,6 @@ enum Theme {
         /// A pop-up chevron turning between its closed and open directions.
         static let menuChevron: TimeInterval = 0.34
         static let copyFeedback: TimeInterval = 1.2
-        static let chatFooter: TimeInterval = 0.12
         /// A Settings search result scrolling its section into view, then the pulse that marks it.
         static let settingsReveal: TimeInterval = 0.28
         static let settingsFlash: TimeInterval = 2.0
@@ -387,9 +327,6 @@ enum Theme {
         /// Pair with the matching `Size` for `KeyCapChip.Scale`.
         static let compactKeyCap = Font.caption2
         static let heroKeyCap = Font.body
-        static let markdownHeading1 = Font.title2.weight(.semibold)
-        static let markdownHeading2 = Font.title3.weight(.semibold)
-        static let markdownHeading3 = Font.headline
         static let code = Font.system(.callout, design: .monospaced)
         static let inlineCode = Font.body.monospaced()
         static let bar = Font.callout.weight(.medium)
@@ -404,10 +341,6 @@ enum Theme {
         static let menuSymbolSize: CGFloat = 14
         static let menuSymbolWeight = Font.Weight.medium
         static let noteTitle = Font.headline
-        /// The composer row's glyphs; Send's arrow is bolder, and Stop's square smaller to match it.
-        static let composerSymbol = Font.system(size: 13, weight: .medium)
-        static let composerSend = Font.system(size: 13, weight: .bold)
-        static let composerStop = Font.system(size: 10, weight: .bold)
     }
 
     enum Colors {
@@ -509,13 +442,6 @@ enum Theme {
         static let success = Color.green
         /// Caution tint, short of destructive: a chat context nearly full.
         static let warning = Color.orange
-        /// Send's disc and its arrow: the strongest mark on the composer, inverted against the page.
-        static let composerSend = ramp(dark: 0.92, light: 0.92)
-        static let composerSendInk = adaptive(dark: .srgbInk(0, alpha: 0.85), light: .srgbInk(1, alpha: 1))
-        /// The window's own page, for a card that must hide the transcript it floats over.
-        static let windowSurface = Color(nsColor: .windowBackgroundColor)
-        /// Where a dropped file will land: the chat window's dashed outline.
-        static let dropTarget = Color.accentColor
         /// Progress tint: the message pill's spinner while the work behind it is still running.
         static let progress = Color.blue
         /// The command output window's page: a flat surface the log sits directly on.

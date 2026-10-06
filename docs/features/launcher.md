@@ -585,26 +585,6 @@ Only the display name is indexed. Activation resolves the stable UUID through th
 to `ShellCommandRunner`; see [custom-commands.md](custom-commands.md) for persistence, hotkeys and
 execution semantics.
 
-## Quick Actions
-
-`AppEntry.Kind.quickAction` is one section holding both halves. `CommandID.fixGrammar`, `.rewrite`,
-`.translate` and `.summarize` publish the shipped four while `quickActionsEnabled` is on, each
-carrying the action's own title and glyph so the launcher row and the settings row can never drift.
-`CommandID.init(_ action: BuiltInQuickAction)` is exhaustive, so a fifth cannot reach the launcher
-without one. They report `CommandID.entryKind`, the one place a catalog command claims a section other
-than Commands.
-
-Custom actions arrive through `AppIndex.setCustomQuickActions` as `quick-action:<uuid>` entries,
-sorted by when they were made, and bind `HotKeyAction.quickAction(id:)`.
-
-Quick Actions are one of the panes in `SettingsTab.ownedCommands`, so `Enable Commands` does not reach
-them. **There is deliberately no `Enable Quick Actions` category toggle** either: a
-`LauncherItemsSection(kind: .quickAction)` would be a second switch over rows the pane already lists.
-
-Activation hands the action to `QuickActionCoordinator.run(_:)` **without** hiding the palette first:
-the coordinator reads the displaced app and then hides, because after the hide the frontmost app is
-Tinycast. See [quick-actions.md](quick-actions.md).
-
 ## Notes commands
 
 `CommandID.showNotes`, `.createNote`, and `.searchNotes` publish the three Notes entry points while the

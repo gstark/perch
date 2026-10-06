@@ -146,10 +146,6 @@ driven imperatively from AppKit. Extension menu extras are dynamic `NSStatusItem
   literal source, switches among local Markdown files and stays visible on focus loss. The displayed
   string is the canonical file source; there is no source/display mapping.
   See [features/notes.md](features/notes.md).
-- **AI Chat** — a titled `AppWindowController` window owned by `AIChatCoordinator`: an
-  `NSSplitViewController` with a collapsible sidebar of saved chats beside the open conversation, as
-  Settings is built. The conversation lives on `AppCore.aiChats`, not the window, so closing it cancels
-  nothing. Quick AI is the same feature's palette screen. See [features/ai.md](features/ai.md).
 - **The main menu** — shaped by `TinycastApp`'s `.commands`, which rebinds ⌘Q to Close Window: the AI
   Chat window when it is key, otherwise Settings. It is only ever on screen while a titled window is
   open, so it is those windows' menu bar. It must stay declarative.

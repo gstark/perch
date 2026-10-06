@@ -29,9 +29,7 @@ struct InterfaceMetrics: Equatable, Sendable {
         var sectionHeaderBottom: CGFloat { scaledPoints(Theme.Spacing.sectionHeaderBottom, scale) }
         var sectionSpacing: CGFloat { scaledPoints(Theme.Spacing.sectionSpacing, scale) }
         var emojiSectionSpacing: CGFloat { scaledPoints(Theme.Spacing.emojiSectionSpacing, scale) }
-        var chatTranscriptBottom: CGFloat { scaledPoints(Theme.Spacing.chatTranscriptBottom, scale) }
         var chatFollowTailSlack: CGFloat { scaledPoints(Theme.Spacing.chatFollowTailSlack, scale) }
-        var chatLine: CGFloat { scaledPoints(Theme.Spacing.chatLine, scale) }
     }
 
     struct Radius: Equatable, Sendable {
@@ -48,7 +46,6 @@ struct InterfaceMetrics: Equatable, Sendable {
         var dialog: CGFloat { scaledPoints(Theme.Radius.dialog, scale) }
         var thumbnail: CGFloat { scaledPoints(Theme.Radius.thumbnail, scale) }
         var glyph: CGFloat { scaledPoints(Theme.Radius.glyph, scale) }
-        var attachmentChip: CGFloat { scaledPoints(Theme.Radius.attachmentChip, scale) }
         var card: CGFloat { scaledPoints(Theme.Radius.card, scale) }
         var keyCap: CGFloat { scaledPoints(Theme.Radius.keyCap, scale) }
         var tooltip: CGFloat { scaledPoints(Theme.Radius.tooltip, scale) }
@@ -101,18 +98,7 @@ struct InterfaceMetrics: Equatable, Sendable {
 
         var markdownListMarker: CGFloat { scaledPoints(Theme.Size.markdownListMarker, scale) }
         var markdownQuoteBar: CGFloat { scaledPoints(Theme.Size.markdownQuoteBar, scale) }
-        var chatMessageAction: CGFloat { scaledPoints(Theme.Size.chatMessageAction, scale) }
-        var chatImageThumb: CGFloat { scaledPoints(Theme.Size.chatImageThumb, scale) }
-        var chatAttachmentGlyph: CGFloat { scaledPoints(Theme.Size.chatAttachmentGlyph, scale) }
-        var chatAttachmentThumb: CGFloat { scaledPoints(Theme.Size.chatAttachmentThumb, scale) }
-        var chatAttachmentRemove: CGFloat { scaledPoints(Theme.Size.chatAttachmentRemove, scale) }
-        var chatAttachmentInset: CGFloat { scaledPoints(Theme.Size.chatAttachmentInset, scale) }
 
-        var quickActionPanel: CGFloat { scaledPoints(Theme.Size.quickActionPanel, scale) }
-        var quickActionHeaderIcon: CGFloat { scaledPoints(Theme.Size.quickActionHeaderIcon, scale) }
-        var quickActionScrollFade: CGFloat { scaledPoints(Theme.Size.quickActionScrollFade, scale) }
-        var quickActionPanelBody: CGFloat { scaledPoints(Theme.Size.quickActionPanelBody, scale) }
-        var quickActionPanelMinBody: CGFloat { scaledPoints(Theme.Size.quickActionPanelMinBody, scale) }
 
         var dialogCompactWidth: CGFloat { scaledPoints(Theme.Size.dialogCompactWidth, scale) }
         var dialogWidth: CGFloat { scaledPoints(Theme.Size.dialogWidth, scale) }
@@ -162,9 +148,6 @@ struct InterfaceMetrics: Equatable, Sendable {
         var keyCap: Font { font(Theme.Typography.keyCap, .caption1) }
         var compactKeyCap: Font { font(Theme.Typography.compactKeyCap, .caption2) }
         var heroKeyCap: Font { font(Theme.Typography.heroKeyCap, .body) }
-        var markdownHeading1: Font { font(Theme.Typography.markdownHeading1, .title2, .semibold) }
-        var markdownHeading2: Font { font(Theme.Typography.markdownHeading2, .title3, .semibold) }
-        var markdownHeading3: Font { font(Theme.Typography.markdownHeading3, .headline) }
         var code: Font {
             scale == 1
                 ? Theme.Typography.code

@@ -141,28 +141,28 @@ run app-name-test          Tinycast/Platform/AppDisplayName.swift \
 run favorites-test         $L/FavoriteSlots.swift
 run launcher-file-test     $L/LauncherFileFormat.swift \
                            Tinycast/Features/Settings/Model/SettingsFileJSON.swift
-run launcher-settings-file-test \
-                           $L/LauncherFileFormat.swift $L/CommandID.swift $L/CommandCatalog.swift \
-                           Tinycast/Features/Launcher/Service/LauncherSettingsFile.swift \
-                           Tinycast/Features/Launcher/Service/AliasStore.swift \
-                           Tinycast/Features/Launcher/Service/VisibilityStore.swift \
-                           Tinycast/Features/Settings/SettingsTab.swift \
-                           Tinycast/Features/Settings/Model/*.swift \
-                           Tinycast/Features/HotKeys/Service/HotKeySettingsFile.swift \
-                           Tinycast/Features/HotKeys/Service/KeyShortcut.swift \
-                           Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
-                           Tinycast/Features/HotKeys/Model/HotKeyBinding.swift \
-                           Tinycast/Features/HotKeys/Model/HotKeySpelling.swift \
-                           Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
-                           Tinycast/Features/HotKeys/Model/ModifierKey.swift \
-                           Tinycast/Features/HotKeys/Model/HyperKey.swift \
-                           Tinycast/Platform/ASCIIKeyboardLayout.swift \
-                           Tinycast/Features/QuickActions/Model/BuiltInQuickAction.swift \
-                           Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-                           Tinycast/Features/SystemActions/Model/SystemAction.swift \
-                           Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
-                           Tinycast/Features/Snippets/Model/Snippet.swift
+run launcher-settings-file-test $L/LauncherFileFormat.swift \
+                                $L/CommandID.swift \
+                                $L/CommandCatalog.swift \
+                                Tinycast/Features/Launcher/Service/LauncherSettingsFile.swift \
+                                Tinycast/Features/Launcher/Service/AliasStore.swift \
+                                Tinycast/Features/Launcher/Service/VisibilityStore.swift \
+                                Tinycast/Features/Settings/SettingsTab.swift \
+                                Tinycast/Features/Settings/Model/*.swift \
+                                Tinycast/Features/HotKeys/Service/HotKeySettingsFile.swift \
+                                Tinycast/Features/HotKeys/Service/KeyShortcut.swift \
+                                Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
+                                Tinycast/Features/HotKeys/Model/HotKeyBinding.swift \
+                                Tinycast/Features/HotKeys/Model/HotKeySpelling.swift \
+                                Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
+                                Tinycast/Features/HotKeys/Model/ModifierKey.swift \
+                                Tinycast/Features/HotKeys/Model/HyperKey.swift \
+                                Tinycast/Platform/ASCIIKeyboardLayout.swift \
+                                Tinycast/Features/Quicklinks/Model/Quicklink.swift \
+                                Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
+                                Tinycast/Features/SystemActions/Model/SystemAction.swift \
+                                Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
+                                Tinycast/Features/Snippets/Model/Snippet.swift
 run apple-shortcut-test    Tinycast/Features/AppleShortcuts/Model/*.swift
 run calc-test              Tinycast/Features/Calculator/Model/*.swift
 run index calc-performance Tinycast/Features/Calculator/Model/*.swift
@@ -236,8 +236,6 @@ run palette-placement-test Tinycast/Platform/Appearance.swift \
 run scroll-reveal-test     Tinycast/DesignSystem/Scrolling/SelectionReveal.swift
 run redaction-test         Tinycast/DesignSystem/RedactedPlaceholder.swift
 run keyboard-focus-test    Tinycast/DesignSystem/Interaction/KeyboardFocus.swift
-run ai-instructions-test   Tinycast/Features/AI/Model/AIInstructions.swift \
-                           Tinycast/Features/AI/Model/AIPreamble.swift
 run hover-arming-test      Tinycast/Palette/HoverArming.swift \
                            Tinycast/Palette/PaletteState.swift \
                            Tinycast/Palette/PaletteMode.swift \
@@ -287,32 +285,17 @@ run palette-tab-test       Tinycast/Palette/PaletteMode.swift \
                            Tinycast/Features/Quicklinks/Model/Quicklink.swift \
                            Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
                            Tinycast/Features/CustomCommands/Model/CustomCommand.swift
-run fallback-test          Tinycast/Features/Launcher/Model/Fallback.swift \
-                           Tinycast/Features/Launcher/Model/CommandID.swift \
-                           Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
-                           Tinycast/Features/QuickActions/Model/QuickAction.swift \
-                           Tinycast/Features/QuickActions/Model/BuiltInQuickAction.swift \
-                           Tinycast/Features/QuickActions/Model/CustomQuickAction.swift \
-                           Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-                           Tinycast/Features/SystemActions/Model/SystemAction.swift \
-                           Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
-                           Tinycast/Features/Snippets/Model/Snippet.swift
+run fallback-test Tinycast/Features/Launcher/Model/Fallback.swift \
+                  Tinycast/Features/Launcher/Model/CommandID.swift \
+                  Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
+                  Tinycast/Features/Quicklinks/Model/Quicklink.swift \
+                  Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
+                  Tinycast/Features/SystemActions/Model/SystemAction.swift \
+                  Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
+                  Tinycast/Features/Snippets/Model/Snippet.swift
 run dictionary-test        Tinycast/Features/Dictionary/Model/DictionaryEntry.swift \
                            Tinycast/Features/Dictionary/Model/DictionaryMarkup.swift
 run dictation-test         Tinycast/Features/Dictation/Model/DictationModel.swift Tinycast/Features/Dictation/Model/DictationIdleRelease.swift Tinycast/Features/Dictation/Model/DictationTextFormatter.swift
-run dictation-field-test   Tinycast/Features/Dictation/Model/DictationModel.swift \
-                           Tinycast/Features/Dictation/Model/DictationMode.swift \
-                           Tinycast/Features/Dictation/Model/DictationDestination.swift \
-                           Tinycast/Features/Dictation/Model/DictationTextFormatter.swift \
-                           Tinycast/Features/Dictation/Service/DictationCoordinator.swift \
-                           Tinycast/Features/Dictation/Service/DictationInsertionContext.swift \
-                           Tinycast/Features/AI/UI/ChatComposerTextView.swift \
-                           Tinycast/Features/TextInjection/Service/*.swift \
-                           Tinycast/Features/Snippets/Model/*.swift \
-                           Tinycast/Platform/AccessibilityText.swift \
-                           Tinycast/Platform/PasteboardFiles.swift \
-                           Tinycast/Platform/Appearance.swift Tinycast/DesignSystem/Theme.swift
 run dictation-volume-test  Tinycast/Features/Dictation/Model/DictationVolumeSnapshot.swift \
                            Tinycast/Features/Dictation/Service/DictationAudioDucker.swift \
                            Tinycast/Platform/AppPaths.swift
@@ -330,25 +313,22 @@ run dictation-worker-test  Tinycast/Features/Dictation/Model/DictationModel.swif
                            Tinycast/Features/Dictation/Service/DictationModelStore.swift \
                            Tinycast/Features/Dictation/Service/DictationModelDownloader.swift \
                            Tinycast/Platform/ProcessExit.swift Tinycast/Platform/AppPaths.swift
-run hotkey-test            Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
-                           Tinycast/Features/HotKeys/Model/ModifierKey.swift \
-                           Tinycast/Features/HotKeys/Model/ModifierKeyDetector.swift \
-                           Tinycast/Features/HotKeys/Model/DoubleTapDetector.swift \
-                           Tinycast/Features/HotKeys/Model/HotKeyBinding.swift \
-                           Tinycast/Features/HotKeys/Model/HotKeySpelling.swift \
-                           Tinycast/Features/HotKeys/Model/HyperKey.swift \
-                           Tinycast/Platform/ASCIIKeyboardLayout.swift \
-                           Tinycast/Features/HotKeys/Service/KeyShortcut.swift \
-                           Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
-                           Tinycast/Features/QuickActions/Model/QuickAction.swift \
-                           Tinycast/Features/QuickActions/Model/BuiltInQuickAction.swift \
-                           Tinycast/Features/QuickActions/Model/CustomQuickAction.swift \
-                           Tinycast/Features/Launcher/Model/CommandID.swift \
-                           Tinycast/Features/Quicklinks/Model/Quicklink.swift \
-                           Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
-                           Tinycast/Features/SystemActions/Model/SystemAction.swift \
-                           Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
-                           Tinycast/Features/Snippets/Model/Snippet.swift
+run hotkey-test Tinycast/Features/HotKeys/Model/DoubleTapModifier.swift \
+                Tinycast/Features/HotKeys/Model/ModifierKey.swift \
+                Tinycast/Features/HotKeys/Model/ModifierKeyDetector.swift \
+                Tinycast/Features/HotKeys/Model/DoubleTapDetector.swift \
+                Tinycast/Features/HotKeys/Model/HotKeyBinding.swift \
+                Tinycast/Features/HotKeys/Model/HotKeySpelling.swift \
+                Tinycast/Features/HotKeys/Model/HyperKey.swift \
+                Tinycast/Platform/ASCIIKeyboardLayout.swift \
+                Tinycast/Features/HotKeys/Service/KeyShortcut.swift \
+                Tinycast/Features/HotKeys/Model/HotKeyAction.swift \
+                Tinycast/Features/Launcher/Model/CommandID.swift \
+                Tinycast/Features/Quicklinks/Model/Quicklink.swift \
+                Tinycast/Features/Quicklinks/Model/QuicklinkDestination.swift \
+                Tinycast/Features/SystemActions/Model/SystemAction.swift \
+                Tinycast/Features/WindowManagement/Model/WindowCommand.swift \
+                Tinycast/Features/Snippets/Model/Snippet.swift
 run callout-test          Tinycast/Platform/Appearance.swift \
                            Tinycast/DesignSystem/Theme.swift \
                            Tinycast/DesignSystem/InterfaceMetrics.swift \
@@ -637,124 +617,6 @@ run update-check-test      Tinycast/Features/Updates/Model/*.swift \
                            Tinycast/Features/Updates/Service/UpdateCheckStore.swift \
                            Tinycast/Platform/AppPaths.swift
 run support-test           Tinycast/Features/Support/Model/*.swift
-run ai-provider-test       Tinycast/Features/Settings/AppSettingsKey.swift \
-                           Tinycast/Features/AI/Model/*.swift \
-                           Tinycast/Features/AI/Settings/AISettingsStore.swift
-run ai-chat-test           Tinycast/Features/AI/Model/AIRequest.swift \
-                           Tinycast/Features/AI/Model/AIConnection.swift \
-                           Tinycast/Features/AI/Model/AppleIntelligence.swift \
-                           Tinycast/Features/AI/Model/AIAttachmentPolicy.swift \
-                           Tinycast/Features/AI/Model/AIRetention.swift \
-                           Tinycast/Features/AI/Model/AITool.swift \
-                           Tinycast/Features/AI/Model/JSONValue.swift \
-                           Tinycast/Features/AI/Model/ChatMessage.swift \
-                           Tinycast/Features/AI/Model/ChatSession.swift \
-                           Tinycast/Features/AI/Model/ChatChoices.swift \
-                           Tinycast/Features/AI/Model/ChatReferences.swift \
-                           Tinycast/Features/AI/Model/ChatTitle.swift \
-                           Tinycast/Features/AI/Model/ChatFind.swift \
-                           Tinycast/Features/AI/Model/ChatCitations.swift \
-                           Tinycast/Features/AI/Model/ChatToolScope.swift \
-                           Tinycast/Features/AI/Model/MarkdownBlock.swift \
-                           Tinycast/Features/AI/Model/MarkdownMath.swift \
-                           Tinycast/Features/AI/Model/MathFormula.swift \
-                           Tinycast/Features/AI/Model/MathNode.swift \
-                           Tinycast/Features/AI/Model/MathSymbolCatalog.swift \
-                           Tinycast/Features/AI/Service/AIProvider.swift \
-                           Tinycast/Features/AI/Service/ChatHistoryStore.swift \
-                           Tinycast/Features/AI/Service/AIToolLoopProvider.swift \
-                           Tinycast/Features/AI/UI/AIChatState.swift \
-                           Tinycast/Features/AI/UI/AIChatSurfacesState.swift \
-                           Tinycast/Features/AI/UI/ChatFindState.swift
-run chat-markdown-test     Tinycast/Platform/Appearance.swift \
-                           Tinycast/DesignSystem/Theme.swift \
-                           Tinycast/DesignSystem/InterfaceMetrics.swift \
-                           Tinycast/Features/Settings/InterfaceSize.swift \
-                           Tinycast/Features/AI/Model/AIRequest.swift \
-                           Tinycast/Features/AI/Model/AITool.swift \
-                           Tinycast/Features/AI/Model/JSONValue.swift \
-                           Tinycast/Features/AI/Model/ChatMessage.swift \
-                           Tinycast/Features/AI/Model/ChatChoices.swift \
-                           Tinycast/Features/AI/Model/ChatReferences.swift \
-                           Tinycast/Features/AI/Model/ChatCitations.swift \
-                           Tinycast/Features/AI/Model/ChatFind.swift \
-                           Tinycast/Features/AI/Model/MarkdownBlock.swift \
-                           Tinycast/Features/AI/Model/MarkdownMath.swift \
-                           Tinycast/Features/AI/Model/MathFormula.swift \
-                           Tinycast/Features/AI/Model/MathNode.swift \
-                           Tinycast/Features/AI/Model/MathSymbolCatalog.swift \
-                           Tinycast/Features/AI/UI/ChatTextHighlight.swift \
-                           Tinycast/Features/AI/UI/ChatMarkdownRenderer.swift \
-                           Tinycast/Features/AI/UI/MathAttachmentCell.swift \
-                           Tinycast/Features/AI/UI/MathBox.swift \
-                           Tinycast/Features/AI/UI/MathFont.swift \
-                           Tinycast/Features/AI/UI/MathLayoutEngine.swift
-run mcp-test               Tinycast/Features/Settings/AppSettingsKey.swift \
-                           Tinycast/Features/AI/Model/AIConnection.swift \
-                           Tinycast/Features/AI/Model/AppleIntelligence.swift \
-                           Tinycast/Features/AI/Model/AITool.swift \
-                           Tinycast/Features/AI/Model/AIToolServer.swift \
-                           Tinycast/Features/AI/Model/JSONValue.swift \
-                           Tinycast/Features/MCP/Model/*.swift \
-                           Tinycast/Features/MCP/Settings/MCPSettingsStore.swift
-run -O text-diff-test      Tinycast/Features/QuickActions/Model/TextDiffEngine.swift
-run index text-diff-performance Tinycast/Features/QuickActions/Model/TextDiffEngine.swift
-run quick-action-test      Tinycast/Features/Settings/AppSettingsKey.swift \
-                           Tinycast/Features/AI/Model/AIConnection.swift \
-                           Tinycast/Features/AI/Model/AppleIntelligence.swift \
-                           Tinycast/Features/AI/Model/ChatGPTSubscription.swift \
-                           Tinycast/Features/AI/Model/InstalledAI.swift \
-                           Tinycast/Features/QuickActions/Model/*.swift \
-                           Tinycast/Features/QuickActions/Settings/QuickActionSettingsStore.swift
-run apple-intelligence-test Tinycast/Features/Settings/AppSettingsKey.swift \
-                           Tinycast/Features/AI/Model/*.swift \
-                           Tinycast/Features/AI/Service/AIProvider.swift \
-                           Tinycast/Features/AI/Service/AppleIntelligenceProvider.swift
-run mcp-oauth-test         Tinycast/Platform/ExecutableLocator.swift \
-                           Tinycast/Platform/ProcessExit.swift \
-                           Tinycast/Platform/KeychainSecretStore.swift \
-                           Tinycast/Features/Settings/AppSettingsKey.swift \
-                           Tinycast/Features/AI/Model/AIConnection.swift \
-                           Tinycast/Features/AI/Model/AppleIntelligence.swift \
-                           Tinycast/Features/AI/Model/AITool.swift \
-                           Tinycast/Features/AI/Model/AIToolServer.swift \
-                           Tinycast/Features/AI/Model/AIStreamDecoder.swift \
-                           Tinycast/Features/AI/Model/AIThinkTagDecoder.swift \
-                           Tinycast/Features/AI/Model/AIRequest.swift \
-                           Tinycast/Features/AI/Model/JSONValue.swift \
-                           Tinycast/Features/MCP/Model/*.swift \
-                           Tinycast/Features/MCP/Service/*.swift
-run slow mcp-stdio-test    Tinycast/Platform/ExecutableLocator.swift \
-                           Tinycast/Platform/ProcessExit.swift \
-                           Tinycast/Platform/KeychainSecretStore.swift \
-                           Tinycast/Features/Settings/AppSettingsKey.swift \
-                           Tinycast/Features/AI/Model/AIConnection.swift \
-                           Tinycast/Features/AI/Model/AppleIntelligence.swift \
-                           Tinycast/Features/AI/Model/AITool.swift \
-                           Tinycast/Features/AI/Model/AIToolServer.swift \
-                           Tinycast/Features/AI/Model/AIStreamDecoder.swift \
-                           Tinycast/Features/AI/Model/AIThinkTagDecoder.swift \
-                           Tinycast/Features/AI/Model/AIRequest.swift \
-                           Tinycast/Features/AI/Model/JSONValue.swift \
-                           Tinycast/Features/MCP/Model/*.swift \
-                           Tinycast/Features/MCP/Service/*.swift
-run slow codex-turn-test   Tinycast/Platform/AppPaths.swift \
-                           Tinycast/Features/AI/Model/*.swift \
-                           Tinycast/Features/AI/Service/AIProvider.swift \
-                           Tinycast/Features/AI/Service/ChatGPTSubscriptionManager.swift \
-                           Tinycast/Features/AI/Service/CodexAppServerClient.swift \
-                           Tinycast/Features/AI/Service/InstalledAIProbe.swift \
-                           Tinycast/Platform/ExecutableLocator.swift \
-                           Tinycast/Platform/ProcessExit.swift \
-                           Tinycast/Features/AI/Service/CodexTurnRunner.swift
-run installed-ai-test     Tinycast/Features/AI/Model/*.swift \
-                          Tinycast/Features/AI/Service/AIProvider.swift \
-                          Tinycast/Platform/AppPaths.swift \
-                          Tinycast/Platform/ExecutableLocator.swift \
-                          Tinycast/Platform/ProcessExit.swift \
-                          Tinycast/Features/AI/Service/InstalledCLIProvider.swift \
-                          Tinycast/Features/AI/Service/InstalledAIProbe.swift \
-                          Tinycast/Features/AI/Service/InstalledAIManager.swift
 
 if [ "$emit_db" -eq 1 ]; then
     printf ']\n' >> "$DB"
