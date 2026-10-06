@@ -13,13 +13,19 @@ enum ProcessControl {
         }
         var path = [CChar](repeating: 0, count: Int(MAXPATHLEN) * 4)
         if proc_pidpath(pid, &path, UInt32(path.count)) > 0 {
-            return URL(fileURLWithPath: String(cString: path)).lastPathComponent
+            return URL(fileURLWithPath: string(from: path)).lastPathComponent
         }
         var short = [CChar](repeating: 0, count: Int(MAXCOMLEN) * 2 + 1)
         if proc_name(pid, &short, UInt32(short.count)) > 0 {
-            return String(cString: short)
+            return string(from: short)
         }
         return "Process \(pid)"
+    }
+
+    /// The C string up to its terminator; libproc pads the rest of the buffer with zeros.
+    private static func string(from buffer: [CChar]) -> String {
+        let bytes = buffer.prefix { $0 != 0 }.map { UInt8(bitPattern: $0) }
+        return String(decoding: bytes, as: UTF8.self)
     }
 
     /// A signal to another user's process needs admin rights, which this menu never asks for.
