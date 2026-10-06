@@ -190,6 +190,7 @@
 		81338FF6EF0CEC848A2810FA /* RegionCurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9616666BD5AED02FC903B57 /* RegionCurrency.swift */; };
 		81810D70867B1BC367314CDA /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2355CD88A9DB4D869DE42EC1 /* GeneralSettingsView.swift */; };
 		818A384FAAED82A23D85B547 /* SettingsSidebarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C611AC56A90F0F920FF28810 /* SettingsSidebarView.swift */; };
+		8223ADB2CFDE7AB6A66526DE /* ProcessControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E29A73A414257A222C814D7 /* ProcessControl.swift */; };
 		82C689F77BAF26735FF56C61 /* BarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C138CFE7C9503335F6DB91E2 /* BarButton.swift */; };
 		83C4667F7B1ADF573FD526EC /* CalcTimestamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8898172C404D3D8CD321416A /* CalcTimestamp.swift */; };
 		8463A5904A3CA75C802D0AF3 /* CalcUnits.swift in Sources */ = {isa = PBXBuildFile; fileRef = 903B689E15F416DB141D8775 /* CalcUnits.swift */; };
@@ -377,6 +378,7 @@
 		0BE3F3B3176E98DF40CB6123 /* CalcMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcMath.swift; sourceTree = "<group>"; };
 		0CE88A46ADF7F304410FDC58 /* HotKeyAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyAction.swift; sourceTree = "<group>"; };
 		0D17FF9F84CFAF6F1EA730E9 /* SettingsFileJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFileJSON.swift; sourceTree = "<group>"; };
+		0E29A73A414257A222C814D7 /* ProcessControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessControl.swift; sourceTree = "<group>"; };
 		0E8C3B22DB53A9CCE8B632AF /* ClipboardTextHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardTextHelper.swift; sourceTree = "<group>"; };
 		0F76A001A22DC2AB278E2890 /* HyperKeyTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyperKeyTap.swift; sourceTree = "<group>"; };
 		10B7D627EDC5DB062701024D /* CurrencyRateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyRateStore.swift; sourceTree = "<group>"; };
@@ -1337,6 +1339,7 @@
 			isa = PBXGroup;
 			children = (
 				000DACE858F9A74B29B099AD /* CPUSampler.swift */,
+				0E29A73A414257A222C814D7 /* ProcessControl.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -1738,6 +1741,7 @@
 				BE86A7A14F1B4F93F0A8FE06 /* PermissionsSettingsView.swift in Sources */,
 				2C75661DA10B9F8DDAF8CF1B /* PinnedEmojiStore.swift in Sources */,
 				AC39803FCF723F7398708BA8 /* PopoverMenu.swift in Sources */,
+				8223ADB2CFDE7AB6A66526DE /* ProcessControl.swift in Sources */,
 				3E71E8D08BB3EAEB1F909E19 /* ProcessExit.swift in Sources */,
 				698AC2ED72880878610FF8EA /* ProcessLoad.swift in Sources */,
 				0E751D5883565527FAAD017B /* PseudoTerminal.swift in Sources */,

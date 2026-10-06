@@ -34,8 +34,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
     private func drawMeter(_ loads: [CoreLoad]) {
         guard let button = statusItem?.button else { return }
         button.image = MeterImage.make(loads: loads)
-        let busy = loads.isEmpty ? 0 : loads.map { $0.user + $0.system }.reduce(0, +) / Double(loads.count)
-        button.setAccessibilityValue("\(Int((busy * 100).rounded())) percent")
+        let total: Double = loads.reduce(0) { $0 + $1.user + $1.system }
+        let percent = loads.isEmpty ? 0 : Int((total / Double(loads.count) * 100).rounded())
+        button.setAccessibilityValue("\(percent) percent")
     }
 
     func applyVisibility() {
@@ -44,6 +45,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
+        addProcessItems(to: menu)
+        menu.addItem(item("Open Activity Monitor") { _ in ProcessControl.openActivityMonitor() })
+        menu.addItem(.separator())
         menu.addItem(item("Open Launcher") { $0.paletteCoordinator.showPalette(mode: .launcher) })
         if core.settings.clipboardEnabled {
             menu.addItem(
@@ -54,6 +58,57 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(.separator())
         menu.addItem(item("Quit \(Bundle.main.appDisplayName)") { _ in NSApp.terminate(nil) })
     }
+
+    /// Each row quits its process; holding Option turns every row into Force Quit.
+    private func addProcessItems(to menu: NSMenu) {
+        menu.addItem(.sectionHeader(title: "Top Processes"))
+        let processes = sampler.topProcesses
+        guard !processes.isEmpty else {
+            let measuring = NSMenuItem(title: "Measuring…", action: nil, keyEquivalent: "")
+            measuring.isEnabled = false
+            menu.addItem(measuring)
+            return
+        }
+        for usage in processes {
+            let name = ProcessControl.name(of: usage.pid)
+            let owned = ProcessControl.isOwnedByUser(usage.pid)
+            let quit = processItem(name: name, usage: usage, owned: owned, force: false)
+            quit.toolTip = owned ? "Quit \(name)" : "Owned by another user"
+            menu.addItem(quit)
+            menu.addItem(processItem(name: name, usage: usage, owned: owned, force: true))
+        }
+    }
+
+    private func processItem(
+        name: String, usage: ProcessUsage, owned: Bool, force: Bool
+    ) -> NSMenuItem {
+        let label = force ? "Force Quit \(name)" : name
+        let item = self.item(label) { core in
+            let sent = force ? ProcessControl.forceQuit(usage.pid) : ProcessControl.quit(usage.pid)
+            if !sent { core.showMessage("Could not quit \(name)", tone: .danger) }
+        }
+        item.attributedTitle = Self.processTitle(label, percent: usage.percent)
+        // Without an action AppKit greys the row, which is the disabled look wanted here.
+        if !owned { item.action = nil }
+        if force {
+            item.keyEquivalentModifierMask = .option
+            item.isAlternate = true
+        }
+        return item
+    }
+
+    /// The name on the left and the share on a right-aligned tab stop, so the numbers line up.
+    private static func processTitle(_ name: String, percent: Double) -> NSAttributedString {
+        let style = NSMutableParagraphStyle()
+        style.tabStops = [NSTextTab(textAlignment: .right, location: processColumnWidth)]
+        let shown = name.count > maxNameLength ? String(name.prefix(maxNameLength - 1)) + "…" : name
+        return NSAttributedString(
+            string: "\(shown)\t\(Int(percent.rounded()))%",
+            attributes: [.paragraphStyle: style, .font: NSFont.menuFont(ofSize: 0)])
+    }
+
+    private static let processColumnWidth: CGFloat = 280
+    private static let maxNameLength = 34
 
     private func item(_ title: String, action: @escaping @MainActor (AppCore) -> Void) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: #selector(MenuAction.run), keyEquivalent: "")

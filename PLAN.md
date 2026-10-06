@@ -88,9 +88,10 @@ Build the menu when it opens.
 
 ### Display
 
-- Draw one thermometer bar per core. Fill each bar from the bottom.
-- Stack user time (red) and system time (yellow) in each bar.
-- Put the bars in 2 rows. The column count is `ceil(cores / 2)`.
+- Draw one small cell per core. Fill each cell from left to right.
+- Put user time (red) first, then system time (yellow). Count nice time as user time.
+- Draw a faint track, so that an idle core stays visible.
+- Put the cells in 2 rows. The column count is `ceil(cores / 2)`. Core 0 is the top of the first column.
 - Read the core count at runtime. Do not hardcode it.
 - Order the cores as `host_processor_info` returns them.
 - Update every 1 second.
