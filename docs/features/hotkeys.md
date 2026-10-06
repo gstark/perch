@@ -48,7 +48,7 @@ return `OSStatus` synchronously, preserving event order and hold-to-talk release
 ## Defaults
 
 `HotKeyDefaults` lists the bindings a fresh install starts with: ⌘Space opens the launcher, and
-⇧⌘ with an arrow or Return runs the four halves and Maximize. A key with nothing stored reads its
+⌃⌥ with an arrow or Return runs the four halves and Maximize. A key with nothing stored reads its
 default. Clearing a binding that has a default stores `unbound`, so the default never returns.
 ## Persistence
 

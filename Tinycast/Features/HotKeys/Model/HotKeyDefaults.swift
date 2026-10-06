@@ -13,11 +13,11 @@ enum HotKeyDefaults {
     }
 
     private static let windowCommands: [WindowCommand.ID: HotKeyBinding] = [
-        .leftHalf: combo(kVK_LeftArrow, cmdKey | shiftKey),
-        .rightHalf: combo(kVK_RightArrow, cmdKey | shiftKey),
-        .topHalf: combo(kVK_UpArrow, cmdKey | shiftKey),
-        .bottomHalf: combo(kVK_DownArrow, cmdKey | shiftKey),
-        .maximize: combo(kVK_Return, cmdKey | shiftKey)
+        .leftHalf: combo(kVK_LeftArrow, controlKey | optionKey),
+        .rightHalf: combo(kVK_RightArrow, controlKey | optionKey),
+        .topHalf: combo(kVK_UpArrow, controlKey | optionKey),
+        .bottomHalf: combo(kVK_DownArrow, controlKey | optionKey),
+        .maximize: combo(kVK_Return, controlKey | optionKey)
     ]
 
     private static func combo(_ keyCode: Int, _ modifiers: Int) -> HotKeyBinding {
