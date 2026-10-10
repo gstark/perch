@@ -54,7 +54,7 @@ final class GitWatchCoordinator {
     func scanAll() async {
         guard !isScanning else { return }
         isScanning = true
-        defer { isScanning = false }
+        refreshStatusItem()
         let machines = settings.gitWatchMachines.filter { !$0.roots.isEmpty }
         await withTaskGroup(of: (String, Result<GitWatchReport, GitWatchFailure>).self) { group in
             for machine in machines {
@@ -66,6 +66,7 @@ final class GitWatchCoordinator {
         }
         let hosts = Set(settings.gitWatchMachines.map(\.host))
         statuses = statuses.filter { hosts.contains($0.key) }
+        isScanning = false
         refreshStatusItem()
     }
 
@@ -85,7 +86,7 @@ final class GitWatchCoordinator {
     }
 
     func refreshStatusItem() {
-        statusItem.update(count: atRisk.reduce(0) { $0 + $1.repos.count })
+        statusItem.update(count: atRisk.reduce(0) { $0 + $1.repos.count }, isScanning: isScanning)
     }
 
     func open(_ repo: GitWatchRepo, on machine: GitWatchMachine) {

@@ -15,8 +15,10 @@ its remote. Settings › Git Watch lists the machines and their roots.
   failure, which Settings shows. SSH trust stays in `~/.ssh`.
 - **A failed scan keeps the last report.** The menu marks it `(stale)`. Work at risk stays at risk
   until a scan says otherwise.
-- **The icon exists only while something is at risk.** `GitWatchStatusItem` removes its
-  `NSStatusItem` at a count of zero, and "Show in menu bar" does not affect it.
+- **The icon exists only while a scan runs or something is at risk.** During a scan it shows
+  `arrow.triangle.2.circlepath`, and after it `arrow.up.circle` with the count. With no scan and a
+  count of zero, `GitWatchStatusItem` removes its `NSStatusItem`. "Show in menu bar" does not
+  affect it.
 - **The parsing stays in `Model/`.** `Tests/git-watch-test.swift` compiles `Model/` and the scanner,
   and runs the real script against repos it creates in a temporary folder.
 
@@ -49,6 +51,7 @@ at the same time, and a scan has a 60-second limit. Results stay in memory.
 A local row opens the folder in Finder. A remote row copies `ssh -t <host> 'cd <path> && exec
 "$SHELL" -l'`. Holding Option turns each row into **Ignore <name>**. Settings lists the ignored repos
 of each machine.
+While a scan runs, the menu shows **Scanning…** and **Scan Now** is disabled.
 
 ## Settings
 

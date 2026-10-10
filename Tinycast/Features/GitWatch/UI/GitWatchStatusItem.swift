@@ -1,6 +1,6 @@
 import AppKit
 
-/// The menu bar warning. It exists only while a default branch holds unpushed work.
+/// The menu bar warning. It exists only while a scan runs or a default branch holds unpushed work.
 @MainActor
 final class GitWatchStatusItem: NSObject, NSMenuDelegate {
     private unowned let coordinator: GitWatchCoordinator
@@ -13,21 +13,23 @@ final class GitWatchStatusItem: NSObject, NSMenuDelegate {
         menu.delegate = self
     }
 
-    func update(count: Int) {
-        guard count > 0 else {
+    func update(count: Int, isScanning: Bool) {
+        guard count > 0 || isScanning else {
             if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
             statusItem = nil
             return
         }
         let item = statusItem ?? makeItem()
-        item.button?.title = "\(count)"
-        item.button?.setAccessibilityValue("\(count) repositories with unpushed commits")
+        item.button?.image = NSImage(
+            systemSymbolName: isScanning ? "arrow.triangle.2.circlepath" : "arrow.up.circle",
+            accessibilityDescription: isScanning ? "Scanning" : "Unpushed commits")
+        item.button?.title = count > 0 ? "\(count)" : ""
+        item.button?.setAccessibilityValue(
+            isScanning ? "Scanning" : "\(count) repositories with unpushed commits")
     }
 
     private func makeItem() -> NSStatusItem {
         let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        item.button?.image = NSImage(
-            systemSymbolName: "arrow.up.circle", accessibilityDescription: "Unpushed commits")
         item.button?.imagePosition = .imageLeading
         item.button?.setAccessibilityLabel("Git Watch")
         item.menu = menu
@@ -50,8 +52,15 @@ final class GitWatchStatusItem: NSObject, NSMenuDelegate {
                 menu.addItem(ignore)
             }
         }
+        if coordinator.isScanning {
+            let scanning = NSMenuItem(title: "Scanning…", action: nil, keyEquivalent: "")
+            scanning.isEnabled = false
+            menu.addItem(scanning)
+        }
         menu.addItem(.separator())
-        menu.addItem(item("Scan Now") { coordinator in Task { await coordinator.scanNow() } })
+        let scanNow = item("Scan Now") { coordinator in Task { await coordinator.scanNow() } }
+        if coordinator.isScanning { scanNow.action = nil }
+        menu.addItem(scanNow)
         menu.addItem(item("Git Watch Settings…") { $0.showSettings() })
     }
 
