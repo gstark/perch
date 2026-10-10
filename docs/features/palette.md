@@ -300,9 +300,8 @@ home detent clears that display's stored position.
 The lower expanded-centre detent also records its display separately, so restoring it recomputes
 the centre for the current visible frame and Interface Size instead of reusing an obsolete offset.
 
-The position and its detent are deliberately **not** in a settings backup — they are machine-local
-geometry, the same reason the Settings window autosaves its frame instead
-([backup.md](backup.md)).
+The position and its detent are deliberately **not** in settings.json — they are machine-local
+geometry, the same reason the Settings window autosaves its frame instead.
 
 Which display the palette anchors to depends on the **Follow the cursor across displays**
 setting (`AppSettings.openOnCursorScreen`, on by default):

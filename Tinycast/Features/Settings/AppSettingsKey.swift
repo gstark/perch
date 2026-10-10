@@ -1,7 +1,7 @@
 import Foundation
 
-/// The UserDefaults keys `AppSettings` owns; `CaseIterable` so the backup harness enumerates them.
-enum AppSettingsKey: String, CaseIterable {
+/// The UserDefaults keys `AppSettings` owns.
+enum AppSettingsKey: String {
     // Every raw value is spelled out so renaming a case can never rename a persisted key.
     case clipboardEnabled = "clipboardEnabled"
     case clipboardTextSearchEnabled = "clipboardTextSearchEnabled"

@@ -49,13 +49,6 @@ final class FrequentEmojiStore {
         persist()
     }
 
-    /// Replaces the tallies wholesale from a backup, under the same cap `record` enforces.
-    func replace(_ imported: [FrequentEmoji]) {
-        revision &+= 1
-        records = Self.history(imported)
-        persist()
-    }
-
     /// Most-used glyphs (recency breaks ties), newest habits first.
     func top(_ n: Int = 16) -> [String] {
         let sorted = sortedMemo.value(for: revision) {
@@ -66,7 +59,7 @@ final class FrequentEmojiStore {
         return Array(sorted.prefix(n))
     }
 
-    /// A backup can repeat a glyph; only its newest tally is kept, so each takes one grid cell.
+    /// A hand-edited file can repeat a glyph; only its newest tally is kept, so each takes one cell.
     private static func history(_ tallies: [FrequentEmoji]) -> [FrequentEmoji] {
         var seen = Set<String>()
         return Array(

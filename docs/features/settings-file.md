@@ -1,7 +1,7 @@
 # Settings file
 
-An opt-in mirror of Perch's preferences, the launcher's items and all of window management in
-`~/.config/perch/settings.json`, switched on in **Settings → Backup → Settings File**. `UserDefaults`
+A mirror of Perch's preferences, the launcher's items and all of window management in
+`~/.config/perch/settings.json`. It is always on. `UserDefaults`
 stays the store; the file follows it, and an edit made to the file applies at once. The machinery lives
 in `Features/Settings/` (`Model/`, `Service/`, `SettingsFileSchema.swift`), the launcher's part in
 `Features/Launcher/`, and window management's in `Features/WindowManagement/`.
@@ -11,8 +11,6 @@ in `Features/Settings/` (`Model/`, `Service/`, `SettingsFileSchema.swift`), the 
 - **`UserDefaults` is the store; the file is a mirror.** Every value keeps its `AppSettingsKey` and its
   `didSet`, and the file reads and writes through the same properties. Turning the file on or off,
   deleting it, or updating the app never loses a setting, so there is nothing to migrate.
-- **Off by default, and only the pane turns it on.** `settingsFileEnabled` has no key in the file and is
-  excluded from backups: a file or an import must never switch on something that reads a file.
 - **A capability grant never has a key.** Snippets, Extensions, Calendar access, Auto Join, Camera
   Preview, Quick Actions, MCP and clipboard text recognition are switched on only in the app, which
   asks first. `settings-file-test` checks those paths stay absent.
@@ -176,8 +174,7 @@ in `commands.builtIn` — by their ID after `command:`. App Launcher and Dictati
 
 ## Adding a setting
 
-1. Add the property to its store as usual, with its `AppSettingsKey` and its
-   `SettingsBackupCoverage` entry.
+1. Add the property to its store as usual, with its `AppSettingsKey`.
 2. Add a `SettingsFileKey` case in pane order, its raw value the `section.name` path.
 3. Bind it in `SettingsFileSchema`; an enum conforms to `SettingsFileRawValue`, or to
    `SettingsFileToken` when its file spelling differs from its raw value.

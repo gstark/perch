@@ -104,12 +104,6 @@ final class LauncherRankingStore {
         didMutate()
     }
 
-    /// Replaces the table wholesale from a backup, dropping what the initialiser would.
-    func replace(_ imported: [String: LauncherVisit]) {
-        visits = Self.live(imported, at: now())
-        didMutate()
-    }
-
     /// The form a query is matched in, so a term is stored as the ranking will compare it.
     nonisolated static func normalize(_ query: String) -> String {
         SearchText(query.trimmingCharacters(in: .whitespacesAndNewlines), transliterated: true).string

@@ -364,10 +364,10 @@ and every shortcut stays editable afterwards.
   `boundCustomWindowSizeIDs` index, the shape window layouts use. It dispatches through
   `WindowCommandCoordinator.runCustomWindowSize(id:)`, the same funnel and the same feature gate.
 - **`AppIndex.setCustomWindowSizes(_:)`** publishes the custom-size slice immediately after the
-  window commands, inside the same section. Custom sizes and their bindings ride in settings backups.
+  window commands, inside the same section. Custom sizes and their bindings ride in settings.json.
 - **Settings** — `windowManagementEnabled` (off), `windowManagementShowInLauncher` (on), `windowGap`
-  (0) and `windowCycle` (`.off`). All four ride in settings backups: unlike `snippetsEnabled` they
-  grant no permission class of their own.
+  (0) and `windowCycle` (`.off`). All four ride in settings.json, because
+  they grant no permission class of their own.
 - **Per-command visibility** reuses `VisibilityStore` as-is; clearing a recorded shortcut is how a
   hotkey is disabled, so there is no separate per-command enabled flag. Window commands deliberately
   get **no** launcher-category pane of their own — they are managed inside Settings › Window

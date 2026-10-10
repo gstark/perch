@@ -96,7 +96,7 @@ feature's doc, under its own `## Invariants`.
 ## Conventions worth knowing up front
 
 - **A new preference also gets a `SettingsFileKey`** and its binding in `SettingsFileSchema`, so the
-  opt-in `settings.json` mirror carries it; the exhaustive switch fails the build until it is bound.
+  `settings.json` mirror carries it; the exhaustive switch fails the build until it is bound.
   See [settings-file.md](docs/features/settings-file.md).
 - **A type's suffix says what it *is*** — `Store`, `Coordinator`, `Controller`, `Manager`, `Engine`,
   `Policy` and the rest each name a specific responsibility. **Semantic correctness always wins over

@@ -60,7 +60,7 @@ LaunchServices: its Settings row went with it, so nothing else could clear the c
 keeps a dropped search scope from deleting a working shortcut, and running on unchanged scans too
 covers LaunchServices still resolving an app for a few seconds after it is trashed.
 
-Shortcuts are also spelled as typeable chords (`ctrl+option+left`) in the opt-in
+Shortcuts are also spelled as typeable chords (`ctrl+option+left`) in the
 [settings file](settings-file.md) — all but those of content, extensions and Apple Shortcuts.
 `HotKeySpelling` is that grammar; `HotKeySettingsFile` applies through `setBinding`, so `UserDefaults`
 stays the one store either way.
@@ -76,19 +76,10 @@ Apple Shortcuts keep the same kind of index in `boundAppleShortcutIDs`, pruned n
 the first successful read of the library, since a failed read looks exactly like deletion
 (see [apple-shortcuts.md](apple-shortcuts.md#sweeping-deleted-shortcuts)).
 
-Snippets index `StoredSnippet.ID`, the file's path, in `boundSnippetIDs`. The store runs only while
-the feature is on, so they are swept not at launch but on every snapshot, by
-`removeSnippetBindings`; a file that fails to parse still counts, since it is mid-edit rather than
-gone. A rename outside Perch or a new Snippets Folder therefore drops the shortcut, and none
-travels in a backup, where an imported snippet lands at a new path
-(see [snippets.md](snippets.md#shortcuts)).
-
 `HotKeyBinding` takes the synthesised `Codable`, so a `.combo` writes
 `{"combo":{"_0":{"carbonKeyCode":N,"carbonModifiers":N}}}` and a `.doubleTap` writes
 `{"doubleTap":{"_0":"command"}}`. `KeyShortcut` keeps a hand-written `init(from:)` — not a format seam,
 but the guarantee that every decode runs through the initializer that masks device modifier bits off.
-`SettingsBackup.HotkeyBackup` stores the same values, so the backup file carries this shape too; only
-export → import within one build is guaranteed to round-trip.
 
 Every built-in command is bindable: `CommandID.hotKeyAction` answers `.command(self)` by default, and
 names the three exceptions. Open in Browser and Run Shell Command are query-driven — their input is the
@@ -104,8 +95,7 @@ action exactly as its command row does.
 Like a window command, the chord registers regardless of the launcher row. Search Files and Notes both
 re-check their feature switches before opening; see [file-search.md](file-search.md#invocation) and
 [notes.md](notes.md#ownership-and-enablement). A hidden launcher row does not disable its shortcut, but
-disabling the feature does. `SettingsBackup.HotkeyBackup` carries them as one `commands` map keyed by
-`CommandID` raw value.
+disabling the feature does.
 
 System actions and window commands are the fixed-catalog case: they persist under
 `hotkey.systemAction.<raw-id>` and `hotkey.windowCommand.<raw-id>`

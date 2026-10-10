@@ -108,13 +108,16 @@ struct ClipboardTextTests {
     }
 
     static func searchAndLifetime(in directory: URL) async throws {
-        let store = ClipboardStore(directory: directory.appendingPathComponent("search"))
+        let folder = directory.appendingPathComponent("search")
+        let store = ClipboardStore(directory: folder)
         store.maxAge = ClipboardRetention.forever.maxAge
         store.addFiles(["/tmp/invoice.pdf"], sourceBundleID: nil)
         let original = store.items[0]
         expect(!store.textSearchEnabled, "text recognition defaults to off")
         expect(store.nextExtractionItem() == nil, "disabled store has no extraction work")
-        expect(!hasExtractionTable(store.dbURL), "disabled store never creates OCR schema")
+        expect(
+            !hasExtractionTable(folder.appendingPathComponent("clipboard.sqlite3")),
+            "disabled store never creates OCR schema")
         expect(
             store.search("invoice", filter: .all).first?.id == original.id, "ordinary search works while off")
         expect(store.setTextSearchEnabled(true), "enable extraction")
@@ -163,7 +166,9 @@ struct ClipboardTextTests {
         let old = ClipboardItem(
             imagePath: "/tmp/old.png",
             createdAt: Date().addingTimeInterval(-86_400 * 7), sourceBundleID: nil)
-        store.importEntries([old] + (0..<1005).map { ClipboardItem(text: "new \($0)", sourceBundleID: nil) })
+        ClipboardSeed.insert(
+            [old] + (0..<1005).map { ClipboardItem(text: "new \($0)", sourceBundleID: nil) }, into: folder)
+        store.load()
         expect(!store.items.contains { $0.id == old.id }, "fixture is beyond resident window")
         store.setExtractedText("archive document", for: old, generation: store.extractionGeneration)
         try await waitUntil { store.search("archive", filter: .image).first?.id == old.id }

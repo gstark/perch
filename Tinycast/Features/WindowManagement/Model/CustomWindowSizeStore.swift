@@ -49,7 +49,7 @@ final class CustomWindowSizeStore {
         return removed
     }
 
-    /// Replaces the whole library on backup import, cleaning rather than rejecting.
+    /// Replaces the whole library from settings.json, cleaning rather than rejecting.
     @discardableResult
     func replace(with incoming: [CustomWindowSize]) -> Int {
         let updated = Self.sanitized(incoming)

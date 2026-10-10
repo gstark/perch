@@ -91,7 +91,7 @@ struct CustomWindowSize: Codable, Hashable, Identifiable, Sendable {
         self.offset = offset
     }
 
-    // Hand-written, so an added field keeps stored sizes and older backups readable.
+    // Hand-written, so an added field keeps stored sizes and older settings.json files readable.
     private enum CodingKeys: String, CodingKey {
         case id, name, width, height, anchor, offset
     }

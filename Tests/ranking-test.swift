@@ -102,15 +102,18 @@ struct RankingTest {
         store.resetAll()
         check("reset all empties the table", store.isEmpty)
 
-        store.replace([
+        let seededURL = fileURL.deletingPathExtension().appendingPathExtension("seeded.json")
+        try? JSONEncoder().encode([
             "kept": LauncherVisit(anchor: clock + day, openedAt: clock, searchTerms: ["k"]),
             "stale": LauncherVisit(anchor: clock - day, openedAt: clock - 90 * day, searchTerms: []),
             "": LauncherVisit(anchor: clock + day, openedAt: clock, searchTerms: [])
-        ])
-        check("an import keeps only live, keyed entries", Array(store.visits.keys) == ["kept"])
+        ]).write(to: seededURL)
+        let seeded = LauncherRankingStore(fileURL: seededURL) { clock }
+        check("loading keeps only live, keyed entries", Array(seeded.visits.keys) == ["kept"])
 
         await store.flush()
         try? FileManager.default.removeItem(at: fileURL)
+        try? FileManager.default.removeItem(at: seededURL)
 
         print(failures == 0 ? "\nALL PASSED" : "\n\(failures) FAILED")
         exit(failures == 0 ? 0 : 1)

@@ -8,8 +8,7 @@ final class LauncherCoordinator {
     private let paletteCoordinator: PaletteCoordinator
     private let settingsCoordinator: SettingsCoordinator
     private let windowCommandCoordinator: WindowCommandCoordinator
-    /// The backup commands only, which need the live stores to gather from and apply to.
-    private unowned let core: AppCore
+    private let clipboardCoordinator: ClipboardCoordinator
 
     init(
         ranking: LauncherRankingStore,
@@ -17,14 +16,14 @@ final class LauncherCoordinator {
         paletteCoordinator: PaletteCoordinator,
         settingsCoordinator: SettingsCoordinator,
         windowCommandCoordinator: WindowCommandCoordinator,
-        core: AppCore
+        clipboardCoordinator: ClipboardCoordinator
     ) {
         self.ranking = ranking
         self.windowController = windowController
         self.paletteCoordinator = paletteCoordinator
         self.settingsCoordinator = settingsCoordinator
         self.windowCommandCoordinator = windowCommandCoordinator
-        self.core = core
+        self.clipboardCoordinator = clipboardCoordinator
     }
 
     // MARK: - Activation
@@ -78,7 +77,7 @@ final class LauncherCoordinator {
         case .clipboardHistory:
             paletteCoordinator.togglePalette(mode: .clipboard)
         case .pasteSequentially:
-            core.clipboardCoordinator.pasteNextInSequence()
+            clipboardCoordinator.pasteNextInSequence()
         case .searchEmoji:
             paletteCoordinator.togglePalette(mode: .emoji)
         case .openInBrowser:

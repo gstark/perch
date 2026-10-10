@@ -30,12 +30,6 @@ final class PinnedEmojiStore {
         didChange()
     }
 
-    /// Restores authored pins from a backup, preserving order while dropping invalid duplicates.
-    func replace(_ imported: [String]) {
-        glyphs = Self.normalized(imported)
-        didChange()
-    }
-
     /// The caller names the neighbour: a stored pin the catalog cannot show is not one.
     func swap(_ glyph: String, with other: String) {
         guard let source = glyphs.firstIndex(of: glyph),

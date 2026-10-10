@@ -30,40 +30,40 @@ struct ClipboardSearchTests {
             if kind != .text, index % 7 != 0 { metadata[item.id] = "Common invoice" + suffix }
             return item
         }
-        precondition(ClipboardStore.importStoredItems(inDatabaseAt: store.dbURL, entries) == entries.count)
+        ClipboardSeed.insert(entries, into: directory)
         store.load()
-        try await compare(store, phase: "disabled by default")
+        try await compare(store, in: directory, phase: "disabled by default")
         precondition(store.setTextSearchEnabled(true))
         for entry in entries {
             if let text = metadata[entry.id] {
                 precondition(store.setExtractedText(text, for: entry, generation: store.extractionGeneration))
             }
         }
-        try await compare(store, phase: "enabled mixed history")
+        try await compare(store, in: directory, phase: "enabled mixed history")
         let old = entries[224]
         metadata[old.id] = "common invoice rare"
         precondition(
             store.setExtractedText(metadata[old.id]!, for: old, generation: store.extractionGeneration))
-        try await compare(store, phase: "late OCR outside window")
+        try await compare(store, in: directory, phase: "late OCR outside window")
         store.promote(entries[400])
         store.togglePinned(entries[401])
-        try await compare(store, phase: "promotion and pinning")
+        try await compare(store, in: directory, phase: "promotion and pinning")
         store.setTextSearchEnabled(false)
         store.promote(entries[401])
         store.togglePinned(store.items.first { $0.id == entries[401].id }!)
         store.promote(entries[400])
-        try await compare(store, phase: "disabled with populated OCR database")
+        try await compare(store, in: directory, phase: "disabled with populated OCR database")
         store.setTextSearchEnabled(true)
-        try await compare(store, phase: "reenabled preserves historical text")
+        try await compare(store, in: directory, phase: "reenabled preserves historical text")
         store.remove(entries[400])
         metadata.removeValue(forKey: entries[400].id)
-        try await compare(store, phase: "deleted indexed row")
+        try await compare(store, in: directory, phase: "deleted indexed row")
         store.close()
         store.open()
         store.load()
-        try await compare(store, phase: "reopened defaults off")
+        try await compare(store, in: directory, phase: "reopened defaults off")
         store.setTextSearchEnabled(true)
-        try await compare(store, phase: "reopened and enabled")
+        try await compare(store, in: directory, phase: "reopened and enabled")
         _ = store.search("common", filter: .all)
         _ = store.search("common", filter: .image)
         _ = store.search("common", filter: .file)
@@ -87,7 +87,7 @@ struct ClipboardSearchTests {
         // Pins outlive Clear History, and so does the OCR text recorded against them.
         let survivors = Set(store.items.map(\.id))
         metadata = metadata.filter { survivors.contains($0.key) }
-        try await compare(store, phase: "cleared")
+        try await compare(store, in: directory, phase: "cleared")
         store.close()
         for query in queries { precondition(store.search(query, filter: .all).isEmpty) }
         print("\(checks) search comparisons passed")
@@ -97,9 +97,8 @@ struct ClipboardSearchTests {
         actual.map(\.id) == expected.map(\.id) && actual.map(\.isPinned) == expected.map(\.isPinned)
     }
 
-    static func compare(_ store: ClipboardStore, phase: String) async throws {
-        var stored: [ClipboardItem] = []
-        ClipboardStore.forEachStoredItem(inDatabaseAt: store.dbURL) { stored.append($0) }
+    static func compare(_ store: ClipboardStore, in directory: URL, phase: String) async throws {
+        let stored = ClipboardSeed.all(in: directory)
         let all = Array(stored.reversed())
         let pins = store.items.filter(\.isPinned).sorted { $0.pinnedAt! < $1.pinnedAt! }
         for query in queries {

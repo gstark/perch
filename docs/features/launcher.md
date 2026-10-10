@@ -44,7 +44,7 @@ earliest scope wins; within one folder, the newest `CFBundleShortVersionString` 
 `SearchScopes` (`Launcher/Model/SearchScopes.swift`) owns the paths; the list is user-editable in
 Settings → Applications → Search Scopes and persisted as `AppSettings.searchScopes`.
 A scope is either a directory or a single `.app`
-bundle, stored tilde-abbreviated so the UI reads cleanly and a settings backup stays portable.
+bundle, stored tilde-abbreviated so the UI reads cleanly and settings.json stays portable.
 
 Enumeration descends **one subfolder deep** — a scope's own `.app` children, plus any inside an
 immediate subfolder, are indexed. That catches vendor-folder installs like
@@ -282,7 +282,7 @@ entry is an ordinary `.command`, so `VisibilityStore` still gates it — Command
 and its `url` carries the destination instead of the catalog's `perch://` placeholder. Nothing
 learns from it and nothing pins it: `LauncherCoordinator.launch` records no visit for a contextual
 row, since a pasted URL is not a term any row should rank under; and ⇧⌘F and ⇧⌘H are both refused,
-because a favorite — or a hidden-item key — the empty query can never resolve is dead state a backup
+because a favorite — or a hidden-item key — the empty query can never resolve is dead state settings.json
 would then carry.
 
 The row prints `AppEntry.subtitle` beside its name — the one field for an entry whose name alone
@@ -322,10 +322,6 @@ deliberately. The fallback's checkbox is the switch. The run is an ad-hoc `Custo
 never stored — same streaming window, same Stop button — so `CustomCommandCoordinator` keeps
 `lastShellCommand` for the window's Rerun, which has no library entry to look up. It sources the
 shell config (`ll` should mean the reader's own alias) and takes the runner's default home directory.
-
-**The order and the checkboxes are not in a settings backup.** The fallback list is where an import
-could arm shell execution from the launcher, which is the line `snippetsEnabled` already draws:
-a flag that grants a capability is never carried by a backup.
 
 `FallbackStore` is a thin persistence shell over `Fallback.ordered(_:by:)`, which is pure and covered
 by `fallback-test`: stored ids first, then anything the order has never seen, and a stored id with
@@ -367,7 +363,7 @@ Commands passes `CustomCommand.entryID`, Settings ▸ Extensions passes `extensi
 and each dims the field when the entry is hidden from launcher search, whose entry the ranker never
 sees.
 
-Aliases ride along in a settings backup (`launcherAliases`), and deleting what an alias points at —
+Deleting what an alias points at —
 uninstalling an app, deleting a quicklink or custom command, uninstalling an extension — removes it
 with the entry's other per-entry preferences.
 
@@ -456,7 +452,7 @@ never suggested, however often they are opened:
 A suggested entry leaves its kind section below, so no row appears twice. `AppIndex.Results` carries
 `favoriteCount`, `meetingCount` and `suggestionCount`, which `LauncherScreen` hands to `LauncherList`
 for its three leading headers. **Show suggestions** in Settings › General › Search turns the section
-off (`launcherShowsSuggestions`, carried by a settings backup). `HotKeyManager.revision` is part of
+off (`launcherShowsSuggestions`). `HotKeyManager.revision` is part of
 `AppIndex`'s results key, because binding a shortcut takes an entry out of the section.
 
 ## System actions
@@ -592,7 +588,7 @@ id is what keeps "which pane owns this" out of the entry-ID namespace.
 
 Eleven panes own commands today — AI, Quick Actions, File Search, Notes, Snippets, Navigation,
 Window Management, Clipboard, Emoji, Calendar and Quicklinks. What is left in Settings › Commands is
-the set no feature switch governs: Calculator History, Open Camera, the three backup commands, Check
+the set no feature switch governs: Calculator History, Open Camera, Check
 for Updates, Perch Settings, About, Support and Quit.
 
 A pane's list is also its display order, so `CommandID`'s declaration order is grouped by owner.

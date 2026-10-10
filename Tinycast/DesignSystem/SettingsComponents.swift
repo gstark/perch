@@ -490,7 +490,7 @@ struct AliasField: View {
             }
         }
         .onAppear { draft = aliases.alias(for: key) ?? "" }
-        // A backup import replaces the table out from under an unfocused row.
+        // A settings.json edit replaces the alias out from under an unfocused row.
         .onChange(of: aliases.revision) { _, _ in
             if !focused { draft = aliases.alias(for: key) ?? "" }
         }

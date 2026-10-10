@@ -58,7 +58,7 @@ final class AppCore {
         paletteCoordinator: paletteCoordinator,
         settingsCoordinator: settingsCoordinator,
         windowCommandCoordinator: windowCommandCoordinator,
-        core: self)
+        clipboardCoordinator: clipboardCoordinator)
     @ObservationIgnored private(set) lazy var clipboardCoordinator = ClipboardCoordinator(
         clipboardStore: clipboardStore, clipboardManager: clipboardManager, settings: settings,
         appIndex: appIndex, palette: palette, windowController: windowController,

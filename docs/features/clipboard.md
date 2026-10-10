@@ -104,20 +104,6 @@ Image capture (TIFF→PNG re-encode + blob write) runs off the main actor via de
 inserts, original-text search, and pruning stay on the main actor.
 Image copy uses Foundation’s `mappedIfSafe` hint before publishing the original PNG and marker.
 
-**A backup reads the whole table, not `items`.** `forEachStoredItem(inDatabaseAt:)` is `nonisolated`
-and opens a second connection, because the resident window stops at 1000 rows while the table is
-capped only by age — an export that read `items` would silently drop the rest of someone's history,
-and walking an uncapped table is not main-actor work. That connection is `SQLITE_OPEN_READWRITE`,
-not read-only: a read-only connection to a WAL database still has to create its `-shm` file, and
-fails confusingly when it cannot. It reads in `rowid` order, oldest first, so a streaming
-import rebuilds the same order it exported.
-
-**A restore streams back the same way.** `importStoredItems(inDatabaseAt:adoptingImagesInto:_:)` is the
-one insert path a bulk import takes, `importEntries` included: it hashes the existing rows once into a
-dedupe set rather than scanning the table per candidate, holds one transaction, and moves a staged blob
-into `imagesDir` only once the row is known to be new. `adoptingImagesInto` is nil where the paths
-handed in are already the ones to keep, as the Raycast import's are.
-
 **The load query is deliberately two indexed branches**, not one `pinned_at IS NOT NULL OR rowid >= ?`.
 It fetches every pinned row plus the newest `memoryWindow` unpinned ones, keyed off the floor rowid
 that `windowFloor` looks up. The planner cannot drive an `OR` from an index while preserving row
@@ -135,21 +121,21 @@ it; an update trigger moves the original-text FTS entry to the new rowid. The UU
 are untouched.
 
 Files under the store's own `imagesDir` are **owned**: pruned and deleted with their row. External
-references — an image imported from another app's cache — are left on disk when the row goes. A
+references are left on disk when the row goes. A
 retention cut can strand hundreds of files, so those deletions run off the main actor to keep
 capture-time pruning from hitching.
 
 ## Image and PDF text search
 
-**Search text in images and PDFs is off by default.** The per-machine switch is excluded from
-settings backups. A cold disabled launch creates no OCR schema, indexer, search task or Vision request,
+**Search text in images and PDFs is off by default.** The per-machine switch stays out of
+settings.json. A cold disabled launch creates no OCR schema, indexer, search task or Vision request,
 and loads no extracted strings. Existing derived data stays on disk when disabled and is reused on
 reenabling; deletion and retention still remove it with its original item.
 
 When both clipboard history and text search are enabled, `AppCore` creates its
 `ClipboardTextIndexer`. It recognizes locally with Vision's `RecognizeTextRequest`, starting one
 background-priority job after two seconds without input, even while the palette is open. A 250 ms
-pause separates items; continued typing or mouse movement defers the next job. Existing and imported
+pause separates items; continued typing or mouse movement defers the next job. Existing
 history is backfilled, including rows beyond the resident window. Nothing recognizes on the capture
 or search path. When only failed work is left the indexer sleeps until a retry is due — a new capture
 wakes that wait — and an empty queue exits rather than polling.
@@ -184,8 +170,7 @@ query or filter, palette dismissal, disabling, and any history mutation cancel w
 obsolete, and a request identity keeps a late answer from publishing. Publication follows the
 selected item by UUID; pinning and promoting keep the matches already on screen while it refreshes.
 Clearing or reloading rotates the extraction generation, and the insert selects its row rather than
-naming it, so it cannot recreate a deleted entry. Backups stream the original fields and never load
-OCR metadata.
+naming it, so it cannot recreate a deleted entry.
 
 Work is bounded: files up to 32 MB, the first 64 PDF pages, a 4,194,304-pixel bitmap budget with a
 4096-pixel maximum edge, and 32 KB of UTF-8 text per item. An empty, unsupported or oversized input
@@ -198,8 +183,7 @@ are recognized in full-width 2048-pixel strips overlapping by 256 pixels, with V
 minimum text-height cutoff disabled so it cannot discard small text on a tall screenshot or page.
 Strips never split a line across columns, and each keeps only the lines centred in its half of an
 overlap, so a line is read once and the text keeps its reading order. A referenced file is read once
-when it is indexed; editing it later does not refresh the historical search text. Backups carry the
-original content and references, and a restored entry is recognized again.
+when it is indexed; editing it later does not refresh the historical search text.
 
 ## Copy Text from an image
 
@@ -414,11 +398,6 @@ field; see [palette.md](palette.md#the-keyboard-belongs-to-the-search-field).
 of a 359 pt content area, and the overflow pushed the bottom bar out and the panel taller. Every other
 preview kind already shrinks — an image scales to fit, text scrolls — so the player does too, and only
 its maximum is a token.
-
-**A backup carries the path, never the bytes.** `BackupClipboardItem.file` exports `text` and no
-blob, a file already gone at export time is counted missing, and a restore drops a row whose path
-does not exist on this Mac — the same thing the Raycast import already does for an image path.
-Carrying file bytes would make a backup unbounded and defeat the point of referencing in place.
 
 ## Dragging out
 

@@ -23,14 +23,11 @@ struct ClipboardTests {
         typeFilterSplitsTheHistory()
         typeFilterJoinsTheSearchMemo()
         persistence()
-        exportSeesPastTheMemoryWindow()
-        importedImagesArriveOnce()
         multiFileCopyMakesOneRowEach()
         referencedFilesOutliveTheirRows()
         filePathsAreNeverATextForm()
         fileEntriesAreFoundByNameAndFolder()
         fileKindClassification()
-        importedFilesArriveOncePerPath()
         defaultActionChords()
         plainTextSkipsTheFile()
         offersTextExtraction()
@@ -106,13 +103,14 @@ struct ClipboardTests {
     /// Retention sweeps everything around a pin but never the pin itself.
     static func pinsSurvivePruningAndTheWindow() {
         withStore { store, dir in
-            // Older than the case's 1-day retention, inside the default the import prunes against.
             let old = Date().addingTimeInterval(-2 * 86_400)
-            _ = store.importEntries([
-                entry("ancient-pinned", at: old),
-                entry("ancient-loose", at: old.addingTimeInterval(1)),
-                entry("fresh", at: Date())
-            ])
+            ClipboardSeed.insert(
+                [
+                    entry("ancient-pinned", at: old),
+                    entry("ancient-loose", at: old.addingTimeInterval(1)),
+                    entry("fresh", at: Date())
+                ], into: dir)
+            store.load()
             store.togglePinned(item(store, "ancient-pinned"))
 
             store.maxAge = 86_400
@@ -133,7 +131,7 @@ struct ClipboardTests {
 
     /// A pin must lead a filtered search even when the FTS statement's LIMIT cannot reach it.
     static func pinsLeadFilteredSearches() {
-        withStore { store, _ in
+        withStore { store, dir in
             var seed: [ClipboardItem] = []
             let base = Date().addingTimeInterval(-10_000)
             // The pinned hit is the oldest of 260 matches; the FTS statement stops at 200.
@@ -141,7 +139,8 @@ struct ClipboardTests {
             for i in 1...259 {
                 seed.append(entry("haystack filler \(i)", at: base.addingTimeInterval(Double(i))))
             }
-            _ = store.importEntries(seed)
+            ClipboardSeed.insert(seed, into: dir)
+            store.load()
             store.togglePinned(item(store, "needle in the haystack"))
 
             let results = store.search("haystack", filter: .all)
@@ -542,52 +541,6 @@ struct ClipboardTests {
         }
     }
 
-    /// A backup reads the whole table, not `items` — which stops at the memory window.
-    static func exportSeesPastTheMemoryWindow() {
-        withStore { store, _ in
-            let total = 1_200
-            store.importEntries(
-                (0..<total).map {
-                    ClipboardItem(
-                        id: UUID(), kind: .text, text: "entry \($0)", imagePath: nil,
-                        createdAt: Date().addingTimeInterval(TimeInterval($0 - total)),
-                        sourceBundleID: nil)
-                })
-            expect(store.items.count < total, "the resident window holds back some of the history")
-
-            var streamed = 0
-            var seen = Set<String>()
-            ClipboardStore.forEachStoredItem(inDatabaseAt: store.dbURL) { item in
-                streamed += 1
-                if let text = item.text { seen.insert(text) }
-            }
-            expect(streamed == total, "the export streams every row, not just the window")
-            expect(seen.count == total, "every row arrives exactly once")
-        }
-    }
-
-    /// Importing one backup twice must not leave a second copy of every image.
-    static func importedImagesArriveOnce() {
-        withStore { store, dir in
-            let staging = dir.appendingPathComponent("staged", isDirectory: true)
-            try? FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
-            let blob = staging.appendingPathComponent("blob.png")
-            let staged = ClipboardItem(imagePath: blob.path, sourceBundleID: nil)
-
-            for pass in 1...2 {
-                try? Data("png".utf8).write(to: blob)
-                let inserted = ClipboardStore.importStoredItems(
-                    inDatabaseAt: store.dbURL, adoptingImagesInto: store.imagesDir, [staged])
-                expect(inserted == (pass == 1 ? 1 : 0), "pass \(pass) inserts \(2 - pass) row(s)")
-            }
-            store.load()
-            expect(store.items.count == 1, "the second import adds no row")
-            let images =
-                (try? FileManager.default.contentsOfDirectory(atPath: store.imagesDir.path)) ?? []
-            expect(images == ["blob.png"], "and no second copy of the blob")
-        }
-    }
-
     /// One row per file, and the first file copied leads the history.
     static func multiFileCopyMakesOneRowEach() {
         withStore { store, _ in
@@ -657,19 +610,6 @@ struct ClipboardTests {
         expect(ClipboardFileKind.of(path: "/a/b.m4a") == .audio, "an .m4a is audio")
         expect(ClipboardFileKind.of(path: "/a/README") == .other, "a bare name is not a folder")
         expect(ClipboardFileKind.of(path: "/a/b", isDirectory: true) == .folder, "a folder is one")
-    }
-
-    /// `importKey` must key a file row off its path, or every file collides into one row.
-    static func importedFilesArriveOncePerPath() {
-        withStore { store, _ in
-            let a = ClipboardItem(filePath: "/tmp/one.pdf", sourceBundleID: nil)
-            let b = ClipboardItem(filePath: "/tmp/two.pdf", sourceBundleID: nil)
-            expect(store.importEntries([a, b]) == 2, "two distinct paths import as two rows")
-            expect(store.importEntries([a]) == 0, "and re-importing one adds nothing")
-            expect(
-                store.items.allSatisfy { $0.imagePath == nil },
-                "an imported file row is never adopted into imagesDir")
-        }
     }
 
     /// The default takes ↵ and Paste its chord; the Paste and Copy defaults keep their old pair.

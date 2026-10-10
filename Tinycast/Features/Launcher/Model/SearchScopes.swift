@@ -16,7 +16,7 @@ enum SearchScopes {
         "~/Applications"
     ]
 
-    /// Tilde-abbreviated and unslashed, so a settings backup stays portable across machines.
+    /// Tilde-abbreviated and unslashed, so settings.json stays portable across machines.
     static func abbreviate(_ path: String) -> String {
         let trimmed = trimTrailingSlash(path)
         return (trimmed as NSString).abbreviatingWithTildeInPath
