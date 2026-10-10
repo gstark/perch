@@ -229,7 +229,7 @@ Tinycast/
   Assets.xcassets/  the app icon and the bundled image sets some catalog symbols resolve to
   Features/
     PaletteRowIndex.swift   the flat selection index — palette-owned, so it sits at the top
-    Launcher/ Clipboard/ Calculator/ Emoji/ HotKeys/ WindowManagement/ CPUMeter/ Proxmox/ Settings/
+    Launcher/ Clipboard/ Calculator/ Emoji/ HotKeys/ WindowManagement/ CPUMeter/ Proxmox/ GitWatch/ Settings/
         Model/      pure — the harness inputs
         Service/    effects — stores, monitors, runners, AppKit glue
         UI/         screens, views, and the feature's coordinator

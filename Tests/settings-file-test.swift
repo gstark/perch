@@ -46,7 +46,8 @@ struct SettingsFileTest {
             "sections follow the Settings sidebar",
             SettingsFileKey.sections == [
                 "general", "appearance", "hyperKey", "calculator", "search", "applications",
-                "systemSettings", "commands", "windowManagement", "clipboard", "emoji", "proxmox"
+                "systemSettings", "commands", "windowManagement", "clipboard", "emoji", "proxmox",
+                "gitWatch"
             ])
 
         // A file that could switch one of these on would grant what only the app may ask for.

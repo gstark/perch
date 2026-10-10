@@ -73,6 +73,8 @@ enum SettingsFileSchema {
         case .emojiCommands: return launcher.commandsBinding(for: key, owner: .emoji)
         case .proxmoxAddress: return bind(settings, \.proxmoxAddress)
         case .proxmoxTokenID: return bind(settings, \.proxmoxTokenID)
+        case .gitWatchMachines:
+            return bind(settings, \.gitWatchMachines) { GitWatchMachine.normalize($0) }
         }
     }
 
@@ -102,5 +104,21 @@ extension ClipboardRetention: SettingsFileToken {
         case .year: 365
         case .forever: "forever"
         }
+    }
+}
+
+extension GitWatchMachine: SettingsFileValue {
+    init?(settingsJSON: SettingsFileJSON) {
+        guard let host = settingsJSON["host"]?.string,
+            let roots = settingsJSON["roots"].flatMap([String].init(settingsJSON:)),
+            let ignored = [String](settingsJSON: settingsJSON["ignored"] ?? .array([]))
+        else { return nil }
+        self.init(host: host, roots: roots, ignoredPaths: ignored)
+    }
+
+    var settingsJSON: SettingsFileJSON {
+        .object([
+            "host": .string(host), "roots": roots.settingsJSON, "ignored": ignoredPaths.settingsJSON
+        ])
     }
 }

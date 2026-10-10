@@ -109,7 +109,7 @@ enum SettingsSearchCatalog {
 
     static let entries: [SettingsSearchEntry] =
         general + applications + systemSettings + commands + clipboard + windowManagement + emoji
-        + proxmox + permissions
+        + proxmox + gitWatch + permissions
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -282,6 +282,14 @@ enum SettingsSearchCatalog {
         .init(
             .proxmoxCertificate, "Trusted Certificate",
             keywords: ["fingerprint", "tls", "ssl", "self-signed", "pin"])
+    ]
+
+    private static let gitWatch: [SettingsSearchEntry] = [
+        .init(
+            pane: .gitWatch,
+            keywords: ["git", "repository", "unpushed", "commits", "branch", "remote", "push"]),
+        .init(.gitWatchScan, "Scan Now", keywords: ["refresh", "check", "repos"]),
+        .init(.gitWatchAddMachine, "SSH Host", keywords: ["remote", "server", "machine", "ssh"])
     ]
 
     private static let permissions: [SettingsSearchEntry] = [

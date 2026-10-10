@@ -69,6 +69,7 @@ final class AppCore {
     @ObservationIgnored private(set) lazy var calculatorCoordinator = CalculatorCoordinator(
         calcHistory: calcHistory, paletteCoordinator: paletteCoordinator, core: self)
     @ObservationIgnored private(set) lazy var proxmoxCoordinator = ProxmoxCoordinator(core: self)
+    @ObservationIgnored private(set) lazy var gitWatchCoordinator = GitWatchCoordinator(core: self)
 
     let cpuSampler = CPUSampler()
     @ObservationIgnored private(set) lazy var statusItem = StatusItemController(
@@ -104,6 +105,7 @@ final class AppCore {
             applyAppearance()
             observeEffectiveAppearance()
             statusItem.start()
+            gitWatchCoordinator.start()
             pinnedEmoji.onPersistenceFailure = { [weak self] in
                 self?.showMessage("Couldn't save Emoji & Symbols pins", tone: .danger)
             }
@@ -220,6 +222,7 @@ final class AppCore {
 
     private func observeFeatureSwitches() {
         track({ _ = $0.showInMenuBar }, reproject: { $0.statusItem.applyVisibility() })
+        track({ _ = $0.gitWatchMachines }, reproject: { $0.gitWatchCoordinator.refreshStatusItem() })
         track(
             {
                 _ = $0.windowManagementEnabled

@@ -29,5 +29,6 @@ open with an `## Invariants` section; read it before changing anything in that a
 [window management](features/window-management.md) ·
 [settings file](features/settings-file.md) ·
 [CPU meter](features/cpu-meter.md) ·
-[Proxmox](features/proxmox.md)
+[Proxmox](features/proxmox.md) ·
+[Git Watch](features/git-watch.md)
 

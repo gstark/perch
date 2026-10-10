@@ -4,8 +4,9 @@ The status item is the meter: one bar per core, and a menu that lists the busies
 
 ## Invariants
 
-- **One status item.** `StatusItemController` owns the only `NSStatusItem`. Both clicks open the same
-  menu, and `menuNeedsUpdate` rebuilds it each time it opens.
+- **One status item for the meter.** `StatusItemController` owns the meter's `NSStatusItem`, and
+  [Git Watch](git-watch.md) owns the only other one. Both clicks open the same menu, and
+  `menuNeedsUpdate` rebuilds it each time it opens.
 - **The math stays in `Model/`.** `CPULoad`, `ProcessLoad` and `MeterLayout` import neither AppKit nor
   SwiftUI, so `Tests/cpu-meter-test.swift` compiles them directly.
 - **Reads happen off the main actor.** `CPUSampler` reads `host_processor_info` and every process's

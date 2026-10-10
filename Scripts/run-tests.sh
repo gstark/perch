@@ -304,6 +304,9 @@ run settings-file-test     Tinycast/Features/Settings/Model/*.swift \
                            Tinycast/Platform/AppPaths.swift
 run cpu-meter-test         Tinycast/Features/CPUMeter/Model/*.swift
 run proxmox-test           Tinycast/Features/Proxmox/Model/*.swift
+run git-watch-test         Tinycast/Features/GitWatch/Model/*.swift \
+                           Tinycast/Features/GitWatch/Service/GitWatchScanner.swift \
+                           Tinycast/Platform/ProcessExit.swift
 run settings-history-test  Tinycast/Features/Settings/SettingsTab.swift \
                            Tinycast/Features/Settings/SettingsHistory.swift \
                            Tinycast/Features/Settings/SettingsAnchor.swift \

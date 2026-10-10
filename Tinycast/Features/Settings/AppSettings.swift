@@ -122,6 +122,14 @@ final class AppSettings {
         }
     }
 
+    /// Always starts with this Mac; `GitWatchMachine.normalize` keeps one machine per host.
+    var gitWatchMachines: [GitWatchMachine] {
+        didSet {
+            defaults.set(
+                try? JSONEncoder().encode(gitWatchMachines), forKey: Key.gitWatchMachines.rawValue)
+        }
+    }
+
     /// How long a closed palette keeps its state before popping back to the root launcher.
     var popToRootTimeout: PopToRootTimeout {
         didSet { defaults.set(popToRootTimeout.rawValue, forKey: Key.popToRootTimeout.rawValue) }
@@ -285,6 +293,9 @@ final class AppSettings {
         proxmoxTokenID = defaults.string(forKey: Key.proxmoxTokenID.rawValue) ?? ""
         proxmoxCertificateFingerprint =
             defaults.string(forKey: Key.proxmoxCertificateFingerprint.rawValue)
+        gitWatchMachines = GitWatchMachine.normalize(
+            defaults.data(forKey: Key.gitWatchMachines.rawValue)
+                .flatMap { try? JSONDecoder().decode([GitWatchMachine].self, from: $0) } ?? [])
         popToRootTimeout =
             PopToRootTimeout(rawValue: defaults.integer(forKey: Key.popToRootTimeout.rawValue))
             ?? .immediately
