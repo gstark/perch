@@ -325,6 +325,23 @@ struct CalcTests {
         expectDisplay("2*3 kg", "6 kg")  // an operator keeps the answer in the units written
         expectDisplay("20 celsius", "68 °F")
         expectDisplay("50cm", "19.68503937 in")
+        // A bare quantity also lists the category's other units beneath its card
+        expectAlternatives(
+            "1 quart",
+            [
+                "946.352946 mL", "94.6352946 cL", "9.46352946 dL", "4 cup",
+                "64 tbsp", "192 tsp", "0.25 gal", "2 pt", "32 fl oz", "946,352.946 mm³",
+                "946.352946 cm³", "0.946352946 dm³", "0.000946352946 m³", "57.75 in³",
+                "0.03342013889 ft³", "0.001237782922 yd³", "0.2081685462 UK gal",
+                "0.8326741846 UK qt", "1.665348369 UK pt", "33.30696739 UK fl oz"
+            ])
+        expectAlternatives("20 celsius", ["293.15 K"])
+        expectAlternatives("1m", [
+            "1,000 mm", "100 cm", "10 dm", "0.001 km", "39.37007874 in", "3.280839895 ft",
+            "1.093613298 yd", "0.0006213711922 mi", "0.0005399568035 nmi"
+        ])
+        expectAlternatives("10km to mi", [])
+        expectAlternatives("2*3 kg", [])
         // Ambiguous single-letter aliases stay app searches, not bare temperatures
         expectNil("5 k")
         expectNil("100 c")
@@ -1905,6 +1922,19 @@ struct CalcTests {
     /// The region currency is injected, so the suite ignores the host's region.
     static func label(_ query: String, _ region: String?) -> String {
         region.map { "\(query) [region \($0)]" } ?? query
+    }
+
+    static func expectAlternatives(_ query: String, _ expected: [String]) {
+        guard let result = CalcEngine.evaluate(query, now: clock.now, calendar: clock.calendar, rates: fx)
+        else {
+            fail(query, expected: "\(expected)", got: "nil")
+            return
+        }
+        let displays = result.alternatives.map { alternative -> String in
+            guard case .value(let display, _) = alternative.payload else { return "error" }
+            return display
+        }
+        check(query + " [alternatives]", expected: "\(expected)", got: "\(displays)")
     }
 
     static func expectBadges(

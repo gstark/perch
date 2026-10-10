@@ -62,7 +62,13 @@ Single ASCII words return immediately: a bare app name, constant or date keyword
 
 `CalcExpressionParser` is the sole precedence-climbing evaluator, returning `CalcValue` for numbers,
 measurements, currencies and booleans. `CalcQuantity` turns those values into cards and applies display
-policy. Scalar operands in conversions and percent phrases use the same parser's `scalar` projection;
+policy.
+
+**A bare quantity also lists its other units.** `1 quart` answers `0.946352946 L` on the card, and
+`CalcResult.alternatives` carries the same amount in every other unit of the category. The launcher
+lists them as selectable rows under a Conversions header, and each row copies like the card. The list
+reads `CalcUnits.listed`: the hand-written catalog records in order, so generated prefixes such as
+petameters never appear. An explicit target (`1 qt to ml`) or any operator gives no list. Scalar operands in conversions and percent phrases use the same parser's `scalar` projection;
 there is no second arithmetic parser or fallback evaluation of a completed scalar query.
 
 `CalcTokenizer` scans Unicode scalars, retaining canonical-equivalent accented currency names.

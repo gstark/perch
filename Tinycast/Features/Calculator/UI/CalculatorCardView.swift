@@ -75,6 +75,48 @@ struct CalculatorCard: View {
     }
 }
 
+/// One of the card's other-unit answers: the value leads, the unit's name trails like a kind label.
+struct CalcConversionRow: View {
+    @Environment(\.metrics) private var metrics
+    @Environment(AppCore.self) private var core
+    let result: CalcResult
+    let selected: Bool
+    @State private var hovered = false
+
+    private var fill: Color {
+        if selected { return Theme.Colors.selection }
+        if hovered { return Theme.Colors.rowHover }
+        return .clear
+    }
+
+    var body: some View {
+        let result = core.calcNumberFormat.localized(result)
+        HStack(spacing: metrics.spacing.lg) {
+            Image(systemName: "equal")
+                .foregroundStyle(.tertiary)
+                .frame(width: metrics.size.resultRowIcon, height: metrics.size.resultRowIcon)
+            if case .value(let display, _) = result.payload {
+                Text(display)
+                    .font(metrics.typography.rowTitle)
+                    .lineLimit(1)
+            }
+            Spacer()
+            if let badge = result.targetBadge {
+                Text(badge)
+                    .font(metrics.typography.rowTrailing)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .padding(.horizontal, metrics.spacing.md)
+        .padding(.vertical, metrics.spacing.sm)
+        .background(
+            RoundedRectangle(cornerRadius: metrics.radius.row, style: .continuous)
+                .fill(fill)
+        )
+        .armedHover($hovered)
+    }
+}
+
 /// Dims the words that join an expression, so the values they join read first.
 private enum CalcSyntax {
     static func highlighted(_ text: String) -> AttributedString {

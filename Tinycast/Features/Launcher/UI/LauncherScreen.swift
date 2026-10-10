@@ -67,7 +67,7 @@ struct LauncherScreen: PaletteScreen {
         self.favoriteCount = pinsFavorites ? ordered.favoriteCount : 0
         self.suggestionCount = pinsFavorites ? ordered.suggestionCount : 0
         if let calc {
-            self.rows = [.calc(calc)] + entries
+            self.rows = [.calc(calc)] + calc.alternatives.map(Row.conversion) + entries
         } else if let color {
             self.rows = [.color(color)] + entries
         } else {
@@ -78,12 +78,14 @@ struct LauncherScreen: PaletteScreen {
     /// The card is a row like any other, so the flat selection indexes `rows` with no offset.
     enum Row: Equatable, Identifiable {
         case calc(CalcResult)
+        case conversion(CalcResult)
         case color(ColorValue)
         case entry(AppEntry)
 
         var id: String {
             switch self {
             case .calc: return "calc-card"
+            case .conversion(let result): return LauncherList.conversionRowID(result)
             case .color: return "color-card"
             case .entry(let app): return app.id
             }
@@ -98,7 +100,7 @@ struct LauncherScreen: PaletteScreen {
 
     var primaryActionTitle: String {
         switch row(at: clampedSelection) {
-        case .calc: return "Copy Answer"
+        case .calc, .conversion: return "Copy Answer"
         case .color: return "Copy Color"
         case .entry(let app): return app.kind.descriptor.openVerb
         case nil: return "Open Application"
@@ -109,6 +111,14 @@ struct LauncherScreen: PaletteScreen {
         rows.indices.contains(selection) ? rows[selection] : nil
     }
 
+    /// The card and its conversion rows answer alike, so every calculator action reads this.
+    private func calcResult(at selection: Int) -> CalcResult? {
+        switch row(at: selection) {
+        case .calc(let result), .conversion(let result): return result
+        default: return nil
+        }
+    }
+
     private func entry(at selection: Int) -> AppEntry? {
         guard case .entry(let app) = row(at: selection) else { return nil }
         return app
@@ -117,7 +127,7 @@ struct LauncherScreen: PaletteScreen {
     private func isCardSelected(_ selection: Int) -> Bool {
         switch row(at: selection) {
         case .calc, .color: return true
-        case .entry, nil: return false
+        case .conversion, .entry, nil: return false
         }
     }
 
@@ -129,13 +139,12 @@ struct LauncherScreen: PaletteScreen {
 
     /// An error card is selectable but has no action: it must drive neither the pill nor ⌘K.
     func hasPrimaryAction(at selection: Int) -> Bool {
-        guard case .calc(let result) = row(at: selection) else { return true }
-        return result.isActionable
+        calcResult(at: selection)?.isActionable ?? true
     }
 
     func actions(at selection: Int) -> PopoverMenuContent? {
         switch row(at: selection) {
-        case .calc(let result):
+        case .calc(let result), .conversion(let result):
             return result.isActionable ? CalcActionsMenu.content(result: result, core: core) : nil
         case .color(let color):
             return ColorActionsMenu.content(color: color, core: core)
@@ -157,7 +166,8 @@ struct LauncherScreen: PaletteScreen {
     func activate(at selection: Int) {
         switch row(at: selection) {
         // Error cards no-op — copyCalculatorResult only acts on value payloads.
-        case .calc(let result): core.calculatorCoordinator.copyCalculatorResult(result)
+        case .calc(let result), .conversion(let result):
+            core.calculatorCoordinator.copyCalculatorResult(result)
         case .color(let color):
             core.clipboardCoordinator.copyColor(color, as: ColorFormat.primary(for: color))
         case .entry(let app):
@@ -169,7 +179,7 @@ struct LauncherScreen: PaletteScreen {
 
     /// ⌘↵ — an answer becomes the query, an entry on disk is revealed.
     func secondary(at selection: Int) -> Bool {
-        if case .calc(let result) = row(at: selection) {
+        if let result = calcResult(at: selection) {
             return core.calculatorCoordinator.putAnswerInSearchBar(result)
         }
         guard let app = entry(at: selection), app.canRevealInFinder else { return false }
@@ -198,7 +208,7 @@ struct LauncherScreen: PaletteScreen {
     }
 
     private func copyCalculation(at selection: Int) -> Bool {
-        guard case .calc(let result) = row(at: selection), result.isActionable else { return false }
+        guard let result = calcResult(at: selection), result.isActionable else { return false }
         core.calculatorCoordinator.copyCalculationWithExpression(result)
         return true
     }
@@ -298,7 +308,7 @@ struct LauncherScreen: PaletteScreen {
     }
 
     private func select(row index: Int) {
-        vm.selection = index + (leadCard == nil ? 0 : 1)
+        vm.selection = index + rows.count - results.count
         scrollToFollow()
     }
 
@@ -328,6 +338,7 @@ struct LauncherScreen: PaletteScreen {
             showSections: showSections,
             scroll: scroll,
             card: leadCard,
+            conversions: calc?.alternatives ?? [],
             cardSelected: isCardSelected(selection),
             onActivateCard: {
                 vm.selection = 0
@@ -336,6 +347,16 @@ struct LauncherScreen: PaletteScreen {
             onCardActions: {
                 guard hasPrimaryAction(at: 0) else { return }
                 vm.selection = 0
+                openActions()
+            },
+            onActivateConversion: { result in
+                guard let index = rows.firstIndex(of: .conversion(result)) else { return }
+                vm.selection = index
+                activate(at: index)
+            },
+            onConversionActions: { result in
+                guard let index = rows.firstIndex(of: .conversion(result)) else { return }
+                vm.selection = index
                 openActions()
             },
             onActivate: {

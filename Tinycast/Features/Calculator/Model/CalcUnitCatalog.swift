@@ -1,9 +1,11 @@
 import Foundation
 
 enum CalcUnitCatalog {
-    static func makeIndex() -> [String: UnitDef] {
+    /// `listed` holds only the records below, in order, so generated prefixes never crowd a list.
+    static func make() -> (index: [String: UnitDef], listed: [UnitCategory: [UnitDef]]) {
         var table: [String: UnitDef] = [:]
         table.reserveCapacity(1024)
+        var listed: [UnitCategory: [UnitDef]] = [:]
         var category = UnitCategory.length
         func add(_ definition: UnitDef, _ names: [String]) {
             for name in names { table[name] = definition }
@@ -23,6 +25,7 @@ enum CalcUnitCatalog {
                 preconditionFailure("Invalid built-in unit record")
             }
             let definition = UnitDef(String(fields[0]), String(fields[1]), category, factor, offset: offset)
+            listed[category, default: []].append(definition)
             for name in fields[3].split(separator: ",") { table[String(name)] = definition }
         }
 
@@ -61,7 +64,7 @@ enum CalcUnitCatalog {
             }
         }
 
-        return table
+        return (table, listed)
     }
 
     // Category headers; records hold symbol, label, scale, aliases and optional offset.

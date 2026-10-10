@@ -159,5 +159,17 @@ enum CalcUnits {
         "px/mm": ("ppi", false), "px/m": ("ppi", false)
     ]
 
-    static let byName = CalcUnitCatalog.makeIndex()
+    private static let catalog = CalcUnitCatalog.make()
+    static let byName = catalog.index
+    static let listed = catalog.listed
+
+    /// Every other listed unit of the category, for the list beneath a bare conversion's card.
+    static func alternatives(of bare: BareConversion) -> [(unit: UnitDef, output: Double)] {
+        listed[bare.from.category, default: []].compactMap { unit in
+            // A compound answer reads feet+inches, so plain decimal feet still earns its own row.
+            guard unit != bare.from, bare.compound || unit != bare.to else { return nil }
+            let output = (bare.input * bare.from.factor + bare.from.offset - unit.offset) / unit.factor
+            return output.isFinite ? (unit, output) : nil
+        }
+    }
 }

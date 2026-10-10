@@ -31,16 +31,19 @@ struct CalcResult: Equatable, Sendable {
     let payload: Payload
     /// False when the copy text, typed back as a query, is not this answer: dates, times, booleans.
     let canChain: Bool
+    /// The same amount in the category's other units; only a bare quantity like `1 quart` has any.
+    let alternatives: [CalcResult]
 
     init(
         expression: String, sourceBadge: String? = nil, targetBadge: String? = nil, payload: Payload,
-        canChain: Bool = true
+        canChain: Bool = true, alternatives: [CalcResult] = []
     ) {
         self.expression = expression
         self.sourceBadge = sourceBadge
         self.targetBadge = targetBadge
         self.payload = payload
         self.canChain = canChain
+        self.alternatives = alternatives
     }
 
     /// True only for a copyable value; an error card has no primary action and no actions menu.
@@ -162,11 +165,17 @@ enum CalcEngine {
             } else {
                 payload = .measurement(bare.output, unit: bare.to)
             }
+            let expression = "\(CalcFormatter.display(bare.input)) \(bare.from.symbol)"
             return CalcResult(
-                expression: "\(CalcFormatter.display(bare.input)) \(bare.from.symbol)",
+                expression: expression,
                 sourceBadge: bare.from.name,
                 targetBadge: bare.to.name,
-                payload: payload)
+                payload: payload,
+                alternatives: CalcUnits.alternatives(of: bare).map {
+                    CalcResult(
+                        expression: expression, sourceBadge: bare.from.name, targetBadge: $0.unit.name,
+                        payload: .measurement($0.output, unit: $0.unit))
+                })
         }
 
         // Natural-language percent: `20% off 500`, `50 as % of 200`.

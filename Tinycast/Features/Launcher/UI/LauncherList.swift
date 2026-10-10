@@ -13,9 +13,13 @@ struct LauncherList: View {
     let scroll: ScrollIntent
     /// The card at flat index 0, when one leads. At most one ever does.
     var card: LeadCard?
+    /// The calculator card's other-unit answers, listed right under it.
+    var conversions: [CalcResult] = []
     var cardSelected = false
     var onActivateCard: () -> Void = {}
     var onCardActions: () -> Void = {}
+    var onActivateConversion: (CalcResult) -> Void = { _ in }
+    var onConversionActions: (CalcResult) -> Void = { _ in }
     let onActivate: (AppEntry) -> Void
     let onActions: (AppEntry) -> Void
     let onDropped: () -> Void
@@ -41,15 +45,21 @@ struct LauncherList: View {
         }
     }
 
+    nonisolated static func conversionRowID(_ result: CalcResult) -> String {
+        "calc-conversion-" + (result.targetBadge ?? "")
+    }
+
     private enum Row: Identifiable {
         case header(String)
         case card(LeadCard)
+        case conversion(CalcResult)
         /// `slot` is the row's ⌘-digit, carried from the section build rather than searched.
         case app(AppEntry, slot: Character?)
         var id: String {
             switch self {
             case .header(let title): return "header-" + title
             case .card(let card): return card.rowID
+            case .conversion(let result): return LauncherList.conversionRowID(result)
             case .app(let app, _): return app.id
             }
         }
@@ -63,6 +73,7 @@ struct LauncherList: View {
     private var rows: [Row] {
         var cardRows: [Row] = []
         if let card { cardRows = [.header(card.sectionTitle), .card(card)] }
+        if !conversions.isEmpty { cardRows += [.header("Conversions")] + conversions.map(Row.conversion) }
         guard showSections else {
             guard !results.isEmpty else { return cardRows }
             return cardRows + [.header("Results")] + results.map { .app($0, slot: nil) }
@@ -123,6 +134,13 @@ struct LauncherList: View {
                                         .onRightClick(perform: onCardActions)
                                         .padding(.bottom, metrics.spacing.xs)
                                         .selectionFrame(cardSelected)
+                                case .conversion(let result):
+                                    let selected = row.id == selectedRowID
+                                    CalcConversionRow(result: result, selected: selected)
+                                        .contentShape(Rectangle())
+                                        .onTapGesture { onActivateConversion(result) }
+                                        .onRightClick { onConversionActions(result) }
+                                        .selectionFrame(selected)
                                 case .app(let app, let slot):
                                     AppRow(
                                         app: app,
