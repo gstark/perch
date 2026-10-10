@@ -6,9 +6,11 @@ Perch is a modified version of [Tinycast](https://github.com/abue-ammar/tinycast
 
 ## Modifications
 
-Gavin Stark forked Tinycast at upstream commit `c048b316` on 2026-10-05. Perch removes most of
-Tinycast's features, renames the app, and adds a per-core CPU meter. The git history records every
-change. Modifications are Copyright (C) 2026 Gavin Stark, under the same licence.
+Gavin Stark forked Tinycast at upstream commit `c048b316` on 2026-10-05. Perch renames the app,
+removes most of Tinycast's features, and adds new ones. The git history records every change and
+its date. Modifications are Copyright (C) 2026 Gavin Stark, under the same licence.
+
+Perch is not the official Tinycast app and is not affiliated with the Tinycast project.
 
 ## Unicode CLDR and emoji data
 
