@@ -1,6 +1,6 @@
 # CPU meter
 
-The status item is the meter: one cell per core, and a menu that lists the busiest processes.
+The status item is the meter: one bar per core, and a menu that lists the busiest processes.
 
 ## Invariants
 
@@ -10,13 +10,22 @@ The status item is the meter: one cell per core, and a menu that lists the busie
   SwiftUI, so `Tests/cpu-meter-test.swift` compiles them directly.
 - **Reads happen off the main actor.** `CPUSampler` reads `host_processor_info` and every process's
   `PROC_PIDTASKINFO` once a second in a detached task, then publishes on the main actor.
-- **The core count is read at runtime.** Nothing hardcodes it; the layout derives from the sample.
-- **The look is constants, not settings.** Colors live in `MeterImage`, geometry in `MeterLayout`.
+- **The core count is read at runtime.** Nothing hardcodes it; the layout derives from the sample, and
+  the efficiency cluster's size from `hw.perflevel1.logicalcpu`, which an Intel Mac lacks.
+- **The look is constants, not settings.** Colors and the efficiency-core opacity live in `MeterImage`,
+  geometry and draw order in `MeterLayout`, and the load cuts that pick a colour in `LoadZone`.
 
 ## Drawing
 
-Cells sit in two rows; core 0 is the top of the first column and core 1 the bottom. Each cell fills
-left to right: user time (nice included) in red, then system time in yellow, over a faint track.
+Bars stand in one row, each 6 points wide and 16 tall with a 2-point gap. Performance cores draw
+first and the efficiency cluster last, at 60% opacity, so the dim group at the right end reads as the
+small cores rather than a lighter load. Apple silicon numbers the efficiency cores lowest, which is
+why `MeterLayout.order` rotates them to the end instead of drawing in core order. A bar
+fills from the bottom with the core's total share (user, nice and system together) over a faint track,
+so the row reads as a skyline. The whole bar takes one colour from its `LoadZone`: `systemBlue` under
+60%, `systemOrange` under 80%, `systemRed` from there, the same cuts Stats uses. System colours resolve
+per appearance, so the bars read on a light and a dark menu bar alike. The user/system split is not
+drawn: at menu-bar size two hues in one bar were slivers, and the process menu carries the detail.
 
 ## Process list
 

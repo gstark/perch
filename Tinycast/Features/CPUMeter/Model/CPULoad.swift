@@ -14,6 +14,22 @@ struct CoreLoad: Equatable, Sendable {
     var system: Double
 
     static let idle = CoreLoad(user: 0, system: 0)
+
+    var total: Double { user + system }
+    var zone: LoadZone { LoadZone(load: total) }
+}
+
+/// How busy a core is, for the colour its bar takes; the cuts are the ones Stats draws with.
+enum LoadZone: Equatable, Sendable {
+    case low, high, saturated
+
+    init(load: Double) {
+        switch load {
+        case ..<0.6: self = .low
+        case ..<0.8: self = .high
+        default: self = .saturated
+        }
+    }
 }
 
 enum CPULoad {

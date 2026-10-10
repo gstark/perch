@@ -1,6 +1,6 @@
 import Foundation
 
-/// The meter's math: per-core shares, per-process percentages, and where each cell is drawn.
+/// The meter's math: per-core shares and zones, per-process percentages, and where each bar is drawn.
 @main
 @MainActor
 struct CPUMeterTests {
@@ -21,6 +21,7 @@ struct CPUMeterTests {
     static func main() {
         coreLoads()
         processLoads()
+        zones()
         layout()
         print("\(passes) passed, \(failures) failed")
         if failures > 0 { exit(1) }
@@ -79,13 +80,25 @@ struct CPUMeterTests {
             "no elapsed time measures nothing")
     }
 
+    static func zones() {
+        expect(CoreLoad(user: 0.3, system: 0.2).zone == .low, "half busy is still low")
+        expect(CoreLoad(user: 0.6, system: 0).zone == .high, "60 percent is where low ends")
+        expect(CoreLoad(user: 0.5, system: 0.29).zone == .high, "system time counts toward the zone")
+        expect(CoreLoad(user: 0.8, system: 0).zone == .saturated, "80 percent is where high ends")
+        expect(CoreLoad.idle.zone == .low, "an idle core is low")
+    }
+
     static func layout() {
-        let twelve = MeterLayout(coreCount: 12)
-        expect(twelve.columns == 6, "twelve cores make six columns of two")
-        expect(MeterLayout(coreCount: 7).columns == 4, "an odd count rounds up to a last half column")
-        expect(twelve.cell(for: 0).minY == 0 && twelve.cell(for: 1).minY > twelve.cell(for: 0).maxY, "core 1 sits under core 0")
-        expect(twelve.cell(for: 2).minX > twelve.cell(for: 0).maxX, "core 2 starts the next column")
-        expect(twelve.cell(for: 11).maxX == twelve.size.width, "the last column ends at the image's edge")
-        expect(twelve.cell(for: 1).maxY == twelve.size.height, "the bottom row ends at the image's edge")
+        let twelve = MeterLayout(coreCount: 12, efficiencyCount: 4)
+        expect(twelve.size.height == MeterLayout.barHeight, "one row, so the image is one bar tall")
+        expect(twelve.bar(atSlot: 0).minX == 0, "the first slot starts at the left edge")
+        expect(twelve.bar(atSlot: 1).minX == twelve.bar(atSlot: 0).maxX + MeterLayout.gap, "slots sit one gap apart")
+        expect(twelve.bar(atSlot: 11).maxX == twelve.size.width, "the last slot ends at the image's edge")
+        expect(twelve.bar(atSlot: 5).maxY == twelve.size.height, "every bar reaches the bottom edge")
+        expect(twelve.order == [4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3], "performance cores draw first, then efficiency")
+        expect(twelve.isEfficiency(3) && !twelve.isEfficiency(4), "the lowest-numbered cores are the efficiency ones")
+        expect(MeterLayout(coreCount: 8).order == Array(0..<8), "one cluster draws in core order")
+        expect(MeterLayout(coreCount: 2, efficiencyCount: 5).efficiencyCount == 2, "the efficiency count never exceeds the cores")
+        expect(MeterLayout(coreCount: 0).size.width == 0, "no cores draw nothing")
     }
 }

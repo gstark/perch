@@ -59,6 +59,14 @@ final class CPUSampler {
 
     private nonisolated static let host = mach_host_self()
 
+    /// Apple silicon numbers its efficiency cluster first; an Intel Mac has no second level, so 0.
+    nonisolated static let efficiencyCoreCount: Int = {
+        var count: Int32 = 0
+        var size = MemoryLayout<Int32>.size
+        guard sysctlbyname("hw.perflevel1.logicalcpu", &count, &size, nil, 0) == 0 else { return 0 }
+        return Int(count)
+    }()
+
     private nonisolated static func readCoreTicks() -> [CoreTicks] {
         var coreCount: natural_t = 0
         var info: processor_info_array_t?

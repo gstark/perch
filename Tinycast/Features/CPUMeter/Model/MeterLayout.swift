@@ -1,33 +1,33 @@
 import CoreGraphics
 
-/// Where each core's cell sits in the menu-bar image: two rows, filled column by column.
+/// Where each core's bar sits in the menu-bar image: one row, each bar filled from the bottom.
 struct MeterLayout: Equatable, Sendable {
-    static let rows = 2
-    static let cellWidth: CGFloat = 8
-    static let cellHeight: CGFloat = 7
-    static let rowGap: CGFloat = 1
-    static let columnGap: CGFloat = 9
+    static let barWidth: CGFloat = 6
+    static let barHeight: CGFloat = 16
+    static let gap: CGFloat = 2
 
     let coreCount: Int
+    let efficiencyCount: Int
 
-    var columns: Int { (coreCount + Self.rows - 1) / Self.rows }
-
-    var size: CGSize {
-        let cells = CGFloat(columns) * Self.cellWidth
-        let gaps = CGFloat(max(columns - 1, 0)) * Self.columnGap
-        let rowCells = CGFloat(Self.rows) * Self.cellHeight
-        let rowGaps = CGFloat(Self.rows - 1) * Self.rowGap
-        let width: CGFloat = cells + gaps
-        let height: CGFloat = rowCells + rowGaps
-        return CGSize(width: width, height: height)
+    init(coreCount: Int, efficiencyCount: Int = 0) {
+        self.coreCount = max(coreCount, 0)
+        self.efficiencyCount = min(max(efficiencyCount, 0), self.coreCount)
     }
 
-    /// Core 0 is the top of the first column, core 1 the bottom; y grows downward.
-    func cell(for core: Int) -> CGRect {
-        let column = CGFloat(core / Self.rows)
-        let row = CGFloat(core % Self.rows)
-        let x: CGFloat = column * (Self.cellWidth + Self.columnGap)
-        let y: CGFloat = row * (Self.cellHeight + Self.rowGap)
-        return CGRect(x: x, y: y, width: Self.cellWidth, height: Self.cellHeight)
+    var size: CGSize {
+        let bars = CGFloat(coreCount) * Self.barWidth
+        let gaps = CGFloat(max(coreCount - 1, 0)) * Self.gap
+        return CGSize(width: bars + gaps, height: Self.barHeight)
+    }
+
+    /// Cores in draw order: performance first, then the efficiency cluster macOS numbers lowest.
+    var order: [Int] { Array(efficiencyCount..<coreCount) + Array(0..<efficiencyCount) }
+
+    func isEfficiency(_ core: Int) -> Bool { core < efficiencyCount }
+
+    /// The slot's whole bar, track included; y grows downward, so the fill rises from `maxY`.
+    func bar(atSlot slot: Int) -> CGRect {
+        let x: CGFloat = CGFloat(slot) * (Self.barWidth + Self.gap)
+        return CGRect(x: x, y: 0, width: Self.barWidth, height: Self.barHeight)
     }
 }

@@ -33,7 +33,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     private func drawMeter(_ loads: [CoreLoad]) {
         guard let button = statusItem?.button else { return }
-        button.image = MeterImage.make(loads: loads)
+        button.image = MeterImage.make(loads: loads, efficiencyCount: CPUSampler.efficiencyCoreCount)
         let total: Double = loads.reduce(0) { $0 + $1.user + $1.system }
         let percent = loads.isEmpty ? 0 : Int((total / Double(loads.count) * 100).rounded())
         button.setAccessibilityValue("\(percent) percent")
