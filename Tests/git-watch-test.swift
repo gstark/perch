@@ -45,13 +45,29 @@ struct GitWatchTests {
         expect(report.unparsedLineCount == 2, "an unknown state and a stray line are counted")
         expect(report.atRisk.map(\.path) == ["/home/g/dev/a b"], "only the ahead repo is at risk")
         expect(
-            GitWatchRepoState.noRemote.isAtRisk && GitWatchRepoState.unpushed.isAtRisk
-                && !GitWatchRepoState.clean.isAtRisk && !GitWatchRepoState.error.isAtRisk,
-            "ahead, noRemote and unpushed are the at-risk states")
+            GitWatchRepoState.ahead.isAtRisk && GitWatchRepoState.unpushed.isAtRisk
+                && !GitWatchRepoState.noRemote.isAtRisk && !GitWatchRepoState.clean.isAtRisk
+                && !GitWatchRepoState.error.isAtRisk,
+            "only ahead and unpushed are at risk; a repo with no remote has nowhere to push")
         expect(
-            GitWatchFailure.exited(message: "").message == "The scan failed"
-                && GitWatchFailure.exited(message: "No route").message == "No route",
+            GitWatchFailure.exited(message: "").message == "The command failed"
+                && GitWatchFailure.exited(message: "No route\n").message == "No route",
             "an exit with no stderr still says something")
+        let rejected = """
+            To github.com:g/perch.git
+             ! [rejected]        main -> main (fetch first)
+            error: failed to push some refs to 'github.com:g/perch.git'
+            hint: Updates were rejected because the remote contains work that you do not
+            """
+        expect(
+            GitWatchFailure.exited(message: rejected).message
+                == "! [rejected]        main -> main (fetch first)",
+            "a push failure shows git's rejection line, not the last hint")
+
+        var marked = report
+        marked.markClean("/home/g/dev/a b")
+        expect(marked.atRisk.isEmpty, "a pushed repo stops counting at once")
+        expect(marked.repos.first?.state == .clean, "the pushed repo reads as clean")
     }
 
     static func machines() {
@@ -107,7 +123,8 @@ struct GitWatchTests {
         git("commit", "-q", "--allow-empty", "-m", "1", in: "loose")
         git("init", "-q", "-b", "main", "never")
         git("commit", "-q", "--allow-empty", "-m", "1", in: "never")
-        git("remote", "add", "origin", "../remote.git", in: "never")
+        git("init", "-q", "--bare", "-b", "main", "never.git")
+        git("remote", "add", "origin", "../never.git", in: "never")
         git("clone", "-q", "remote.git", "synced")
         git("init", "-q", "-b", "main", "node_modules/dep")
         git("commit", "-q", "--allow-empty", "-m", "1", in: "node_modules/dep")
@@ -137,6 +154,29 @@ struct GitWatchTests {
         expect(!report.repos.contains { $0.path.contains("node_modules") }, "node_modules is skipped")
         expect(report.missingRoots == [missing], "a missing root is reported and the scan goes on")
         expect(report.unparsedLineCount == 0, "every line parses")
+
+        for name in ["a b ahead", "never"] {
+            let path = root.appending(path: name).path
+            let pushed = await GitWatchShell.run(GitWatchScript.push(path: path, branch: "main"), on: machine)
+            if case .failure(let failure) = pushed { expect(false, "push \(name): \(failure.message)") }
+        }
+        guard case .success(let after) = await GitWatchScanner.scan(machine) else {
+            expect(false, "the scan after the push succeeds")
+            return
+        }
+        let names = Set(after.atRisk.map(\.name))
+        expect(!names.contains("a b ahead"), "a push to the upstream clears an ahead repo")
+        expect(!names.contains("never"), "a first push sets the upstream and clears an unpushed repo")
+        let blocked = root.appending(path: "synced").path
+        git("commit", "-q", "--allow-empty", "-m", "theirs", in: "a b ahead")
+        git("push", "-q", in: "a b ahead")
+        git("commit", "-q", "--allow-empty", "-m", "mine", in: "synced")
+        let rejected = await GitWatchShell.run(GitWatchScript.push(path: blocked, branch: "main"), on: machine)
+        guard case .failure(let failure) = rejected else {
+            expect(false, "a push that is not a fast-forward fails")
+            return
+        }
+        expect(failure.message.contains("rejected"), "a rejected push says so: \(failure.message)")
     }
 
     static func run(_ arguments: [String], in folder: URL) {

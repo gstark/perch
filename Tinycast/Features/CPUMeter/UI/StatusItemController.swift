@@ -1,11 +1,13 @@
 import AppKit
 
-/// Perch's one menu-bar item: the CPU meter. Either click opens the same menu, rebuilt each time.
+/// Perch's one menu-bar item: the CPU meter, with Git Watch's badge to its left when it has news.
 @MainActor
 final class StatusItemController: NSObject, NSMenuDelegate {
     private unowned let core: AppCore
     private let sampler: CPUSampler
     private var statusItem: NSStatusItem?
+    private var meter: NSImage?
+    private var gitWatchBadge: NSImage?
     private let menu = NSMenu()
 
     init(core: AppCore, sampler: CPUSampler) {
@@ -33,10 +35,42 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     private func drawMeter(_ loads: [CoreLoad]) {
         guard let button = statusItem?.button else { return }
-        button.image = MeterImage.make(loads: loads, efficiencyCount: CPUSampler.efficiencyCoreCount)
+        meter = MeterImage.make(loads: loads, efficiencyCount: CPUSampler.efficiencyCoreCount)
+        drawImage()
         let total: Double = loads.reduce(0) { $0 + $1.user + $1.system }
         let percent = loads.isEmpty ? 0 : Int((total / Double(loads.count) * 100).rounded())
         button.setAccessibilityValue("\(percent) percent")
+    }
+
+    /// The badge sits left of the meter, so the meter keeps its place as the item widens.
+    func applyGitWatch() {
+        let coordinator = core.gitWatchCoordinator
+        gitWatchBadge = GitWatchBadge.make(
+            count: coordinator.atRiskCount, isScanning: coordinator.isScanning)
+        drawImage()
+    }
+
+    private func drawImage() {
+        guard let button = statusItem?.button, let meter else { return }
+        button.image = gitWatchBadge.map { Self.joined($0, meter) } ?? meter
+    }
+
+    private static let badgeGap: CGFloat = 6
+
+    private static func joined(_ badge: NSImage, _ meter: NSImage) -> NSImage {
+        let size = NSSize(
+            width: badge.size.width + badgeGap + meter.size.width,
+            height: max(badge.size.height, meter.size.height))
+        let image = NSImage(size: size, flipped: false) { _ in
+            let badgeY = (size.height - badge.size.height) / 2
+            badge.draw(in: NSRect(origin: NSPoint(x: 0, y: badgeY), size: badge.size))
+            let meterOrigin = NSPoint(
+                x: size.width - meter.size.width, y: (size.height - meter.size.height) / 2)
+            meter.draw(in: NSRect(origin: meterOrigin, size: meter.size))
+            return true
+        }
+        image.isTemplate = false
+        return image
     }
 
     func applyVisibility() {
@@ -45,6 +79,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
+        GitWatchMenu.addItem(to: menu, coordinator: core.gitWatchCoordinator)
         addProcessItems(to: menu)
         menu.addItem(item("Open Activity Monitor") { _ in ProcessControl.openActivityMonitor() })
         if core.proxmoxCoordinator.hasAddress {

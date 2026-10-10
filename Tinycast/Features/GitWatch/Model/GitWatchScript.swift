@@ -12,10 +12,27 @@ enum GitWatchScript {
         return body.replacingOccurrences(of: "@SKIP@", with: skip) + scans + "exit 0\n"
     }
 
+    /// Pushes one branch with all output on stderr, so the exit status alone says if it worked.
+    static func push(path: String, branch: String) -> String {
+        "repo=\(quoted(path))\nbranch=\(quoted(branch))\n" + pushBody
+    }
+
     /// Single quotes pass every byte literally; an embedded quote closes, escapes and reopens them.
     static func quoted(_ text: String) -> String {
         "'" + text.replacingOccurrences(of: "'", with: #"'\''"#) + "'"
     }
+
+    private static let pushBody = #"""
+        export GIT_TERMINAL_PROMPT=0
+        upstream=$(git -C "$repo" rev-parse --abbrev-ref --symbolic-full-name "$branch@{upstream}" 2>/dev/null)
+        if [ -n "$upstream" ]; then
+          exec git -C "$repo" push "${upstream%%/*}" "$branch:${upstream#*/}" </dev/null 1>&2
+        fi
+        remote=$(git -C "$repo" remote | grep -x origin || git -C "$repo" remote | head -n 1)
+        if [ -z "$remote" ]; then echo "fatal: the repository has no remote" >&2; exit 1; fi
+        exec git -C "$repo" push --set-upstream "$remote" "$branch" </dev/null 1>&2
+
+        """#
 
     private static let body = #"""
         export GIT_OPTIONAL_LOCKS=0

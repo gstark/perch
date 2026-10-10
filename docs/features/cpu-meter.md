@@ -4,8 +4,8 @@ The status item is the meter: one bar per core, and a menu that lists the busies
 
 ## Invariants
 
-- **One status item for the meter.** `StatusItemController` owns the meter's `NSStatusItem`, and
-  [Git Watch](git-watch.md) owns the only other one. Both clicks open the same menu, and
+- **One status item.** `StatusItemController` owns the only `NSStatusItem`, and
+  [Git Watch](git-watch.md) adds a badge and a menu row to it. Both clicks open the same menu, and
   `menuNeedsUpdate` rebuilds it each time it opens.
 - **The math stays in `Model/`.** `CPULoad`, `ProcessLoad` and `MeterLayout` import neither AppKit nor
   SwiftUI, so `Tests/cpu-meter-test.swift` compiles them directly.
@@ -37,6 +37,13 @@ drawn: at menu-bar size two hues in one bar were slivers, and the process menu c
 - A click quits: an app through `NSRunningApplication.terminate()`, anything else with `SIGTERM`.
   Holding Option swaps every row for its alternate, Force Quit (`forceTerminate()` or `SIGKILL`).
 - Rows for processes another user owns are shown but disabled; the menu never asks for admin rights.
+
+## Git Watch badge
+
+While a scan runs or a repo is at risk, `GitWatchBadge` draws a symbol and the count, and
+`StatusItemController` joins it to the left of the meter in one image. The item grows to the left,
+so the meter stays in place. `AppCore` tracks the coordinator's count and scan state and calls
+`applyGitWatch()`.
 
 ## Menu
 

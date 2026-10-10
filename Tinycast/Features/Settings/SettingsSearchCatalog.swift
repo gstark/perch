@@ -287,7 +287,9 @@ enum SettingsSearchCatalog {
     private static let gitWatch: [SettingsSearchEntry] = [
         .init(
             pane: .gitWatch,
-            keywords: ["git", "repository", "unpushed", "commits", "branch", "remote", "push"]),
+            keywords: [
+                "git", "repository", "unpushed", "commits", "branch", "remote", "push", "ignore"
+            ]),
         .init(.gitWatchScan, "Scan Now", keywords: ["refresh", "check", "repos"]),
         .init(.gitWatchAddMachine, "SSH Host", keywords: ["remote", "server", "machine", "ssh"])
     ]

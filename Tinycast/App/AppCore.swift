@@ -222,7 +222,13 @@ final class AppCore {
 
     private func observeFeatureSwitches() {
         track({ _ = $0.showInMenuBar }, reproject: { $0.statusItem.applyVisibility() })
-        track({ _ = $0.gitWatchMachines }, reproject: { $0.gitWatchCoordinator.refreshStatusItem() })
+        track(
+            gitWatchCoordinator,
+            {
+                _ = $0.atRiskCount
+                _ = $0.isScanning
+            },
+            reproject: { $0.statusItem.applyGitWatch() })
         track(
             {
                 _ = $0.windowManagementEnabled

@@ -4,7 +4,8 @@ import Foundation
 enum GitWatchRepoState: String, Sendable {
     case ahead, noRemote, unpushed, clean, error
 
-    var isAtRisk: Bool { self == .ahead || self == .noRemote || self == .unpushed }
+    /// A repo with no remote is a choice, not forgotten work, so only a configured remote counts.
+    var isAtRisk: Bool { self == .ahead || self == .unpushed }
 }
 
 struct GitWatchRepo: Hashable, Sendable {

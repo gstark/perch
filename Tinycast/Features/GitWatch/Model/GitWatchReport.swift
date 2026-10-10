@@ -28,4 +28,11 @@ struct GitWatchReport: Equatable, Sendable {
     }
 
     var atRisk: [GitWatchRepo] { repos.filter(\.state.isAtRisk) }
+
+    /// After a push succeeds, so the badge drops at once instead of at the next scan.
+    mutating func markClean(_ path: String) {
+        guard let index = repos.firstIndex(where: { $0.path == path }) else { return }
+        let repo = repos[index]
+        repos[index] = GitWatchRepo(path: repo.path, branch: repo.branch, state: .clean, commitCount: 0)
+    }
 }

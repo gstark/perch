@@ -21,7 +21,6 @@ final class GitWatchCoordinator {
     @ObservationIgnored private unowned let core: AppCore
     @ObservationIgnored private var schedule: Task<Void, Never>?
     @ObservationIgnored private var wakeToken: NotificationCenter.ObservationToken?
-    @ObservationIgnored private lazy var statusItem = GitWatchStatusItem(coordinator: self)
     private var settings: AppSettings { core.settings }
 
     init(core: AppCore) {
@@ -54,7 +53,6 @@ final class GitWatchCoordinator {
     func scanAll() async {
         guard !isScanning else { return }
         isScanning = true
-        refreshStatusItem()
         let machines = settings.gitWatchMachines.filter { !$0.roots.isEmpty }
         await withTaskGroup(of: (String, Result<GitWatchReport, GitWatchFailure>).self) { group in
             for machine in machines {
@@ -67,14 +65,13 @@ final class GitWatchCoordinator {
         let hosts = Set(settings.gitWatchMachines.map(\.host))
         statuses = statuses.filter { hosts.contains($0.key) }
         isScanning = false
-        refreshStatusItem()
     }
 
     /// The Settings button and the menu's Scan Now: the user started it, so a HUD reports it.
     func scanNow() async {
         guard !isScanning else { return }
         await scanAll()
-        let count = atRisk.reduce(0) { $0 + $1.repos.count }
+        let count = atRiskCount
         let failed = statuses.values.filter { $0.failure != nil }.count
         if failed > 0 {
             core.showMessage("\(failed) machine(s) could not be scanned", tone: .danger)
@@ -85,18 +82,31 @@ final class GitWatchCoordinator {
         }
     }
 
-    func refreshStatusItem() {
-        statusItem.update(count: atRisk.reduce(0) { $0 + $1.repos.count }, isScanning: isScanning)
+    var atRiskCount: Int { atRisk.reduce(0) { $0 + $1.repos.count } }
+
+    func openInFinder(_ repo: GitWatchRepo) {
+        NSWorkspace.shared.open(URL(filePath: repo.path, directoryHint: .isDirectory))
     }
 
-    func open(_ repo: GitWatchRepo, on machine: GitWatchMachine) {
-        guard !machine.isLocal else {
-            NSWorkspace.shared.open(URL(filePath: repo.path, directoryHint: .isDirectory))
-            return
-        }
+    func copySSHCommand(_ repo: GitWatchRepo, on machine: GitWatchMachine) {
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(machine.terminalCommand(for: repo.path), forType: .string)
         core.showMessage("Copied an ssh command for \(repo.name)")
+    }
+
+    /// Never forced: a push that is not a fast-forward fails, and the HUD shows git's reason.
+    func push(_ repo: GitWatchRepo, on machine: GitWatchMachine) async {
+        core.showProgress("Pushing \(repo.name)…")
+        let result = await GitWatchShell.run(
+            GitWatchScript.push(path: repo.path, branch: repo.branch), on: machine)
+        core.hideProgress()
+        switch result {
+        case .success:
+            statuses[machine.host]?.report?.markClean(repo.path)
+            core.showMessage("Pushed \(repo.name) \(repo.branch)")
+        case .failure(let failure):
+            core.showMessage("\(repo.name): \(failure.message)", tone: .danger)
+        }
     }
 
     func showSettings() {
@@ -128,7 +138,9 @@ final class GitWatchCoordinator {
     }
 
     func ignore(_ path: String, on host: String) {
-        updateMachine(host) { $0.ignoredPaths.append(path) }
+        updateMachine(host) { machine in
+            if !machine.ignoredPaths.contains(path) { machine.ignoredPaths.append(path) }
+        }
     }
 
     func unignore(_ path: String, on host: String) {

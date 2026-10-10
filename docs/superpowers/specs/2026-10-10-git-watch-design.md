@@ -10,8 +10,8 @@ remote.
 
 - **Default branch:** the branch that `origin/HEAD` names. If that ref does not exist, Git Watch
   uses `main`, then `master`, then the checked-out branch.
-- **At risk:** a repository is at risk when its default branch is in state `ahead`, `noRemote` or
-  `unpushed` (see [States](#states)).
+- **At risk:** a repository is at risk when its default branch is in state `ahead` or
+  `unpushed` (see [States](#states)). A repo with no remote is not at risk.
 - **Machine:** this Mac, or a remote host that Perch reaches over SSH.
 - **Root:** a folder on a machine that Git Watch searches for repositories.
 
@@ -101,7 +101,7 @@ A path can contain spaces. A path that contains a tab or a newline is not suppor
 | State | Condition | At risk |
 | --- | --- | --- |
 | `ahead` | The branch has an upstream, and `git rev-list --count @{u}..<branch>` is more than 0. | Yes |
-| `noRemote` | `git remote` prints nothing. | Yes |
+| `noRemote` | `git remote` prints nothing. | No |
 | `unpushed` | A remote exists, but the branch has no upstream and no `<remote>/<branch>` ref. | Yes |
 | `clean` | The branch has nothing to push. | No |
 | `error` | A git command failed, or no default branch was found. | No |
