@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <clipPath id="bird">
+      <ellipse cx="500" cy="548" rx="235" ry="182" transform="rotate(-18 500 548)"/>
+      <circle cx="652" cy="368" r="138"/>
+      <path d="M500 420 Q540 300 600 248 L700 420 Z"/>
+      <path d="M786 410 Q792 500 720 596 L620 480 Z"/>
+    </clipPath>
+    <linearGradient id="belly" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F4F5F2"/>
+      <stop offset="1" stop-color="#E4B286"/>
+    </linearGradient>
+  </defs>
+  <path d="M372 560 L182 800 Q170 822 196 826 L246 830 Q266 830 274 812 L432 640 Z" fill="#56656E"/>
+  <g clip-path="url(#bird)">
+    <rect width="1024" height="1024" fill="#7F8F98"/>
+    <ellipse cx="640" cy="650" rx="200" ry="170" fill="url(#belly)"/>
+    <path d="M280 566 Q400 452 600 486 Q556 616 384 682 Q286 666 280 566 Z" fill="#C3CDD2"/>
+    <path d="M280 548 Q400 432 600 468 Q552 594 384 660 Q290 646 280 548 Z" fill="#56656E"/>
+    <path d="M440 140 H880 V346 Q720 322 610 344 Q540 358 470 334 Z" fill="#15171C"/>
+    <path d="M880 346 Q720 322 610 344 Q540 358 490 350 Q560 430 650 456 Q720 466 780 440 L880 430 Z" fill="#F4F5F2"/>
+    <path d="M880 428 L776 442 Q720 476 704 560 Q800 580 880 548 Z" fill="#15171C"/>
+  </g>
+  <path d="M780 350 L842 374 L780 396 Z" fill="#15171C"/>
+  <circle cx="722" cy="320" r="9" fill="#F4F5F2"/>
+  <rect x="462" y="706" width="40" height="24" rx="12" fill="#3B3F45"/>
+  <rect x="540" y="706" width="40" height="24" rx="12" fill="#3B3F45"/>
+</svg>
