@@ -142,6 +142,12 @@ enum Theme {
         static let clipboardPreviewPixel: CGFloat = 900
         /// Opening size and resize floor: the Quick Actions row's width, the sidebar's full height.
         static let settingsWindow = CGSize(width: 900, height: 700)
+        /// Opening size; resizable down to `proxmoxWindowMinimum`.
+        static let proxmoxWindow = CGSize(width: 440, height: 520)
+        static let proxmoxWindowMinimum = CGSize(width: 360, height: 280)
+        /// A guest row's load bar, beside a percentage of fixed width so the bars line up.
+        static let proxmoxLoadBar: CGFloat = 80
+        static let proxmoxPercentColumn: CGFloat = 44
         /// Settings sidebar: a fixed column, wide enough for "Window Management".
         static let settingsSidebar: CGFloat = 215
         /// The narrowest the pane column may get before a grouped row's control starts colliding.

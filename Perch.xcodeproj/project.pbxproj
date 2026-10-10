@@ -53,6 +53,7 @@
 		2C0C3DDB428E4BD6B4FFFEE2 /* ColorSwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B4ABAB0D1CCC167200F3344 /* ColorSwatch.swift */; };
 		2C75661DA10B9F8DDAF8CF1B /* PinnedEmojiStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8807622DBC7FBACA9A8ADFC8 /* PinnedEmojiStore.swift */; };
 		2C8BD746E370A8D63ABD3184 /* RunningAppsMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A59D88AB6EB765AAD202D147 /* RunningAppsMonitor.swift */; };
+		2D2088CC51C4E9CD17119FBA /* ProxmoxFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 752A4F59E02192759382245C /* ProxmoxFailure.swift */; };
 		2D5331020EEE947CCB6DD3B0 /* UnitDef.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DCC6A4938EB0F5D923723A /* UnitDef.swift */; };
 		30AAE68F6C2685714B644932 /* ModifierKeyDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F22A56619532B939CB4A2601 /* ModifierKeyDetector.swift */; };
 		33F6F324E86AB6FD34C6FC9A /* SpaceGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = 99FF35EC5C7EA920D6AC0768 /* SpaceGesture.swift */; };
@@ -65,6 +66,7 @@
 		384C4FDA45B572B49D94D1DA /* CalcUnitExpression.swift in Sources */ = {isa = PBXBuildFile; fileRef = F709221D6AD04652A529CC28 /* CalcUnitExpression.swift */; };
 		389156C0316802F5FEF20A0D /* ClipboardTextHelper in Embed Dependencies */ = {isa = PBXBuildFile; fileRef = 65C6AB8D648657696E7667ED /* ClipboardTextHelper */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		38B5EAD6A38555BA9543F694 /* LauncherItemsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D61ACDF9264D352FCEDAA946 /* LauncherItemsSection.swift */; };
+		39417FFA21EAC3CED9620BE3 /* ProxmoxConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10C5CC1ED12140B00267770E /* ProxmoxConnection.swift */; };
 		396285B39B6CEA946F9B249B /* LinkOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD55D99FE5A34CB284CACD4A /* LinkOpener.swift */; };
 		398DC4F9CE65800B97F867CC /* EmojiKeywords in Resources */ = {isa = PBXBuildFile; fileRef = 674431648A7157E379458D13 /* EmojiKeywords */; };
 		3A18D3FCA1A0312F0C7940E4 /* ImageThumbnail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13974F85BAD239384304D12A /* ImageThumbnail.swift */; };
@@ -120,6 +122,7 @@
 		5F0D2740600334A689AAF920 /* ClipDrag.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E7634E743B1A46524B35AE /* ClipDrag.swift */; };
 		5F29A50EA0D1CF6D35F9B82C /* ColorDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BD9418EF68FE7E928005CF /* ColorDot.swift */; };
 		61DC7CA55A4B9EB6C1644739 /* OverflowFade.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02F2A45A64319393714DEF2 /* OverflowFade.swift */; };
+		62843DEAE518675AD4BF18D6 /* ProxmoxSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C983E047F1788D60C4207A0B /* ProxmoxSettingsView.swift */; };
 		630330D8825D04686DAC1899 /* CalcNumberBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE7139E923132C7408F5DA8 /* CalcNumberBase.swift */; };
 		635BAD676C753C180A6519D2 /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3010689C3513FF994262C731 /* StatusItemController.swift */; };
 		65EF65F243FDAB8055E04296 /* PalettePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C3D25CBD47DA750D4803F /* PalettePanel.swift */; };
@@ -190,8 +193,10 @@
 		9433B383522B6D3A4F152E45 /* LauncherItemsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EEE58AF144C8DAC9EDFA630 /* LauncherItemsTable.swift */; };
 		9545DC64276B013F659DFAB9 /* DialogPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0427630D5470C693D16BBCF5 /* DialogPanel.swift */; };
 		955D38DFF95E41DB6CA997C1 /* WindowLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2EBF647B8B7591BF73C088C /* WindowLevel.swift */; };
+		96D6BBAD2FA3AC321230C3C7 /* ProxmoxPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C57E9EE7B924CF4EA97A65F /* ProxmoxPanelView.swift */; };
 		985CDE5B580A70EC8D44F4F4 /* ExecutableLocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F6C2768D5975ECFDBE6BE68 /* ExecutableLocator.swift */; };
 		99140F6BDD8B5FB3E00106DA /* VisibilityStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2DDFA117DFE425C960299FB /* VisibilityStore.swift */; };
+		9991A09E4016C397CCFA85AF /* ProxmoxCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B49FA9687718D79499328147 /* ProxmoxCoordinator.swift */; };
 		9A34CAC7EDE27F7FF4AC2C5C /* AliasStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3E8997F3DE2DB9DE2085F54 /* AliasStore.swift */; };
 		9A578D4A9F35E952A2E50DF1 /* CalcUnitCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A495593898B08CE83D5A64E /* CalcUnitCatalog.swift */; };
 		9A84A56FE62C916EDC9B2B78 /* NOTICE.md in Resources */ = {isa = PBXBuildFile; fileRef = 4AB9573D4C6B29619E5CB1B8 /* NOTICE.md */; };
@@ -255,6 +260,7 @@
 		CD2B4510D0169ED8EACF5159 /* EmojiData.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB97995D13B1C6519CF45792 /* EmojiData.generated.swift */; };
 		CE1F08AEAFE1E1B559942A94 /* CalcDimension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8B2E82385B1156EC4685AC /* CalcDimension.swift */; };
 		CEE275DDCE17B8BC2637B509 /* WindowTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 943A6D520572557B91C285BF /* WindowTarget.swift */; };
+		CF71AD6CBC32C8BFDA48E74D /* ProxmoxSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53581D1BD3E56B04DC935CB9 /* ProxmoxSession.swift */; };
 		CF8DB73FFCC989CC363B94D0 /* ColorSpaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 289967276C0CE0447E5B1C2D /* ColorSpaces.swift */; };
 		D0493242918B23B2BE2451EE /* SpaceSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9362D1FD2D89A68B57F47D83 /* SpaceSwitcher.swift */; };
 		D070C5449B3797F868A5A758 /* SettingsFileIdentity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D67F9EEC32BC586DE930711 /* SettingsFileIdentity.swift */; };
@@ -267,6 +273,7 @@
 		DE4A95E31BF2873A80D3FAB6 /* SteadySegmentedPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33F5C75A0937E45EA93A76D7 /* SteadySegmentedPicker.swift */; };
 		DF972C63EB8E118290CB607D /* SettingsFileBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA5E7778544E7DD8F5723143 /* SettingsFileBinding.swift */; };
 		DFF02272B416A5F71CA9CD7C /* CalcEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8D3BB3627D30B11FE26C154 /* CalcEngine.swift */; };
+		E010F0F12C125E40E4625844 /* ProxmoxSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A040B8767B412BF866DD1F4 /* ProxmoxSnapshot.swift */; };
 		E0FBD716D140342382B3F30D /* DoubleTapDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB131D7445F9A6D56A591AC /* DoubleTapDetector.swift */; };
 		E2116883077B4E7696B94EE4 /* DisabledApplicationsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE993CFFED8980ADEB447F64 /* DisabledApplicationsSection.swift */; };
 		E5A093DDE1469CDCF36143BD /* CountryZoneData.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9EC6C802257CFCA6031BFC /* CountryZoneData.generated.swift */; };
@@ -278,6 +285,7 @@
 		EDB8F5617D7D92BCAEE66B45 /* WindowLayoutNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7706D40944796EA182F1EECF /* WindowLayoutNumberField.swift */; };
 		EDFAEB0B6729A1A10A0DBC65 /* EmojiCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9B33A76946805B2B2CD4DF /* EmojiCatalog.swift */; };
 		EE15D16D12F1858100378CD8 /* LeadCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D751156AD9514AAE763915 /* LeadCard.swift */; };
+		F1483BCE5E7EF7635F5B5390 /* ProxmoxWindowChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401FFCF902A4F713A7DDE574 /* ProxmoxWindowChrome.swift */; };
 		F21DB07558C87720C83F4C9F /* RegionNumberFormatMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D47619B41FEFA3B8390F7CB /* RegionNumberFormatMonitor.swift */; };
 		F250EABDC26EB9B468E15730 /* HotKeyBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAE9494503B6A70E1E87235 /* HotKeyBinding.swift */; };
 		F4995F3F19D2336A6D244D06 /* SelectionFollowing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27715901C469548F30EF30D1 /* SelectionFollowing.swift */; };
@@ -295,6 +303,7 @@
 		FDAE1B2940F320BBE5FB29FF /* SettingsCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF275587B4EA3E7AFBB8DA7E /* SettingsCoordinator.swift */; };
 		FDDA1E5A448223CEEC9E3B9D /* SettingsFileMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDA78011B41566078A84F21E /* SettingsFileMonitor.swift */; };
 		FE5CADB8913110C5FF9D6F97 /* CalloutShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1E528898F121E6CA3CD1E64 /* CalloutShape.swift */; };
+		FECA4A4CEA42E03508218B04 /* ProxmoxService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 807887BBE400A0DE3B6E4AD6 /* ProxmoxService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -340,6 +349,7 @@
 		0E8C3B22DB53A9CCE8B632AF /* ClipboardTextHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardTextHelper.swift; sourceTree = "<group>"; };
 		0F76A001A22DC2AB278E2890 /* HyperKeyTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyperKeyTap.swift; sourceTree = "<group>"; };
 		10B7D627EDC5DB062701024D /* CurrencyRateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyRateStore.swift; sourceTree = "<group>"; };
+		10C5CC1ED12140B00267770E /* ProxmoxConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxConnection.swift; sourceTree = "<group>"; };
 		10EF1ADEE33541A74B5AD868 /* CalculatorHistoryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorHistoryStore.swift; sourceTree = "<group>"; };
 		11888A019962A8AE61AA3EBC /* Tooltip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tooltip.swift; sourceTree = "<group>"; };
 		130573B33A8189EABD8A3DFB /* CalcPercent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcPercent.swift; sourceTree = "<group>"; };
@@ -348,6 +358,7 @@
 		164B1CB8ABDE86D5A42084F6 /* HotKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyManager.swift; sourceTree = "<group>"; };
 		17B9DB82160282A5CA550AA7 /* PaletteCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteCoordinator.swift; sourceTree = "<group>"; };
 		181EFFE013F00CE79F60E951 /* PasteboardFiles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasteboardFiles.swift; sourceTree = "<group>"; };
+		1A040B8767B412BF866DD1F4 /* ProxmoxSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxSnapshot.swift; sourceTree = "<group>"; };
 		1A1B5F65C4FB087C6EA21E14 /* CalcTokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcTokenizer.swift; sourceTree = "<group>"; };
 		1B25982E0FF984412BA36027 /* EmojiScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiScreen.swift; sourceTree = "<group>"; };
 		1BA843837257E19EF45D5E0D /* SettingsEditorPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsEditorPresenter.swift; sourceTree = "<group>"; };
@@ -397,6 +408,7 @@
 		3E9392934A2112E1DADAB389 /* SettingsScrollTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScrollTarget.swift; sourceTree = "<group>"; };
 		3EDA8C0EBEF36AB22D359CE8 /* ColorValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorValue.swift; sourceTree = "<group>"; };
 		3FEE655720A68DEC98AF7F1E /* SearchScopesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchScopesSection.swift; sourceTree = "<group>"; };
+		401FFCF902A4F713A7DDE574 /* ProxmoxWindowChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxWindowChrome.swift; sourceTree = "<group>"; };
 		411E44C4B373655E4D6D23D9 /* LauncherRankingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherRankingStore.swift; sourceTree = "<group>"; };
 		41FFAE3EC65DE8F4663AF4AB /* HotKeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyCenter.swift; sourceTree = "<group>"; };
 		43A41A32C2D423956BFF860B /* MeterLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeterLayout.swift; sourceTree = "<group>"; };
@@ -415,6 +427,7 @@
 		518F8E198C08A2B080A21BA4 /* PaletteState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteState.swift; sourceTree = "<group>"; };
 		525E38D5DF6B5ED0031AF1EE /* SettingsFileSchema.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFileSchema.swift; sourceTree = "<group>"; };
 		52618147B8F5A76F46735F5D /* AppDisplayName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDisplayName.swift; sourceTree = "<group>"; };
+		53581D1BD3E56B04DC935CB9 /* ProxmoxSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxSession.swift; sourceTree = "<group>"; };
 		535E47980F299E888C344EA5 /* CommandCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandCatalog.swift; sourceTree = "<group>"; };
 		54A38F893826E9B5237E08C4 /* CalcQuantity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcQuantity.swift; sourceTree = "<group>"; };
 		54F197B1092E0A8AE37601BB /* HUDPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDPanel.swift; sourceTree = "<group>"; };
@@ -449,6 +462,7 @@
 		73F6CFF75E79A17C8D33F3E6 /* FavoriteSlots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSlots.swift; sourceTree = "<group>"; };
 		741D5129A822B62620B52F5D /* ActivationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationPolicy.swift; sourceTree = "<group>"; };
 		745A538EFEC115DEC12A189E /* PseudoTerminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PseudoTerminal.swift; sourceTree = "<group>"; };
+		752A4F59E02192759382245C /* ProxmoxFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxFailure.swift; sourceTree = "<group>"; };
 		7577EB8E92D9B623242B99B3 /* WindowShortcutPresetCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowShortcutPresetCoordinator.swift; sourceTree = "<group>"; };
 		7615B1E6CA4E6DB3E9606BB2 /* WindowManagementSettingsFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManagementSettingsFile.swift; sourceTree = "<group>"; };
 		764C204C892357E2D95593E6 /* ModalActionButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalActionButtonStyle.swift; sourceTree = "<group>"; };
@@ -460,8 +474,10 @@
 		7B4213B2721F275D5D998E3E /* UnitCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitCategory.swift; sourceTree = "<group>"; };
 		7B57D361ACD39D4C92A306ED /* WindowLayoutAnchor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowLayoutAnchor.swift; sourceTree = "<group>"; };
 		7C093AC404A59ADFBA31FD03 /* InterfaceSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceSize.swift; sourceTree = "<group>"; };
+		7C57E9EE7B924CF4EA97A65F /* ProxmoxPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxPanelView.swift; sourceTree = "<group>"; };
 		7C8B2E82385B1156EC4685AC /* CalcDimension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcDimension.swift; sourceTree = "<group>"; };
 		7FC3B8BB90E44E197E91B837 /* Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Appearance.swift; sourceTree = "<group>"; };
+		807887BBE400A0DE3B6E4AD6 /* ProxmoxService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxService.swift; sourceTree = "<group>"; };
 		82E37AFD12A84C1B8EF905F3 /* InterfaceMetrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InterfaceMetrics.swift; sourceTree = "<group>"; };
 		82F0E252F4B69EABEC014694 /* CalcTimeZone.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcTimeZone.swift; sourceTree = "<group>"; };
 		8595DDD5663F94B8D06599A7 /* ClipboardScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardScreen.swift; sourceTree = "<group>"; };
@@ -528,6 +544,7 @@
 		B3DCC6A4938EB0F5D923723A /* UnitDef.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnitDef.swift; sourceTree = "<group>"; };
 		B3FDA0668A6DE0B6499AF811 /* EmptyResults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyResults.swift; sourceTree = "<group>"; };
 		B4264BFB53B0FC91B17148B0 /* PaletteEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteEnvironment.swift; sourceTree = "<group>"; };
+		B49FA9687718D79499328147 /* ProxmoxCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxCoordinator.swift; sourceTree = "<group>"; };
 		B50434B7D88884BEAE21B773 /* Permissions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Permissions.swift; sourceTree = "<group>"; };
 		B5F73A63083833558B9DB49E /* PaletteScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteScreen.swift; sourceTree = "<group>"; };
 		B6779011E164AAC0C1BE43F7 /* AppPaths.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPaths.swift; sourceTree = "<group>"; };
@@ -546,6 +563,7 @@
 		C28C52B25583030BDB408D0D /* SettingsTab.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsTab.swift; sourceTree = "<group>"; };
 		C611AC56A90F0F920FF28810 /* SettingsSidebarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsSidebarView.swift; sourceTree = "<group>"; };
 		C9567CB029C83AB8F665CAB3 /* EmojiCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCoordinator.swift; sourceTree = "<group>"; };
+		C983E047F1788D60C4207A0B /* ProxmoxSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxSettingsView.swift; sourceTree = "<group>"; };
 		CA709F882BD32807448A866A /* ExecutablePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecutablePicker.swift; sourceTree = "<group>"; };
 		CB6F8583A93F550EFAA8AF64 /* RightClick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightClick.swift; sourceTree = "<group>"; };
 		CC8FA6E4A22802C7B286CB60 /* CalculatorHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorHistoryView.swift; sourceTree = "<group>"; };
@@ -699,6 +717,23 @@
 			path = DesignSystem;
 			sourceTree = "<group>";
 		};
+		10674EF19F27E57925A64882 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				C983E047F1788D60C4207A0B /* ProxmoxSettingsView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		17EA2AF725AFE2A5722A0F29 /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				807887BBE400A0DE3B6E4AD6 /* ProxmoxService.swift */,
+				53581D1BD3E56B04DC935CB9 /* ProxmoxSession.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
 		192DC4CCD5FCC03788098AEE /* Images */ = {
 			isa = PBXGroup;
 			children = (
@@ -752,6 +787,16 @@
 				2F5A63BD5C04304C9BE4A263 /* UI */,
 			);
 			path = HotKeys;
+			sourceTree = "<group>";
+		};
+		2CD3E72AFB215B8B372E2DB6 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				10C5CC1ED12140B00267770E /* ProxmoxConnection.swift */,
+				752A4F59E02192759382245C /* ProxmoxFailure.swift */,
+				1A040B8767B412BF866DD1F4 /* ProxmoxSnapshot.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		2F5A63BD5C04304C9BE4A263 /* UI */ = {
@@ -960,6 +1005,16 @@
 			path = UI;
 			sourceTree = "<group>";
 		};
+		6BD005B82CCC39E77C8C86BF /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				B49FA9687718D79499328147 /* ProxmoxCoordinator.swift */,
+				7C57E9EE7B924CF4EA97A65F /* ProxmoxPanelView.swift */,
+				401FFCF902A4F713A7DDE574 /* ProxmoxWindowChrome.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
 		7763186B761665FFDB9215AA /* Model */ = {
 			isa = PBXGroup;
 			children = (
@@ -1017,6 +1072,7 @@
 				034D3E60CC5E535EF67AC10F /* Emoji */,
 				1F70B4CB6F26E998F76D3DB3 /* HotKeys */,
 				DF2493EA19A3E561802BCB5A /* Launcher */,
+				CCBE8380FE2612CB6082B4C0 /* Proxmox */,
 				FCA82FD52AA9114529F6D675 /* Settings */,
 				D865D0DDB59DCBD1E2F3CA5C /* WindowManagement */,
 				1DDC9ABB8E8D4DB97A032873 /* PaletteRowIndex.swift */,
@@ -1128,6 +1184,17 @@
 				F22A56619532B939CB4A2601 /* ModifierKeyDetector.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		CCBE8380FE2612CB6082B4C0 /* Proxmox */ = {
+			isa = PBXGroup;
+			children = (
+				2CD3E72AFB215B8B372E2DB6 /* Model */,
+				17EA2AF725AFE2A5722A0F29 /* Service */,
+				10674EF19F27E57925A64882 /* Settings */,
+				6BD005B82CCC39E77C8C86BF /* UI */,
+			);
+			path = Proxmox;
 			sourceTree = "<group>";
 		};
 		CDD6489F9722DC3890025A23 /* Service */ = {
@@ -1620,6 +1687,15 @@
 				8223ADB2CFDE7AB6A66526DE /* ProcessControl.swift in Sources */,
 				3E71E8D08BB3EAEB1F909E19 /* ProcessExit.swift in Sources */,
 				698AC2ED72880878610FF8EA /* ProcessLoad.swift in Sources */,
+				39417FFA21EAC3CED9620BE3 /* ProxmoxConnection.swift in Sources */,
+				9991A09E4016C397CCFA85AF /* ProxmoxCoordinator.swift in Sources */,
+				2D2088CC51C4E9CD17119FBA /* ProxmoxFailure.swift in Sources */,
+				96D6BBAD2FA3AC321230C3C7 /* ProxmoxPanelView.swift in Sources */,
+				FECA4A4CEA42E03508218B04 /* ProxmoxService.swift in Sources */,
+				CF71AD6CBC32C8BFDA48E74D /* ProxmoxSession.swift in Sources */,
+				62843DEAE518675AD4BF18D6 /* ProxmoxSettingsView.swift in Sources */,
+				E010F0F12C125E40E4625844 /* ProxmoxSnapshot.swift in Sources */,
+				F1483BCE5E7EF7635F5B5390 /* ProxmoxWindowChrome.swift in Sources */,
 				0E751D5883565527FAAD017B /* PseudoTerminal.swift in Sources */,
 				1DEDAA166A350722A07B7D8F /* RedactedPlaceholder.swift in Sources */,
 				732B4E291AAA0F05AC7385C5 /* RedactedText.swift in Sources */,

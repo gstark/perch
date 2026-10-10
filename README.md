@@ -1,7 +1,8 @@
 # Perch
 
 A personal macOS menu-bar app: a fuzzy app launcher, global hotkeys, clipboard history, an inline
-calculator with unit conversion, an emoji picker, window management, and a per-core CPU meter.
+calculator with unit conversion, an emoji picker, window management, a per-core CPU meter, and a
+panel for a Proxmox host's CPU use.
 
 ## A fork of Tinycast
 

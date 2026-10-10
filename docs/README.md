@@ -28,5 +28,6 @@ open with an `## Invariants` section; read it before changing anything in that a
 [hotkeys](features/hotkeys.md) ·
 [window management](features/window-management.md) ·
 [settings file](features/settings-file.md) ·
-[CPU meter](features/cpu-meter.md)
+[CPU meter](features/cpu-meter.md) ·
+[Proxmox](features/proxmox.md)
 

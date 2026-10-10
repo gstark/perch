@@ -71,6 +71,8 @@ enum SettingsFileSchema {
         case .emojiSkinTone: return bind(settings, \.emojiSkinTone)
         case .emojiGridColumns: return bind(settings, \.emojiGridColumns)
         case .emojiCommands: return launcher.commandsBinding(for: key, owner: .emoji)
+        case .proxmoxAddress: return bind(settings, \.proxmoxAddress)
+        case .proxmoxTokenID: return bind(settings, \.proxmoxTokenID)
         }
     }
 

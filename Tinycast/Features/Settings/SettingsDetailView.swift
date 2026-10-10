@@ -15,6 +15,7 @@ struct SettingsDetailView: View {
             case .windowManagement: WindowManagementSettingsView()
             case .clipboard: ClipboardSettingsView()
             case .emoji: EmojiSettingsView()
+            case .proxmox: ProxmoxSettingsView()
             case .permissions: PermissionsSettingsView()
             }
         }

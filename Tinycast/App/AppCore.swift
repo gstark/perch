@@ -68,6 +68,7 @@ final class AppCore {
         paletteCoordinator: paletteCoordinator)
     @ObservationIgnored private(set) lazy var calculatorCoordinator = CalculatorCoordinator(
         calcHistory: calcHistory, paletteCoordinator: paletteCoordinator, core: self)
+    @ObservationIgnored private(set) lazy var proxmoxCoordinator = ProxmoxCoordinator(core: self)
 
     let cpuSampler = CPUSampler()
     @ObservationIgnored private(set) lazy var statusItem = StatusItemController(

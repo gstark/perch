@@ -30,6 +30,21 @@
 	<string>Perch asks Finder to show Get Info for an app you choose.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Perch uses Bluetooth access only when you run the Toggle Bluetooth action.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>ts.net</key>
+			<dict>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Perch reads CPU use from the Proxmox host you set in Settings.</string>
 	<key>NSHumanReadableCopyright</key>
 	<string>© 2026 Abue Ammar, © 2026 Gavin Stark. AGPL-3.0.</string>
 </dict>

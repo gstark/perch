@@ -47,6 +47,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.removeAllItems()
         addProcessItems(to: menu)
         menu.addItem(item("Open Activity Monitor") { _ in ProcessControl.openActivityMonitor() })
+        if core.proxmoxCoordinator.hasAddress {
+            menu.addItem(item("Proxmox…") { $0.proxmoxCoordinator.showPanel() })
+        }
         menu.addItem(.separator())
         menu.addItem(item("Open Launcher") { $0.paletteCoordinator.showPalette(mode: .launcher) })
         if core.settings.clipboardEnabled {

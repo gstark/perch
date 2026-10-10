@@ -105,6 +105,23 @@ final class AppSettings {
         didSet { defaults.set(emojiGridColumns.rawValue, forKey: Key.emojiGridColumns.rawValue) }
     }
 
+    /// As typed; `ProxmoxConnection.baseURL(from:)` fills in the scheme and port.
+    var proxmoxAddress: String {
+        didSet { defaults.set(proxmoxAddress, forKey: Key.proxmoxAddress.rawValue) }
+    }
+
+    var proxmoxTokenID: String {
+        didSet { defaults.set(proxmoxTokenID, forKey: Key.proxmoxTokenID.rawValue) }
+    }
+
+    /// A trust grant, so settings.json never carries it.
+    var proxmoxCertificateFingerprint: String? {
+        didSet {
+            defaults.set(
+                proxmoxCertificateFingerprint, forKey: Key.proxmoxCertificateFingerprint.rawValue)
+        }
+    }
+
     /// How long a closed palette keeps its state before popping back to the root launcher.
     var popToRootTimeout: PopToRootTimeout {
         didSet { defaults.set(popToRootTimeout.rawValue, forKey: Key.popToRootTimeout.rawValue) }
@@ -264,6 +281,10 @@ final class AppSettings {
         emojiGridColumns =
             EmojiGridColumns(rawValue: defaults.integer(forKey: Key.emojiGridColumns.rawValue))
             ?? .default
+        proxmoxAddress = defaults.string(forKey: Key.proxmoxAddress.rawValue) ?? ""
+        proxmoxTokenID = defaults.string(forKey: Key.proxmoxTokenID.rawValue) ?? ""
+        proxmoxCertificateFingerprint =
+            defaults.string(forKey: Key.proxmoxCertificateFingerprint.rawValue)
         popToRootTimeout =
             PopToRootTimeout(rawValue: defaults.integer(forKey: Key.popToRootTimeout.rawValue))
             ?? .immediately

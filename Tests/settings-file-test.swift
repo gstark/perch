@@ -46,11 +46,13 @@ struct SettingsFileTest {
             "sections follow the Settings sidebar",
             SettingsFileKey.sections == [
                 "general", "appearance", "hyperKey", "calculator", "search", "applications",
-                "systemSettings", "commands", "windowManagement", "clipboard", "emoji"
+                "systemSettings", "commands", "windowManagement", "clipboard", "emoji", "proxmox"
             ])
 
         // A file that could switch one of these on would grant what only the app may ask for.
-        let grantPaths = ["clipboard.textSearchEnabled"]
+        let grantPaths = [
+            "clipboard.textSearchEnabled", "proxmox.certificateFingerprint", "proxmox.tokenSecret"
+        ]
         check(
             "no capability grant has a settings.json key",
             grantPaths.allSatisfy { SettingsFileKey(rawValue: $0) == nil })

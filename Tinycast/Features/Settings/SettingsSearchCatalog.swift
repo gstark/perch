@@ -108,7 +108,8 @@ enum SettingsSearchCatalog {
     // Pane order, then section order within a pane, so this reads as a table of contents.
 
     static let entries: [SettingsSearchEntry] =
-        general + applications + systemSettings + commands + clipboard + windowManagement + emoji + permissions
+        general + applications + systemSettings + commands + clipboard + windowManagement + emoji
+        + proxmox + permissions
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -269,6 +270,18 @@ enum SettingsSearchCatalog {
         .init(
             .emojiAppearance, "Column Count",
             keywords: ["columns", "density", "zoom", "six", "eight", "ten"])
+    ]
+
+    private static let proxmox: [SettingsSearchEntry] = [
+        .init(
+            pane: .proxmox,
+            keywords: ["pve", "server", "homelab", "virtual machine", "container", "cpu"]),
+        .init(.proxmoxConnection, "Address", keywords: ["host", "url", "tailscale", "ip"]),
+        .init(.proxmoxConnection, "Token ID", keywords: ["api", "user", "realm"]),
+        .init(.proxmoxConnection, "Token Secret", keywords: ["api", "password", "keychain"]),
+        .init(
+            .proxmoxCertificate, "Trusted Certificate",
+            keywords: ["fingerprint", "tls", "ssl", "self-signed", "pin"])
     ]
 
     private static let permissions: [SettingsSearchEntry] = [

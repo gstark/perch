@@ -36,6 +36,9 @@ extension SettingsAnchor {
     static let emojiCommands = Self(tab: .emoji, title: "Commands")
     static let emojiAppearance = Self(tab: .emoji, title: "Appearance")
 
+    static let proxmoxConnection = Self(tab: .proxmox, title: "Connection")
+    static let proxmoxCertificate = Self(tab: .proxmox, title: "Certificate")
+
     static let permissionsAccessibility = Self(tab: .permissions, title: "Accessibility")
 
 }
