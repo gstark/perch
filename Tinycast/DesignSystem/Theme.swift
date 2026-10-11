@@ -145,6 +145,9 @@ enum Theme {
         /// Opening size; resizable down to `proxmoxWindowMinimum`.
         static let proxmoxWindow = CGSize(width: 440, height: 520)
         static let proxmoxWindowMinimum = CGSize(width: 360, height: 280)
+        /// Opening size; resizable down to `gitWatchWindowMinimum`.
+        static let gitWatchWindow = CGSize(width: 560, height: 560)
+        static let gitWatchWindowMinimum = CGSize(width: 440, height: 300)
         /// A guest row's load bar, beside a percentage of fixed width so the bars line up.
         static let proxmoxLoadBar: CGFloat = 80
         static let proxmoxPercentColumn: CGFloat = 44

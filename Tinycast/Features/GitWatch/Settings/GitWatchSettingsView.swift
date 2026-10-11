@@ -70,14 +70,6 @@ struct GitWatchSettingsView: View {
             Button("Add Root") {
                 coordinator.updateMachine(machine.host) { $0.roots.append("~/") }
             }
-            ForEach(machine.ignoredPaths, id: \.self) { path in
-                LabeledContent {
-                    Button("Unignore") { coordinator.unignore(path, on: machine.host) }
-                } label: {
-                    Text(URL(filePath: path).lastPathComponent)
-                    Text("Ignored · \(path)")
-                }
-            }
             if !machine.isLocal {
                 Button("Remove \(machine.host)", role: .destructive) {
                     coordinator.removeMachine(host: machine.host)

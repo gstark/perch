@@ -38,6 +38,7 @@
 		1DEDAA166A350722A07B7D8F /* RedactedPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E30BFA7C79ED95FAAC3EA4A /* RedactedPlaceholder.swift */; };
 		1E513E446BC933D8A093964C /* EmojiCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9567CB029C83AB8F665CAB3 /* EmojiCoordinator.swift */; };
 		1EB457B554FD3A5B9679514F /* EmojiGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD1FCBAE02CF7CB8BFC9BED /* EmojiGridView.swift */; };
+		1EEA24D8B50BA8735CDF2598 /* GitWatchEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A303EE8767C9187D9965977 /* GitWatchEntry.swift */; };
 		219CABEAA363DBEA1CB49F43 /* ClipboardFileKind.swift in Sources */ = {isa = PBXBuildFile; fileRef = A450BCE04EDE14DF8F15DBA2 /* ClipboardFileKind.swift */; };
 		22A90205D9681BD0FDA23A73 /* EmptyResults.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3FDA0668A6DE0B6499AF811 /* EmptyResults.swift */; };
 		22B6B9C95FB74A31DFF97B57 /* DialogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CA078409205BE9B4E2ABAB0 /* DialogView.swift */; };
@@ -88,10 +89,10 @@
 		43A12DB04C371FF33E51F4AF /* LauncherFileFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44D5150262992DB5F91587C5 /* LauncherFileFormat.swift */; };
 		43E096686157A3560C8229D7 /* AppIconView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5907C58C13D5041992E58BF4 /* AppIconView.swift */; };
 		44808E2E416AFF3493E66D47 /* AppWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADDF9522BF899701323DEC0 /* AppWindowController.swift */; };
-		46572D6C118EED6D0559FA05 /* GitWatchMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A929DC5783D7CD30D21119C1 /* GitWatchMenu.swift */; };
 		46AD76019F8295F1ABC0B03E /* ScriptRomanization.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF130C25E49F27215FDB5BCA /* ScriptRomanization.swift */; };
 		474B7F53F25C1A4A7ED6FD5B /* LauncherSuggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C5BDF3C06CF04A21731C49 /* LauncherSuggestions.swift */; };
 		480619B2C865E02F2FBCD8FA /* EmojiSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E88769E5DDE1CE6A5DCA53 /* EmojiSettingsView.swift */; };
+		4807BC9011EE391E34505681 /* GitWatchPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39DD818E4D59EA81DF43800 /* GitWatchPanelView.swift */; };
 		48CECAA1E110E4EC05C69E27 /* IconStyleMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 707FDFF8786E05BE45435FBF /* IconStyleMonitor.swift */; };
 		490278994954BD0705EF88EA /* GitWatchMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05E0297745141C0F4653F4DB /* GitWatchMachine.swift */; };
 		493329B579FF8A0838AAB6D8 /* FileIconStamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C064777A2B02419EE910AA0E /* FileIconStamp.swift */; };
@@ -291,11 +292,11 @@
 		E8708D6139A794AC8B874D0F /* SettingsNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84D5F76455ADC07B7DE84E2 /* SettingsNavigationState.swift */; };
 		E8AE463B464F3AD64A729D73 /* EdgeDissolve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337B18FCF55FF3BCC37284E3 /* EdgeDissolve.swift */; };
 		EA4427A531AEBC3067F70098 /* DialogTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4D1B46939E7125C039A476 /* DialogTextField.swift */; };
+		ECA65B9FB6237B7154FB57CC /* FormWindowChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9114009EE1CCA5A8E2FDF /* FormWindowChrome.swift */; };
 		ED363D88E8DCF4B67FCDE17A /* PasteSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = B769C0497F1061ACFBFEF8CD /* PasteSequence.swift */; };
 		EDB8F5617D7D92BCAEE66B45 /* WindowLayoutNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7706D40944796EA182F1EECF /* WindowLayoutNumberField.swift */; };
 		EDFAEB0B6729A1A10A0DBC65 /* EmojiCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C9B33A76946805B2B2CD4DF /* EmojiCatalog.swift */; };
 		EE15D16D12F1858100378CD8 /* LeadCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85D751156AD9514AAE763915 /* LeadCard.swift */; };
-		F1483BCE5E7EF7635F5B5390 /* ProxmoxWindowChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 401FFCF902A4F713A7DDE574 /* ProxmoxWindowChrome.swift */; };
 		F21DB07558C87720C83F4C9F /* RegionNumberFormatMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D47619B41FEFA3B8390F7CB /* RegionNumberFormatMonitor.swift */; };
 		F250EABDC26EB9B468E15730 /* HotKeyBinding.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEAE9494503B6A70E1E87235 /* HotKeyBinding.swift */; };
 		F4995F3F19D2336A6D244D06 /* SelectionFollowing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27715901C469548F30EF30D1 /* SelectionFollowing.swift */; };
@@ -412,6 +413,7 @@
 		348DB8672687F09FFF0B4440 /* SymbolImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SymbolImage.swift; sourceTree = "<group>"; };
 		355F4D65AAC6C467AEA394B5 /* RedactedText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedactedText.swift; sourceTree = "<group>"; };
 		36F7CB4953EF450088A38A79 /* HUDPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HUDPresenter.swift; sourceTree = "<group>"; };
+		3A303EE8767C9187D9965977 /* GitWatchEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitWatchEntry.swift; sourceTree = "<group>"; };
 		3B7070A07762DA335E96A0F0 /* ProcessLoad.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessLoad.swift; sourceTree = "<group>"; };
 		3C914D6712FB6D769EED796F /* AXWindowAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AXWindowAccess.swift; sourceTree = "<group>"; };
 		3CA078409205BE9B4E2ABAB0 /* DialogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogView.swift; sourceTree = "<group>"; };
@@ -422,7 +424,6 @@
 		3E9392934A2112E1DADAB389 /* SettingsScrollTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScrollTarget.swift; sourceTree = "<group>"; };
 		3EDA8C0EBEF36AB22D359CE8 /* ColorValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorValue.swift; sourceTree = "<group>"; };
 		3FEE655720A68DEC98AF7F1E /* SearchScopesSection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchScopesSection.swift; sourceTree = "<group>"; };
-		401FFCF902A4F713A7DDE574 /* ProxmoxWindowChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxWindowChrome.swift; sourceTree = "<group>"; };
 		411E44C4B373655E4D6D23D9 /* LauncherRankingStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherRankingStore.swift; sourceTree = "<group>"; };
 		41FFAE3EC65DE8F4663AF4AB /* HotKeyCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyCenter.swift; sourceTree = "<group>"; };
 		43A41A32C2D423956BFF860B /* MeterLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeterLayout.swift; sourceTree = "<group>"; };
@@ -459,6 +460,7 @@
 		5E2430CDF11C52A1976A3097 /* ClipboardFilterButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardFilterButton.swift; sourceTree = "<group>"; };
 		5FE1819EB4D94DEF62B2956E /* SettingsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsDetailView.swift; sourceTree = "<group>"; };
 		601B8F169BFE404D6EFAFDBD /* DialogChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DialogChip.swift; sourceTree = "<group>"; };
+		60F9114009EE1CCA5A8E2FDF /* FormWindowChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormWindowChrome.swift; sourceTree = "<group>"; };
 		61100DBF6247F2A992F11158 /* WindowManagementSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManagementSettingsView.swift; sourceTree = "<group>"; };
 		6152664A35D0BD280816D4BE /* LauncherList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherList.swift; sourceTree = "<group>"; };
 		619D61DDDC5D83B0A206318F /* LauncherOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherOrder.swift; sourceTree = "<group>"; };
@@ -544,7 +546,6 @@
 		A71B7C8662EC72D553FD5C25 /* SettingsFileRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFileRepository.swift; sourceTree = "<group>"; };
 		A7E38929D6284C3940E10377 /* PaletteMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteMode.swift; sourceTree = "<group>"; };
 		A84D5F76455ADC07B7DE84E2 /* SettingsNavigationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsNavigationState.swift; sourceTree = "<group>"; };
-		A929DC5783D7CD30D21119C1 /* GitWatchMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitWatchMenu.swift; sourceTree = "<group>"; };
 		AAD633C7776C163D6CCF923F /* CommandEscapeTap.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandEscapeTap.swift; sourceTree = "<group>"; };
 		ACA6CF2FCCB1C22B2FD79BC9 /* ClipboardTextIndexer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardTextIndexer.swift; sourceTree = "<group>"; };
 		ACF5C7FEC39F0EBD236DEAAF /* SettingsComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsComponents.swift; sourceTree = "<group>"; };
@@ -637,6 +638,7 @@
 		F1017CA9A2D398D21367E0C8 /* PaletteWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteWindowController.swift; sourceTree = "<group>"; };
 		F229F4288DB41A33B8E5436B /* CurrencyData.generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyData.generated.swift; sourceTree = "<group>"; };
 		F22A56619532B939CB4A2601 /* ModifierKeyDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModifierKeyDetector.swift; sourceTree = "<group>"; };
+		F39DD818E4D59EA81DF43800 /* GitWatchPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitWatchPanelView.swift; sourceTree = "<group>"; };
 		F43E2CC1130EC9932EF2E31F /* SettingsFileKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFileKey.swift; sourceTree = "<group>"; };
 		F6C891AA2FDD367FAD4B6CBB /* CalculatorHistoryScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorHistoryScreen.swift; sourceTree = "<group>"; };
 		F709221D6AD04652A529CC28 /* CalcUnitExpression.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcUnitExpression.swift; sourceTree = "<group>"; };
@@ -863,7 +865,7 @@
 			children = (
 				BA30482BE55B3BD8D5C9FE75 /* GitWatchBadge.swift */,
 				DC050456DCDF5819E2076DE4 /* GitWatchCoordinator.swift */,
-				A929DC5783D7CD30D21119C1 /* GitWatchMenu.swift */,
+				F39DD818E4D59EA81DF43800 /* GitWatchPanelView.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -1060,6 +1062,7 @@
 		67074C1B4047C1A5E9F4C8B3 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				3A303EE8767C9187D9965977 /* GitWatchEntry.swift */,
 				CA6DEEF52B605B3769AB4B99 /* GitWatchFailure.swift */,
 				05E0297745141C0F4653F4DB /* GitWatchMachine.swift */,
 				715F1F85FD30F0973845B181 /* GitWatchRepo.swift */,
@@ -1074,7 +1077,6 @@
 			children = (
 				B49FA9687718D79499328147 /* ProxmoxCoordinator.swift */,
 				7C57E9EE7B924CF4EA97A65F /* ProxmoxPanelView.swift */,
-				401FFCF902A4F713A7DDE574 /* ProxmoxWindowChrome.swift */,
 			);
 			path = UI;
 			sourceTree = "<group>";
@@ -1161,6 +1163,7 @@
 				E49032A8DFE6CDBC2FB91DBF /* Dialog */,
 				3EB0D1BCD8E3BFFA8B327A3F /* HUD */,
 				DADDF9522BF899701323DEC0 /* AppWindowController.swift */,
+				60F9114009EE1CCA5A8E2FDF /* FormWindowChrome.swift */,
 				1F66E8988DD5532E56B73C81 /* WindowChrome.swift */,
 			);
 			path = Windows;
@@ -1681,13 +1684,15 @@
 				37AACC3D86CE2493F42106AA /* FilePreviewStage.swift in Sources */,
 				4FA762F27C2C5A1D8075D040 /* FilePreviewThumbnail.swift in Sources */,
 				72ACB4B23F4DF69B64816797 /* FocusRelease.swift in Sources */,
+				ECA65B9FB6237B7154FB57CC /* FormWindowChrome.swift in Sources */,
 				70AC1E5076335023935D4459 /* FrequentEmojiStore.swift in Sources */,
 				81810D70867B1BC367314CDA /* GeneralSettingsView.swift in Sources */,
 				B3A7A482B12E9EFBF25321B6 /* GitWatchBadge.swift in Sources */,
 				348D9E0F9B2CD1100AD512B9 /* GitWatchCoordinator.swift in Sources */,
+				1EEA24D8B50BA8735CDF2598 /* GitWatchEntry.swift in Sources */,
 				88FE964484574EF2CC33E8F6 /* GitWatchFailure.swift in Sources */,
 				490278994954BD0705EF88EA /* GitWatchMachine.swift in Sources */,
-				46572D6C118EED6D0559FA05 /* GitWatchMenu.swift in Sources */,
+				4807BC9011EE391E34505681 /* GitWatchPanelView.swift in Sources */,
 				35A60F7017CD933D9748537D /* GitWatchRepo.swift in Sources */,
 				1C4C3004CA3C7C585F5F7D45 /* GitWatchReport.swift in Sources */,
 				BBA07769B59E9606BC3CBF1F /* GitWatchScanner.swift in Sources */,
@@ -1779,7 +1784,6 @@
 				CF71AD6CBC32C8BFDA48E74D /* ProxmoxSession.swift in Sources */,
 				62843DEAE518675AD4BF18D6 /* ProxmoxSettingsView.swift in Sources */,
 				E010F0F12C125E40E4625844 /* ProxmoxSnapshot.swift in Sources */,
-				F1483BCE5E7EF7635F5B5390 /* ProxmoxWindowChrome.swift in Sources */,
 				0E751D5883565527FAAD017B /* PseudoTerminal.swift in Sources */,
 				1DEDAA166A350722A07B7D8F /* RedactedPlaceholder.swift in Sources */,
 				732B4E291AAA0F05AC7385C5 /* RedactedText.swift in Sources */,

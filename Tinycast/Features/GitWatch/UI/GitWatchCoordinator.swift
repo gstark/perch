@@ -4,6 +4,12 @@ import AppKit
 @MainActor
 @Observable
 final class GitWatchCoordinator {
+    enum PushState: Equatable {
+        case pushing
+        case pushed
+        case failed(String)
+    }
+
     struct MachineStatus {
         var report: GitWatchReport?
         var scannedAt: Date?
@@ -17,6 +23,9 @@ final class GitWatchCoordinator {
 
     private(set) var statuses: [String: MachineStatus] = [:]
     private(set) var isScanning = false
+    /// Host, then repo path; the next scan clears it, since a fresh report says if a push held.
+    private(set) var pushes: [String: [String: PushState]] = [:]
+    @ObservationIgnored private let window: AppWindowController
     /// Environment injection and settings only — never for state this type owns.
     @ObservationIgnored private unowned let core: AppCore
     @ObservationIgnored private var schedule: Task<Void, Never>?
@@ -25,6 +34,16 @@ final class GitWatchCoordinator {
 
     init(core: AppCore) {
         self.core = core
+        window = AppWindowController(
+            title: "Git Watch", contentSize: Theme.Size.gitWatchWindow,
+            minimumSize: Theme.Size.gitWatchWindowMinimum, resizable: true,
+            autosaveName: "GitWatchWindow", activation: core.activationPolicy, closesOnEscape: true)
+    }
+
+    func showPanel() {
+        window.show(chrome: FormWindowChrome()) {
+            GitWatchPanelView().environment(core)
+        }
     }
 
     func start() {
@@ -64,6 +83,7 @@ final class GitWatchCoordinator {
         }
         let hosts = Set(settings.gitWatchMachines.map(\.host))
         statuses = statuses.filter { hosts.contains($0.key) }
+        pushes = pushes.mapValues { $0.filter { $0.value == .pushing } }
         isScanning = false
     }
 
@@ -84,6 +104,11 @@ final class GitWatchCoordinator {
 
     var atRiskCount: Int { atRisk.reduce(0) { $0 + $1.repos.count } }
 
+    var menuTitle: String {
+        if isScanning { return "Git Watch: Scanning…" }
+        return atRiskCount > 0 ? "Git Watch: \(atRiskCount) Unpushed…" : "Git Watch…"
+    }
+
     func openInFinder(_ repo: GitWatchRepo) {
         NSWorkspace.shared.open(URL(filePath: repo.path, directoryHint: .isDirectory))
     }
@@ -94,18 +119,18 @@ final class GitWatchCoordinator {
         core.showMessage("Copied an ssh command for \(repo.name)")
     }
 
-    /// Never forced: a push that is not a fast-forward fails, and the HUD shows git's reason.
+    /// Never forced: a push that is not a fast-forward fails, and its row shows git's reason.
     func push(_ repo: GitWatchRepo, on machine: GitWatchMachine) async {
-        core.showProgress("Pushing \(repo.name)…")
+        guard pushes[machine.host]?[repo.path] != .pushing else { return }
+        pushes[machine.host, default: [:]][repo.path] = .pushing
         let result = await GitWatchShell.run(
             GitWatchScript.push(path: repo.path, branch: repo.branch), on: machine)
-        core.hideProgress()
         switch result {
         case .success:
+            pushes[machine.host, default: [:]][repo.path] = .pushed
             statuses[machine.host]?.report?.markClean(repo.path)
-            core.showMessage("Pushed \(repo.name) \(repo.branch)")
         case .failure(let failure):
-            core.showMessage("\(repo.name): \(failure.message)", tone: .danger)
+            pushes[machine.host, default: [:]][repo.path] = .failed(failure.message)
         }
     }
 

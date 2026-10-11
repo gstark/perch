@@ -83,6 +83,26 @@ struct GitWatchTests {
         expect(normal.last?.roots == ["~/dev"], "the first entry for a host wins")
         expect(GitWatchMachine.normalize([]) == [.thisMac], "an empty list gains this Mac")
         expect(GitWatchMachine.thisMac.displayName == "This Mac", "the local machine has a name")
+
+        let report = GitWatchReport(parsing: """
+            repo\t/d/b\tmain\tahead\t1
+            repo\t/d/a\tmain\tunpushed\t2
+            repo\t/d/c\tmain\tclean\t0
+            repo\t/d/x\tmain\tahead\t4
+
+            """)
+        let ignoring = GitWatchMachine(host: "", roots: [], ignoredPaths: ["/d/x", "/d/gone"])
+        let entries = ignoring.entries(in: report)
+        expect(
+            entries.map(\.path) == ["/d/a", "/d/b", "/d/gone", "/d/x"],
+            "at-risk repos first, then every ignored path, each group sorted")
+        expect(
+            entries.map(\.isIgnored) == [false, false, true, true], "ignored entries are marked")
+        expect(entries[3].repo?.commitCount == 4, "an ignored repo still found keeps its state")
+        expect(entries[2].repo == nil, "an ignored repo the scan no longer finds has no state")
+        expect(ignoring.entries(in: nil).map(\.path) == ["/d/gone", "/d/x"], "before a scan")
+        let kept = ignoring.entries(in: report, keeping: ["/d/c"]).map(\.path)
+        expect(kept.prefix(3) == ["/d/a", "/d/b", "/d/c"], "a just-pushed repo stays listed")
     }
 
     static func quoting() {

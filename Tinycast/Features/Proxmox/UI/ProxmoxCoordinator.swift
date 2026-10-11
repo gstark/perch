@@ -26,7 +26,7 @@ final class ProxmoxCoordinator {
             guard let self else { throw .notConfigured }
             return try connection()
         }
-        window.show(chrome: ProxmoxWindowChrome()) {
+        window.show(chrome: FormWindowChrome()) {
             ProxmoxPanelView(session: session).environment(core)
         }
     }

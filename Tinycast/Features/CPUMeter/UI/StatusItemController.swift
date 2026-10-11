@@ -79,7 +79,9 @@ final class StatusItemController: NSObject, NSMenuDelegate {
 
     func menuNeedsUpdate(_ menu: NSMenu) {
         menu.removeAllItems()
-        GitWatchMenu.addItem(to: menu, coordinator: core.gitWatchCoordinator)
+        let gitWatch = core.gitWatchCoordinator
+        menu.addItem(item(gitWatch.menuTitle) { $0.gitWatchCoordinator.showPanel() })
+        menu.addItem(.separator())
         addProcessItems(to: menu)
         menu.addItem(item("Open Activity Monitor") { _ in ProcessControl.openActivityMonitor() })
         if core.proxmoxCoordinator.hasAddress {

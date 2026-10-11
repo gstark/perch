@@ -47,23 +47,26 @@ does not move it. That clone shows as `ahead` until you fetch in it.
 A scan runs at launch, every 10 minutes, after the Mac wakes, and on **Scan Now**. All machines scan
 at the same time, and a scan has a 60-second limit. Results stay in memory.
 
-## The menu
+## The menu and the window
 
-While the badge shows, the CPU menu starts with **Git Watch: N Unpushed** (or **Git Watch:
-Scanning…**). Its submenu lists the repos by machine, so the process list stays in reach.
+The CPU menu always starts with one Git Watch item: **Git Watch: N Unpushed…**, **Git Watch:
+Scanning…** or **Git Watch…**. It opens the Git Watch window, a grouped `Form` in a
+`FormWindowChrome` window, the same as the Proxmox panel.
 
-Each repo row opens its own submenu:
+The window has **Scan Now** and **Settings…** at the top, then one section per machine.
+`GitWatchMachine.entries(in:keeping:)` builds each section: the at-risk repos, then every ignored
+path, dimmed. An at-risk repo has these buttons:
 
-- **Open in Finder**, or **Copy ssh Command** for a repo on a remote host.
-- **Push to Remote** runs `GitWatchScript.push` on the repo's machine, through the same transport
-  as the scan. It pushes the default branch to its upstream, or with `--set-upstream` to `origin`
-  (else the first remote) when it has none. `GIT_TERMINAL_PROMPT=0` makes a credential question
-  fail instead of hang. The HUD shows progress, then the result or git's rejection or error line.
-  A successful push marks the repo clean at once, so the count drops before the next scan.
-- **Ignore This Repository** adds it to the machine's ignore list. Settings lists the ignored repos
-  of each machine, each with **Unignore**.
+- **Finder** opens the folder. A repo on a remote host has **Copy ssh** instead, which copies
+  `ssh -t <host> 'cd <path> && exec "$SHELL" -l'`.
+- **Push** runs `GitWatchScript.push` on the repo's machine, through the same transport as the scan.
+  It pushes the default branch to its upstream, or with `--set-upstream` to `origin` (else the
+  first remote) when it has none. `GIT_TERMINAL_PROMPT=0` makes a credential question fail instead
+  of hang. The row shows "Pushing…", then "Pushed" or git's rejection or error line. A successful
+  push marks the repo clean at once. The row stays listed with its result until the next scan.
+- **Ignore** adds the repo to the machine's ignore list.
 
-**Scan Now** is disabled while a scan runs.
+An ignored repo has **Unignore**. It stays listed even when the scan no longer finds it.
 
 ## Settings
 
