@@ -70,6 +70,8 @@ final class AppCore {
         calcHistory: calcHistory, paletteCoordinator: paletteCoordinator, core: self)
     @ObservationIgnored private(set) lazy var proxmoxCoordinator = ProxmoxCoordinator(core: self)
     @ObservationIgnored private(set) lazy var gitWatchCoordinator = GitWatchCoordinator(core: self)
+    @ObservationIgnored private(set) lazy var diskHistoryCoordinator = DiskHistoryCoordinator(
+        core: self)
 
     let cpuSampler = CPUSampler()
     @ObservationIgnored private(set) lazy var statusItem = StatusItemController(
@@ -106,6 +108,7 @@ final class AppCore {
             observeEffectiveAppearance()
             statusItem.start()
             gitWatchCoordinator.start()
+            diskHistoryCoordinator.start()
             pinnedEmoji.onPersistenceFailure = { [weak self] in
                 self?.showMessage("Couldn't save Emoji & Symbols pins", tone: .danger)
             }

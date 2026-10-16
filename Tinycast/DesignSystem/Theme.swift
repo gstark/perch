@@ -148,6 +148,15 @@ enum Theme {
         /// Opening size; resizable down to `gitWatchWindowMinimum`.
         static let gitWatchWindow = CGSize(width: 560, height: 560)
         static let gitWatchWindowMinimum = CGSize(width: 440, height: 300)
+        /// Opening size; resizable down to `diskHistoryWindowMinimum`.
+        static let diskHistoryWindow = CGSize(width: 620, height: 520)
+        static let diskHistoryWindowMinimum = CGSize(width: 460, height: 400)
+        static let diskHistoryChart: CGFloat = 260
+        /// The CPU menu's disk row; the process rows' tab stop already makes the menu this wide.
+        static let diskMenuSummaryWidth: CGFloat = 310
+        static let diskMenuSparkline: CGFloat = 32
+        /// Where AppKit starts a menu item's title, so a view item's text lines up with the rest.
+        static let menuItemInset: CGFloat = 14
         /// A guest row's load bar, beside a percentage of fixed width so the bars line up.
         static let proxmoxLoadBar: CGFloat = 80
         static let proxmoxPercentColumn: CGFloat = 44

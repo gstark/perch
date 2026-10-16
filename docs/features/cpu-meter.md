@@ -48,4 +48,5 @@ so the meter stays in place. `AppCore` tracks the coordinator's count and scan s
 ## Menu
 
 Below the process list come **Open Activity Monitor** and, once an address is set in
-Settings › Proxmox, **Proxmox…**. See [proxmox.md](proxmox.md).
+Settings › Proxmox, **Proxmox…**. See [proxmox.md](proxmox.md). The **Startup Disk** section
+follows, with a free-space summary and **Disk History…**. See [disk-history.md](disk-history.md).

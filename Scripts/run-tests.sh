@@ -308,6 +308,8 @@ run git-watch-test         Tinycast/Features/GitWatch/Model/*.swift \
                            Tinycast/Features/GitWatch/Service/GitWatchScanner.swift \
                            Tinycast/Features/GitWatch/Service/GitWatchShell.swift \
                            Tinycast/Platform/ProcessExit.swift
+run disk-history-test      Tinycast/Features/DiskHistory/Model/*.swift \
+                           Tinycast/Features/DiskHistory/Service/*.swift
 run settings-history-test  Tinycast/Features/Settings/SettingsTab.swift \
                            Tinycast/Features/Settings/SettingsHistory.swift \
                            Tinycast/Features/Settings/SettingsAnchor.swift \

@@ -87,7 +87,6 @@ because the app rewrites the file.
 {
   "general": {
     "showInMenuBar": true,
-    "automaticallyCheckForUpdates": true,
     "popToRootSeconds": 0,
     "escapeKeyBehavior": "navigateBackOrClose",
     "autoSwitchInputSource": null,

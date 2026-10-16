@@ -30,5 +30,6 @@ open with an `## Invariants` section; read it before changing anything in that a
 [settings file](features/settings-file.md) ·
 [CPU meter](features/cpu-meter.md) ·
 [Proxmox](features/proxmox.md) ·
-[Git Watch](features/git-watch.md)
+[Git Watch](features/git-watch.md) ·
+[Disk History](features/disk-history.md)
 

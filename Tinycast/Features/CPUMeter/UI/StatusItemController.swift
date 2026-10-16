@@ -88,6 +88,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             menu.addItem(item("Proxmox…") { $0.proxmoxCoordinator.showPanel() })
         }
         menu.addItem(.separator())
+        addDiskItems(to: menu)
+        menu.addItem(.separator())
         menu.addItem(item("Open Launcher") { $0.paletteCoordinator.showPalette(mode: .launcher) })
         if core.settings.clipboardEnabled {
             menu.addItem(
@@ -97,6 +99,15 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(item("Settings…") { $0.settingsCoordinator.showSettings() })
         menu.addItem(.separator())
         menu.addItem(item("Quit \(Bundle.main.appDisplayName)") { _ in NSApp.terminate(nil) })
+    }
+
+    private func addDiskItems(to menu: NSMenu) {
+        let disk = core.diskHistoryCoordinator
+        menu.addItem(.sectionHeader(title: "Startup Disk"))
+        if let current = disk.current {
+            menu.addItem(DiskMenuSummary.menuItem(current: current, samples: disk.store.samples))
+        }
+        menu.addItem(item("Disk History…") { $0.diskHistoryCoordinator.showPanel() })
     }
 
     /// Each row quits its process; holding Option turns every row into Force Quit.
