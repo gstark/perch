@@ -144,7 +144,8 @@ Put the code in `Features/CPUMeter/`:
 | `lint` | Run `Scripts/lint.sh`. |
 | `format` | Run `Scripts/format.sh`. |
 | `install` | Build, quit the running Perch, copy it to `/Applications`, and open it. |
-| `upstream` | Fetch `upstream` and show new commits that touch the kept feature folders. |
+| `upstream` | Fetch `upstream` and show commits after `.upstream-reviewed` that touch the kept folders. |
+| `upstream-reviewed` | Write the `upstream/main` hash to `.upstream-reviewed`. |
 
 ## Build order
 

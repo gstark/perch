@@ -2,7 +2,7 @@ set shell := ["bash", "-euo", "pipefail", "-c"]
 
 derived := "build/DerivedData"
 release_app := derived + "/Build/Products/Release/Perch.app"
-kept := "Tinycast/App Tinycast/Platform Tinycast/Palette Tinycast/DesignSystem Tinycast/Features/Launcher Tinycast/Features/Clipboard Tinycast/Features/Emoji Tinycast/Features/Calculator Tinycast/Features/WindowManagement Tinycast/Features/HotKeys Tinycast/Features/Settings"
+kept := "Tinycast/App Tinycast/Platform Tinycast/Palette Tinycast/DesignSystem Tinycast/Features/Launcher Tinycast/Features/Clipboard Tinycast/Features/Emoji Tinycast/Features/Calculator Tinycast/Features/WindowManagement Tinycast/Features/HotKeys Tinycast/Features/Settings Tinycast/Windows"
 
 default:
     @just --list
@@ -39,7 +39,11 @@ install: build
     /usr/bin/open /Applications/Perch.app
     echo "Installed /Applications/Perch.app"
 
-# Fetch upstream Tinycast and list new commits that touch the kept folders
+# Fetch upstream Tinycast and list unreviewed commits that touch the kept folders
 upstream:
     git fetch --quiet upstream
-    git log --oneline --no-merges HEAD..upstream/main -- {{ kept }}
+    git log --oneline --no-merges "$(cat .upstream-reviewed)..upstream/main" -- {{ kept }}
+
+# Record upstream/main as reviewed, so `just upstream` lists only newer commits
+upstream-reviewed:
+    git rev-parse upstream/main > .upstream-reviewed

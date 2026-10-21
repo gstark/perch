@@ -46,7 +46,7 @@ final class DiskHistoryCoordinator {
     }
 
     func revealFile() {
-        NSWorkspace.shared.activateFileViewerSelecting([store.fileURL])
+        AppLauncher.showInFinder(store.fileURL)
     }
 
     private func observeWake() {
