@@ -127,6 +127,7 @@ struct CalcTests {
         expectDisplay("3X3", "9")
         expectDisplay("3 x -2", "-6")
         expectDisplay("2xpi", "6.283185307")
+        expectDisplay("2xsin(pi/2)", "2")
         expectDisplay("6/2x(1+2)", "9")
         expectDisplay("10 x", "10")
         expectDisplay("$5 x 2", "10.00 USD")
@@ -278,6 +279,7 @@ struct CalcTests {
         expectDisplay("256 >> 2", "64")
         expectDisplay("6 & 3", "2")
         expectDisplay("5 xor 3", "6")
+        expectDisplay("5 XOR 3", "6")
         expectDisplay("~1", "-2")
         expectDisplay("1 | 2 == 3", "true")
         expectDisplay("~1 == -2", "true")
@@ -659,6 +661,11 @@ struct CalcTests {
         expectDisplay("10m/s / 2s", "5 m/s²")
         expectDisplay("2kg * 3m/s²", "6 N")
         expectDisplay("1 / 20ms to hz", "50 Hz")
+        expectDisplay("100 / s to hz", "100 Hz")
+        expectDisplay("1000 / (3/s)", "333.3333333 s")
+        expectDisplay("65535 / (100/s) to minutes", "10.9225 min")
+        expectDisplay("1000 / 3 / s", "333.3333333 Hz")
+        expectNil("100 / sec")  // the secant function claims `sec` first
         expectDisplay("(1hr + 30min) to timespan", "1 hr 30 min")
         expectDisplay("100km / 40km/h to duration", "2 hr 30 min")
         expectNil("1m / 0s")
@@ -702,10 +709,20 @@ struct CalcTests {
         // A slash date still reads as a date when the other side names a keyword
         expectDisplayAt("9/4 - today", "42 days")
         expectDisplayAt("today - 9/4", "-42 days")
-        // Bare date/unit words alone are app searches, not cards
-        expectNilAt("today")
+        // A lone word naming one moment answers; one that recurs is still an app search
+        expectDisplayAt("today", "24 July")
+        expectDisplayAt("tomorrow", "25 July")
+        expectDisplayAt("yesterday", "23 July")
+        expectDisplayAt("now", "24 July at 12:18 AM")
+        expectBadgesAt("tomorrow", source: "Friday, 24 July", target: "Saturday")
+        expectExpression("Today", "Today")
+        expectDisplayAt("time", "12:18 AM")
+        expectBadgesAt("time", source: "Friday, 24 July", target: "UTC")
         expectNilAt("july")
-        expectNilAt("tomorrow")
+        expectNilAt("monday")
+        expectNilAt("noon")
+        expectNilAt("todays")
+        expectNilAt("times")
 
         // Angle units (deg is a real unit now, not just a trig postfix)
         expectDisplay("1 deg", "0.01745329252 rad")
@@ -733,6 +750,15 @@ struct CalcTests {
         expectDisplay("60 mph to kmh", "96.56064 km/h")
         expectDisplay("100 mbps to kbps", "100,000 Kbps")
         expectBadges("100 kmh to mph", source: "Kilometers per Hour", target: "Miles per Hour")
+
+        // Fuel economy and consumption: no reciprocal rule joins the two
+        expectDisplay("36 mpg", "15.30517347 km/L")
+        expectBadges("36 mpg", source: "Miles per Gallon", target: "Kilometers per Liter")
+        expectDisplay("15 km/l to mpg", "35.2821875 mpg")
+        expectDisplay("100 mi / 4 gal to mpg", "25 mpg")
+        expectDisplay("24.5 l / 350 km to l/100km", "7 L/100km")
+        expectDisplay("1 / 36 mpg to l/100km", "6.533738426 L/100km")
+        expectError("6.5 l/100km to mpg", "Cannot convert Fuel Consumption to Fuel Economy.")
 
         // Bare-unit auto-conversion gaps: same category, same treatment.
         expectDisplay("5 mbar", "0.07251886887 psi")
@@ -782,6 +808,25 @@ struct CalcTests {
         expectDisplay("1kUSD to EUR", "920.00 EUR")
         expectDisplay("£50 in dollars", "63.29 USD")
         expectDisplay("$100 to yen", "15,700.00 JPY")
+        expectDisplay("400K xof in €", "609.80 EUR")
+        expectDisplay("400K xof to €", "609.80 EUR")
+        expectDisplay("400K XOF in €", "609.80 EUR")
+        expectDisplay("400Kxof to eur", "609.80 EUR")
+        expectDisplay("400000 XoF to eur", "609.80 EUR")
+        expectDisplay("xof 400K to €", "609.80 EUR")
+        expectCopy("400K xof in €", "609.80 EUR")
+        expectBadges("400K xof in €", source: "West African CFA Franc", target: "Euro")
+        expectDisplay("100 xrp to usd", "50.00 USD")
+        expectDisplay("100XRP to usd", "50.00 USD")
+        expectDisplay("2 x 100xrp to usd", "100.00 USD")
+        expectDisplay("-100 xrp to usd", "-50.00 USD")
+        for code in ["XAF", "XPF", "XCD", "XCG", "XDR", "XAU", "XAG", "XLM", "XMR"] {
+            expectError("100 \(code.lowercased()) to usd", "No exchange rate for \(code).")
+            expectError("100\(code) in usd", "No exchange rate for \(code).")
+        }
+        expectErrorWithoutRates(
+            "400K xof in €", "Exchange rates unavailable — check your connection.")
+        expectNil("100 xofx to eur")
         // Sub-cent cross-rates widen instead of collapsing to 0.00
         expectDisplay("1 jpy to usd", "0.006369 USD")
         // …and stay in plain notation past 1e-5, where "%g" would flip to "5.539e-05"
@@ -884,10 +929,79 @@ struct CalcTests {
         // A trailing suffix reports through the same conversion the group uses.
         expectError("($10 + $5) to npr", "No exchange rate for NPR.")
         expectError("(1kg + 500g) to usd", "Cannot convert Weight to Currency.")
-        // A mid-expression `to` converts before it adds; `* 30` stays ambiguous, so it needs parens
-        expectNil("20 eur to usd * 30")
-        expectNil("20 eur to usd / 2")
+        expectDisplay("20 eur to usd * 30", "652.17 USD")
+        expectDisplay("20 eur to usd / 2", "10.87 USD")
         expectDisplay("20 eur to usd + 5 usd", "26.74 USD")
+        expectDisplay("1000 usd in eur/12", "76.67 EUR")
+        expectCopy("1000 usd in eur/12", "76.67 EUR")
+        expectExpression("1000 usd in eur/12", "1000 USD in EUR ÷ 12")
+        expectBadges("1000 usd in eur/12", source: "Expression", target: "Euro")
+        expectDisplay("1000USD in EUR/12", "76.67 EUR")
+        expectDisplay("$1000 in €/12", "76.67 EUR")
+        expectDisplay("1000 usd to eur * 2", "1,840.00 EUR")
+        expectDisplay("1000 usd → eur / 4", "230.00 EUR")
+        expectDisplay("1000 usd -> eur / 4", "230.00 EUR")
+        expectDisplay("1000 usd in eur + 20", "940.00 EUR")
+        expectDisplay("1000 usd in eur - 20", "900.00 EUR")
+        expectDisplay("1000 usd in eur * 3%", "27.60 EUR")
+        expectDisplay("1000 usd in eur / 25%", "3,680.00 EUR")
+        expectDisplay("1000 usd in eur / (2 + 3)", "184.00 EUR")
+        expectDisplay("1000 usd in eur / -2", "-460.00 EUR")
+        expectDisplay("1000 usd in eur / 2^3", "115.00 EUR")
+        expectDisplay("1000 usd in eur / 2 * 3 + 5", "1,385.00 EUR")
+        expectDisplay("(1000 usd in eur / 12) * 3", "230.00 EUR")
+        expectDisplay("1000 usd in eur / 12 +", "76.67 EUR")
+        expectDisplay("1000 usd in eur /", "920.00 EUR")
+        expectDisplay("1 btc in usd / 12", "5,000.00 USD")
+        expectDisplay("1200 xof in eur / 2", "0.91 EUR")
+        expectDisplay("10km to m / 4", "2,500 m")
+        expectDisplay("10in in cm / 2", "12.7 cm")
+        expectDisplay("20 pounds to kg / 2", "4.5359237 kg")
+        expectDisplay("500 Mbps in MBps / 2", "31.25 MBps")
+        expectDisplay("1hr to min * 2", "120 min")
+        expectDisplay("20 celsius to fahrenheit / 2", "34 °F")
+        expectDisplay("10 celsius + 20 fahrenheit in celsius + 5 celsius", "8.333333333 °C")
+        expectDisplay("100km/h in m/s / 2", "13.88888889 m/s")
+        expectDisplay("25 USD/hr in EUR/min * 2", "0.7666666667 EUR/min")
+        expectDisplay("2m2 in cm^2 / 2", "10,000 cm²")
+        expectDisplay("1kg/m3 in g/cm3 * 2", "0.002 g/cm³")
+        expectDisplay("100km/h in m/s + 2m/s", "29.77777778 m/s")
+        expectDisplay("1000 usd / 12 in eur", "76.67 EUR")
+        expectDisplay("1000 usd + 200 usd in eur", "1,104.00 EUR")
+        // A mid-expression conversion takes the whole term before it, never part of a composite
+        expectDisplay("2 * 500 usd in eur / 4", "230.00 EUR")
+        expectDisplay("1000 usd / 4 to eur / 2", "115.00 EUR")
+        expectDisplay("1000 usd in eur / 2 to gbp + 1 gbp", "396.00 GBP")
+        expectDisplay("5 ft 3 in in cm / 2", "80.01 cm")
+        expectDisplay("5 ft 3 in in cm + 1 cm", "161.02 cm")
+        expectDisplay("100 km / 2 h in m/s / 2", "6.944444444 m/s")
+        expectDisplay("2m * 3m to cm2 + 1 cm2", "60,001 cm²")
+        expectDisplay("round(1000 usd in eur)", "920.00 EUR")
+        expectDisplay("max(1000 usd in eur, 900 eur)", "920.00 EUR")
+        expectDisplay("min(10 kg to lb, 30 lb)", "22.04622622 lb")
+        expectLocalized("max(1.000 usd in eur; 900 eur)", "920,00 EUR", italian)
+        expectDisplay("1000 usd in eur > 900 eur", "true")
+        expectDisplay("10 kg to lb == 10 kg", "true")
+        expectNil("1000 usd in eur & 3")
+        expectNil("1000 usd in eur)")
+        expectNil("10 kg to lb to oz")
+        expectLocalized("1.000 usd in eur / 12", "76,67 EUR", italian)
+        expectNil("1000 usd in eur / 0")
+        expectNil("1000 usd in eur / 0%")
+        expectNil("1000 usd in eur / (2 - 2)")
+        expectNil("1000 usd in eur / nonsense")
+        expectNil("1000 usd in eur / (2 +)")
+        expectNil("1000 usd in eur / 2 nonsense")
+        expectNil("1000 usd in eur nonsense / 2")
+        expectNil("1000 usd in eur / 1e-999")
+        expectNil("1000 usd in eur / 1e308 * 1e308 * 1e308")
+        expectNil("100km/h in m/s nonsense / 2")
+        expectNil("100km/h in m/s / (2 +)")
+        expectError("1000 usd in npr / 12", "No exchange rate for NPR.")
+        expectErrorWithoutRates(
+            "1000 usd in eur / 12", "Exchange rates unavailable — check your connection.")
+        expectError("10kg in usd / 2", "Cannot convert Weight to Currency.")
+        expectError("100km/h in kg/s / 2", "Cannot convert Speed to Compound Units.")
         expectDisplay("$10 +", "10.00 USD")
         expectBadges("$10 +", source: "Expression", target: "US Dollar")
         // Juxtaposition multiplies on either side of the amount, same as an explicit "*"
@@ -1198,7 +1312,6 @@ struct CalcTests {
         expectDisplay("1 cup to ml", "236.5882365 mL")
         expectNil("time in xyzzy")
         expectNil("in tokyo")
-        expectNil("time")
 
         // IATA airport codes, which Foundation has no notion of
         expectDisplayAt("time in vie", "2:18 AM")
@@ -1331,11 +1444,9 @@ struct CalcTests {
         expectBadgesAt("25. aug", source: "Friday, 24 July", target: "Tuesday")
         // A bare date takes the year it is nearest, so it agrees with the same date plus a shift
         expectDisplayAt("25. aug + 3", "28 August")
-        // A month or a relative word alone is still an app search
+        // A month alone is still an app search
         expectNilAt("july")
         expectNilAt("aug")
-        expectNilAt("today")
-        expectNilAt("tomorrow")
 
         // Date arithmetic chains left to right, however many terms it carries
         expectDisplayAt("17.2.26 + 100 week days - 4 + 2", "5 July")
@@ -1551,9 +1662,6 @@ struct CalcTests {
         expectDisplayAt("1:00 - 3:00", "-2 hr", calendar: vienna)
         let springNow = clock.calendar.date(from: DateComponents(year: 2026, month: 3, day: 29))!
         expectNilAt("2:30am vienna in london", now: springNow, calendar: vienna)
-        // A lone date word is still an app search
-        expectNilAt("tomorrow")
-        expectNilAt("today")
 
         // Spoken function and operator names
         expectDisplay("square root of 625", "25")
@@ -1779,7 +1887,8 @@ struct CalcTests {
             check(query + " [chains]", expected: "true", got: chains(evaluate(query)))
         }
         for query in [
-            "now + 90 min", "now + 90 min +", "time in Tokyo", "3pm London in Tokyo", "5 > 3",
+            "now + 90 min", "now + 90 min +", "today", "time", "time in Tokyo", "3pm London in Tokyo",
+            "5 > 3",
             "ratio of 1920 to 1080"
         ] {
             check(query + " [chains]", expected: "false", got: chains(evaluate(query)))
@@ -1873,6 +1982,7 @@ struct CalcTests {
         rates: [
             "USD": 1, "EUR": 0.92, "GBP": 0.79, "JPY": 157, "INR": 83.5, "CAD": 1.36,
             "KRW": 1330, "IDR": 18053, "CHF": 0.81, "AED": 3.6725, "SGD": 1.35,
+            "XOF": 603.48, "XRP": 2,
             "BTC": 1.0 / 60_000, "ETH": 1.0 / 2_000, "SOL": 1.0 / 100, "DOGE": 10
         ],
         fetchedAt: Date(timeIntervalSince1970: 1_785_000_000))

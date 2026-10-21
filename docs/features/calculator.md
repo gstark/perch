@@ -46,6 +46,7 @@ in (see Currency below).
 `CalcEngine.evaluate` runs:
 
 Single ASCII words return immediately: a bare app name, constant or date keyword never earns a card.
+The one exception is the five words that name the current moment or its neighbours — see grammar G.
 
 1. Natural-language date/time (`CalcDateTime`, e.g. `hrs till 9am`, `days till 9april`,
    `today + 3 weeks`)
@@ -104,7 +105,7 @@ parser, while the separator still chooses ISO, month-first or day-first interpre
 - **D** — difference between two moments: `jul 4 - today`
 - **E** — a leading duration: `5 weekdays from now`, `3 days from today`, `2 weeks ago`
 - **F** — a weekday inside a future week: `monday in 3 weeks`, `friday in 2 weeks`
-- **G** — a named moment, once qualified: `tomorrow at 9am`, `next monday`, `last friday`
+- **G** — a named moment: `today`, `now`, `time`, `tomorrow at 9am`, `next monday`, `last friday`
 
 **An answered moment badges its weekday.** Grammars C and E resolve to a date, and the day of the
 week is the thing a date does not say out loud — so `5 weekdays from now` reads `4 September` under
@@ -131,11 +132,15 @@ which is the more common thing to type.
 The same convention writes an **ordinal dot** after the day, so `28. aug + 3` reads as 28 August.
 Only a trailing dot is dropped, which is why `28.5 aug` stays silent rather than becoming a date.
 
-Grammar G needs the qualifier. A lone `tomorrow` is an app search, so `at <time>` or a leading
-`next` / `last` earns a card — the same rule that keeps `today` and `july` silent. **A written day
-is qualifier enough**: `25. aug`, `aug 25` and `25.8.27` all answer, badged with their weekday,
-because nobody types a day-and-month pair looking for an app. A month alone still names no day, so
-`july` stays a search.
+Grammar G needs a qualifier for anything that recurs. `monday`, `july` and `noon` alone are app
+searches, so `at <time>` or a leading `next` / `last` earns a card. **`now`, `today`, `tomorrow`,
+`yesterday` and `time` are qualifier enough** — each names exactly one moment, so alone they answer.
+`time` is the Mac's own clock, badged with today's date and the calendar's zone the way `time in
+<place>` badges its city. The card takes row 0, so `time` + Enter copies the clock; Time Machine is
+one row down.
+**A written day is qualifier enough** too: `25. aug`, `aug 25` and `25.8.27` all answer, badged with
+their weekday, because nobody types a day-and-month pair looking for an app. A month alone still
+names no day, so `july` stays a search.
 
 A bare date takes the year it is **nearest**, not the next one — three days behind is likelier the
 date meant than the same day twelve months out. Grammar C shifts a moment, so it reads the year the
@@ -182,11 +187,18 @@ quantity, so `(20 sgd to usd) * 30` converts then multiplies. Percentages keep r
 for addition (`10kg + 20%` → `12 kg`) and act as fractional scalars for multiplication and division
 (`10kg * 3%` → `0.3 kg`, `10kg / 25%` → `40 kg`).
 
-A conversion may also appear **mid-expression, but only where `+` or `-` follows it**:
-`10kg to lb + 3lb` converts and then adds, without needing the parentheses it used to. The
-restriction is the whole point. `20 eur to usd * 30` has two honest readings — convert then scale,
-or convert into a scaled unit — so it stays silent and keeps asking for `(20 eur to usd) * 30`,
-while `+` and `-` carry no such ambiguity because a conversion target is never an addend.
+A conversion may also appear **mid-expression before an operator, `)` or `,`**:
+`1000 usd in eur / 12` converts the amount into euros and then divides by twelve;
+`10kg to lb + 3lb` converts and then adds; `round(1000 usd in eur)` and
+`10 kg to lb > 20 lb` work inside a function call or a comparison. The conversion binds looser
+than `*`, `/` and a composite, and tighter than `+` and `-`: `2 * 500 usd in eur` converts the
+product and `5 ft 3 in in cm / 2` the whole height, while `10kg + 2lb to kg - 1kg` converts only
+the `2lb`. Parentheses make a larger source explicit, as in `(10kg + 500g) to lb / 2`.
+Compound targets consume their unit factors before arithmetic resumes, so
+`100km/h in m/s / 2` converts into meters per second and then halves the speed.
+Numeric factors follow the existing arithmetic precedence, including parentheses and percentages:
+`1000 usd in eur / (2 + 3)` divides by five, and `1000 usd in eur * 3%` takes three percent.
+Mid-expression after a bare number, prefer `to`: `1000 usd / 4 in eur / 2` reads `4 in` as inches.
 A **trailing** `to` is untouched by this and still converts the whole expression, so
 `10kg + 500g to lb` remains the sum in pounds rather than `10kg + (500g to lb)`.
 
@@ -215,6 +227,9 @@ subtracts them, and powers multiply them. `CalcUnits.baseUnits` resolves support
 ordinary units, so conversions and addition need no second representation. Derived results use base
 units unless a trailing conversion names another: `5m * 4m` → `20 m²`,
 `100km / 2h to km/h` → `50 km/h`, `90km/h * 20min to km` → `30 km`.
+A bare unit after `/` is one of that unit, as `(s)` is: `100 / s` → `100 Hz`, `1000 / (3/s)` →
+`333.3333333 s`. Only `/` does this, so `m s` stays a unit pair. A function name still wins, so
+`100 / sec` (the secant) stays silent.
 Area, volume, volume flow, speed, acceleration, force, pressure, energy, power, frequency, data rates
 and electrical and pixel units compose through this same path. `CalcUnitExpression` composes other
 dimensions from existing units, retaining their factors and symbols: `2kg / 4m3` → `0.5 kg/m³`,
@@ -223,6 +238,9 @@ dimensions from existing units, retaining their factors and symbols: `2kg / 4m3`
 All factors share composable bases: cubic meters for volume and bytes per second for data rates.
 To add a dimension, declare its signature on `UnitCategory`, add records to `CalcUnitCatalog`, and register
 one output in `baseUnits`. A new unit within a category only needs a table entry.
+Fuel economy (`mpg`, `km/L`) and fuel consumption (`L/100km`) register no base unit, so
+`100 km / 7 l` keeps the units typed. No rule converts one into the other: `6.5 l/100km to mpg` is a
+category error, while `1 / 36 mpg to l/100km` works through ordinary division.
 `m²` / `m2` and `m³` / `m3` name units; `(2m)^2` squares the entire quantity.
 `CalcUnits.productUnit` selects Wh/kWh for power multiplied by a minutes-or-larger time unit,
 and Ah/mAh for current multiplied by one; other derived products retain their base unit.
@@ -429,8 +447,9 @@ consuming a token before parsing the right operand.
 
 A parenthesis, constant, function or spoken root starts an implicit product (`2 square root of 9` → 6).
 Adjacent numbers never do — `5 3` stays an app search — and unit and currency names keep their own
-operand positions. The tokenizer only folds a lone `x` after an operand, keeping names such as `max`
-and incomplete hexadecimal input such as `0x` out of arithmetic. The same rule covers typed values
+operand positions. The tokenizer only folds a lone `x` after an operand, preserving registered
+currency names such as `xof` and `xrp`, the `xor` operator, names such as `max` and incomplete
+hexadecimal input such as `0x`. The same rule covers typed values
 (`$5(2)` → `10.00 USD`, `2(3)kg` → `6 kg`, matching `2*(3)kg`); adjacent quantities still use the
 composite `+` described above.
 
@@ -594,6 +613,9 @@ newer numbers. Age is measured from the persisted `fetchedAt`, not from launch, 
 Perch never re-fetches a snapshot that is still fresh — a cold start with a same-day cache makes
 zero requests. Offline, the last snapshot keeps answering; with no snapshot at all the card says so
 rather than guessing, and a currency the feed doesn't quote reports `No exchange rate for <CODE>.`
+A money answer sets `CalcResult.isCurrency`, so its card shows when the snapshot was fetched and a
+small refresh button. `CurrencyRateStore.refresh()` fetches at once without touching the pump, which
+re-measures age from `completedAt` whenever it wakes.
 The store hands `CalcEngine.evaluate` a finished `CurrencyRates` value — the engine never fetches,
 which is what keeps it Foundation-only and testable. `CalcMemo` keys its memo on the snapshot's
 `fetchedAt` and the region currency, so either changing re-evaluates without diffing every rate.

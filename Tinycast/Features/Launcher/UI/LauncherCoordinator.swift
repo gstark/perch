@@ -33,7 +33,9 @@ final class LauncherCoordinator {
     ) {
         // A category word is no search for the row: learning it would rank the row under "s".
         if !CommandCatalog.isQueryDriven(app) {
-            let term = searchQuery.flatMap { AppEntry.Kind.named(by: $0) == nil ? $0 : nil }
+            let term = searchQuery.flatMap {
+                AppEntry.Kind.matching(by: LauncherOrder.CategoryQuery($0)).contains(app.kind) ? nil : $0
+            }
             ranking.visit(itemKey: app.preferenceKey, query: term)
         }
         // Commands dispatch before the palette hides: mode-switching commands keep it open.
@@ -60,7 +62,7 @@ final class LauncherCoordinator {
         paletteCoordinator.hidePalette(restoreFocus: false)
         switch app.kind {
         case .application:
-            AppLauncher.launch(app.url)
+            AppLauncher.launch(app.url, allowsRunningApplicationSubstitution: false)
         case .systemSettings:
             guard let bundleID = app.bundleID else { return }
             AppLauncher.openSettingsPane(bundleID: bundleID)
@@ -118,8 +120,10 @@ final class LauncherCoordinator {
     func quit(_ app: AppEntry, force: Bool = false) {
         guard app.kind == .application, let bundleID = app.bundleID else { return }
         // Nothing here takes focus, so hand it back unless that app is on its way out.
-        let quittingPreviousApp = windowController.previousApp?.bundleIdentifier == bundleID
-        guard AppLauncher.quit(bundleID: bundleID, force: force) else { return }
+        let quittingPreviousApp =
+            windowController.previousApp?.bundleURL?.resolvingSymlinksInPath().standardizedFileURL.path
+            == app.id
+        guard AppLauncher.quit(bundleID: bundleID, url: app.url, force: force) else { return }
         paletteCoordinator.hidePalette(restoreFocus: !quittingPreviousApp)
     }
 }

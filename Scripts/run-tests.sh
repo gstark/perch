@@ -124,6 +124,19 @@ run app-name-test          Tinycast/Platform/AppDisplayName.swift \
                            Tinycast/Platform/BundleLocalization.swift \
                            $L/SearchRelevance.swift
 run favorites-test         $L/FavoriteSlots.swift
+run app-installation-test  $L/SearchRelevance.swift $L/ScriptRomanization.swift \
+                           $L/LauncherMatch.swift $L/EntryNaming.swift $L/LauncherOrder.swift \
+                           $L/LauncherRankingStore.swift $L/LauncherSuggestions.swift $L/SearchScopes.swift \
+                           Tinycast/Features/Launcher/Service/AppIndex.swift \
+                           Tinycast/Features/Launcher/Service/AppLauncher.swift \
+                           Tinycast/Features/Launcher/Service/RunningAppsMonitor.swift \
+                           Tinycast/Features/Launcher/Service/FavoritesStore.swift \
+                           Tinycast/Features/Launcher/Service/AliasStore.swift \
+                           Tinycast/Features/Launcher/Service/VisibilityStore.swift \
+                           Tinycast/Features/Launcher/Service/BundleNameCache.swift \
+                           Tinycast/Platform/AppDisplayName.swift Tinycast/Platform/BundleLocalization.swift \
+                           Tinycast/Platform/Images/FileIconStamp.swift Tinycast/Platform/Memo.swift \
+                           Tinycast/Platform/Signposts.swift Tinycast/Platform/NotificationToken.swift
 run launcher-file-test     $L/LauncherFileFormat.swift \
                            Tinycast/Features/Settings/Model/SettingsFileJSON.swift
 run launcher-settings-file-test $L/LauncherFileFormat.swift \
@@ -148,39 +161,59 @@ run launcher-settings-file-test $L/LauncherFileFormat.swift \
 run calc-test              Tinycast/Features/Calculator/Model/*.swift
 run index calc-performance Tinycast/Features/Calculator/Model/*.swift
 run clipboard-test         Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
+                           Tinycast/Platform/Images/ImageDerivative.swift \
                            Tests/clipboard-seed.swift \
                            Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
                            Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
                            Tinycast/Features/Clipboard/Model/ColorValue.swift \
                            Tinycast/Features/Clipboard/Model/ColorFormat.swift \
                            Tinycast/Features/Clipboard/Model/ColorSpaces.swift
+run clipboard-thumbnail-test Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
+                           Tinycast/Platform/Images/ImageDerivative.swift \
+                           Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
+                           Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
+                           Tinycast/Features/Clipboard/Model/ColorValue.swift \
+                           Tinycast/Features/Clipboard/Model/ColorFormat.swift \
+                           Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
+                           Tinycast/Platform/ProcessExit.swift \
+                           Tinycast/Platform/Images/ImageThumbnail.swift \
+                           Tinycast/Platform/Images/ThumbnailCache.swift \
+                           Tests/clipboard-seed.swift
 # `Q` is the URL detector a drag payload builds its link with, rather than a second one.
 Q=Tinycast/Platform/LinkDestination.swift
-run clipboard-search-test  Tinycast/Features/Clipboard/Model/*.swift $Q Tests/clipboard-seed.swift
-run paste-sequence-test    Tinycast/Features/Clipboard/Model/*.swift $Q
-run clipboard-text-test    Tinycast/Features/Clipboard/Model/*.swift $Q Tests/clipboard-seed.swift \
+run clipboard-search-test  Tinycast/Features/Clipboard/Model/*.swift Tinycast/Platform/Images/ImageDerivative.swift $Q Tests/clipboard-seed.swift
+run paste-sequence-test    Tinycast/Features/Clipboard/Model/*.swift Tinycast/Platform/Images/ImageDerivative.swift $Q
+run clipboard-text-test    Tinycast/Features/Clipboard/Model/*.swift Tinycast/Platform/Images/ImageDerivative.swift $Q Tests/clipboard-seed.swift \
                            Tinycast/Features/Clipboard/Service/ClipboardTextExtractor.swift \
                            Tinycast/Features/Clipboard/Service/ClipboardTextIndexer.swift \
                            Tinycast/Features/Clipboard/Service/ClipboardTextWorker.swift \
                            Tinycast/Platform/ProcessExit.swift
 run pasteboard-test        Tinycast/Platform/PasteboardFiles.swift \
                            Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
+                           Tinycast/Platform/Images/ImageDerivative.swift \
                            Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
                            Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
                            Tinycast/Features/Clipboard/Model/ColorValue.swift \
                            Tinycast/Features/Clipboard/Model/ColorFormat.swift \
                            Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
                            Tinycast/Features/Clipboard/Service/ClipboardManager.swift \
-                           Tinycast/Features/Clipboard/Service/Paster.swift
+                           Tinycast/Features/Clipboard/Service/Paster.swift \
+                           Tests/clipboard-seed.swift
 run index clipboard-file-performance \
                            Tinycast/Platform/PasteboardFiles.swift \
                            Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
+                           Tinycast/Platform/Images/ImageDerivative.swift \
                            Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
                            Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
                            Tinycast/Features/Clipboard/Model/ColorValue.swift \
                            Tinycast/Features/Clipboard/Model/ColorFormat.swift \
                            Tinycast/Features/Clipboard/Model/ColorSpaces.swift \
                            Tinycast/Features/Clipboard/Service/ClipboardManager.swift
+run index clipboard-thumbnail-performance \
+                           Tinycast/Platform/ProcessExit.swift \
+                           Tinycast/Platform/Images/ImageThumbnail.swift \
+                           Tinycast/Platform/Images/ImageDerivative.swift \
+                           Tinycast/Platform/Images/ThumbnailCache.swift
 run emoji-test             Tinycast/Features/Emoji/Model/EmojiCatalog.swift \
                            Tinycast/Features/Emoji/Model/EmojiGridGeometry.swift \
                            Tinycast/Features/Emoji/Model/EmojiData.generated.swift
@@ -213,14 +246,22 @@ run palette-placement-test Tinycast/Platform/Appearance.swift \
                            Tinycast/DesignSystem/InterfaceMetrics.swift \
                            Tinycast/Features/Settings/InterfaceSize.swift \
                            Tinycast/Palette/PalettePlacement.swift
+run palette-menu-click-test Tinycast/Platform/Appearance.swift \
+                           Tinycast/DesignSystem/Theme.swift \
+                           Tinycast/Platform/WindowLevel.swift \
+                           Tinycast/Platform/NotificationToken.swift \
+                           Tinycast/DesignSystem/Interaction/KeyboardFocus.swift \
+                           Tinycast/Palette/PalettePanel.swift
 run scroll-reveal-test     Tinycast/DesignSystem/Scrolling/SelectionReveal.swift
 run redaction-test         Tinycast/DesignSystem/RedactedPlaceholder.swift
 run keyboard-focus-test    Tinycast/DesignSystem/Interaction/KeyboardFocus.swift
+run command-escape-tap-test Tinycast/Palette/CommandEscapeTap.swift
 run hover-arming-test Tinycast/Palette/HoverArming.swift \
                       Tinycast/Palette/PaletteState.swift \
                       Tinycast/Palette/PaletteMode.swift \
                       Tinycast/Features/Emoji/Model/EmojiCatalog.swift \
                       Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
+                      Tinycast/Platform/Images/ImageDerivative.swift \
                       Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
                       Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
                       Tinycast/Features/Clipboard/Model/ColorValue.swift \
@@ -237,6 +278,7 @@ run palette-navigation-test Tinycast/Palette/PaletteState.swift \
                             Tinycast/Palette/HoverArming.swift \
                             Tinycast/Features/Emoji/Model/EmojiCatalog.swift \
                             Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
+                            Tinycast/Platform/Images/ImageDerivative.swift \
                             Tinycast/Features/Clipboard/Model/ClipboardFilter.swift \
                             Tinycast/Features/Clipboard/Model/ClipboardFileKind.swift \
                             Tinycast/Features/Clipboard/Model/ColorValue.swift \

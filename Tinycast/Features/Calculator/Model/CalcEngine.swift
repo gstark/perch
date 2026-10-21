@@ -33,10 +33,11 @@ struct CalcResult: Equatable, Sendable {
     let canChain: Bool
     /// The same amount in the category's other units; only a bare quantity like `1 quart` has any.
     let alternatives: [CalcResult]
+    let isCurrency: Bool
 
     init(
         expression: String, sourceBadge: String? = nil, targetBadge: String? = nil, payload: Payload,
-        canChain: Bool = true, alternatives: [CalcResult] = []
+        canChain: Bool = true, alternatives: [CalcResult] = [], isCurrency: Bool = false
     ) {
         self.expression = expression
         self.sourceBadge = sourceBadge
@@ -44,6 +45,7 @@ struct CalcResult: Equatable, Sendable {
         self.payload = payload
         self.canChain = canChain
         self.alternatives = alternatives
+        self.isCurrency = isCurrency
     }
 
     /// True only for a copyable value; an error card has no primary action and no actions menu.
@@ -64,8 +66,8 @@ enum CalcEngine {
         guard !trimmed.isEmpty, trimmed.count <= 256, let query = format.canonical(trimmed) else {
             return nil
         }
-        guard !query.utf8.allSatisfy({ (65...90).contains($0) || (97...122).contains($0) }) else {
-            return nil
+        if query.utf8.allSatisfy({ (65...90).contains($0) || (97...122).contains($0) }) {
+            return CalcDateTime.namedMoment(query, now: now, calendar: calendar).map(unchained)
         }
 
         if let dateTime = CalcDateTime.evaluate(query, now: now, calendar: calendar) {
@@ -140,7 +142,8 @@ enum CalcEngine {
                     targetBadge: to.name,
                     payload: .value(
                         display: "\(CalcFormatter.grouped(amount)) \(to.code)",
-                        copyText: "\(amount) \(to.code)"))
+                        copyText: "\(amount) \(to.code)"),
+                    isCurrency: true)
             case .mismatch(let from, let to):
                 return CalcResult(
                     expression: query,
@@ -262,7 +265,8 @@ enum CalcEngine {
             sourceBadge: result.sourceBadge,
             targetBadge: result.targetBadge,
             payload: result.payload,
-            canChain: result.canChain)
+            canChain: result.canChain,
+            isCurrency: result.isCurrency)
     }
 
     private static func unchained(_ result: CalcResult) -> CalcResult {

@@ -57,7 +57,8 @@ only the closure wiring; the behaviour is `PaletteCoordinator`'s.
 
 `PaletteState` (mode / query / selection / `focusToken`) is the bridge between the panel and the app.
 Showing the palette calls `prepare(mode:)`, which resets state and bumps `focusToken` (a UUID) so the
-SwiftUI search field re-focuses. `prepare` is one of four motions over the screen — see
+SwiftUI search field re-focuses. Closing a palette menu explicitly restores search focus after its
+panel returns key status. `prepare` is one of four motions over the screen — see
 [Navigation](#navigation).
 
 Hiding schedules Pop to Root Search, and `PaletteWindowController.popToRoot` is its only path: the
@@ -349,6 +350,10 @@ editor's own storage, so the bound `query` stays empty for the whole romanisatio
 would sit under the in-flight pinyin. `PalettePanel` publishes the editor's `hasMarkedText()` as
 `PaletteState.isComposing`, and the placeholder is gated on `query.isEmpty && !isComposing`.
 
+The same empty `query` would read as "nothing left to delete" to the bare-backspace step back, so
+`PalettePanel.sendEvent` asks the editor's `hasMarkedText()` itself and lets Backspace through to the
+IME while a composition is in flight. That covers every screen, an extension's search field included.
+
 The observation follows first responder, since SwiftUI hands the window's one field editor to
 whichever field holds focus, and it watches `NSTextView.didChangeSelectionNotification`. Measured,
 that is the **only** notification a marked-text change posts: `NSText.didChangeNotification` fires on
@@ -407,10 +412,11 @@ and states where the highlight starts: the first row, except the pop-up-shaped m
 filter, the AI model and effort menus, an extension's search-bar dropdown — which open on the choice
 they already hold.
 
-**The click-away catcher answers either mouse button.** A left press arrives as a `DragGesture`, so a
-drifting press still dismisses the way a native menu's does; a right press arrives through
-`onRightClick`, whose `NSView` sits above the row catchers beneath it, so a right click on a row
-closes the open menu rather than reopening it on that row.
+**The palette window consumes a click-away press through its release.** While a menu is open,
+`PalettePanel` dismisses it on either mouse button's press and consumes the matching drag and release
+before SwiftUI sees them. A row or footer button beneath the menu cannot inherit a partial click,
+and the next click reaches its control normally. The menu controller installs the dismissal callback
+only while the menu is open and clears it before restoring the palette's key status.
 
 Every row closes the menu behind it — `activateMenuItem` is the one path, and a row that reorders the
 list under itself (Move Favorite Up/Down) is no exception, so no row ever runs against a rebuilt menu.
@@ -420,6 +426,8 @@ row sits as far from it as from the search field's hairline. That height joins t
 sizing, but the separator takes no selection index, so navigation still walks only rows. A menu
 taller than its cap ends its viewport mid-row, so the fold never lands on a separator or section
 title, and both hairlines are one device pixel.
+The app menu keeps its five actions in one group and caps the list at four and a half rows, leaving
+Quit partially visible above the search band until scrolling or keyboard navigation reveals it.
 Built-in action menus mark boundaries between opening or copying, managing the item, settings, and
 deletion. Menus offering one kind of action, such as calculator copies, color formats, or emoji
 transfers, keep their rows in one group.
@@ -440,9 +448,12 @@ it follow a palette drag and vanish with it. Glass renders against the desktop r
 already-blurred, clipped panel, and no menu can be cropped by `RootPaletteView`'s `clipShape` however
 long it grows. The menu temporarily becomes key so its native `TextField` owns the caret and selection, while
 `MenuPanel` hands navigation and action shortcuts back to `RootPaletteView`. It restores key status
-to the palette when it closes. Resigning to the palette closes only the menu; resigning to another
+to the palette when it closes, and `closeMenus()` restores search focus unless the screen hides it.
+Resigning to the palette closes only the menu; resigning to another
 app closes the palette as well. `MenuPanel.sendEvent` also mirrors `PalettePanel`'s hover arming — rows
 light on real pointer movement, never on a scroll under a still cursor.
+Deferred focus-loss dismissal checks the presentation identity and that the menu has not regained key
+status, so an old callback cannot close a reopened menu.
 
 The panel is a second SwiftUI hierarchy, so it observes nothing of `RootPaletteView`'s `@State`:
 `syncMenuPanel` pushes a rebuilt tree on every `openMenu` or `menuSelection` change, and
@@ -514,15 +525,18 @@ handled in `PalettePanel.sendEvent` before `super` hands the event to the respon
 - **Emoji zoom chords.** `⌘0`, `⌘+` and `⌘-` take the same `onCommandShortcut` path on the emoji
   screen, Shift allowed since `+` is a shifted `=`. They bump `PaletteState.emojiGridZoomToken`, and
   `EmojiScreen.zoom` applies the same bounded change as its Actions rows.
-- **Chords the window server keeps for itself.** ⌘⎋ is the one that bites: macOS binds it before any
-  app sees it, so unlike ⌘. there is no keystroke left for `sendEvent` to intercept — a handler in
-  the responder chain compiles, runs never, and looks like a palette bug. `CommandEscapeTap` takes it
-  at the head of the HID stream instead, the one place earlier than the system's own binding, and
-  `prepare(mode: .launcher)`s: one chord back to the root search from any depth, window still open.
-  The tap is enabled only while the palette is on screen, watches `keyDown` alone, and declines the
-  chord whenever the panel is not key, so nothing else on the system loses ⌘⎋ to it. It is a
-  modifying tap, so it needs Accessibility — without that grant the chord is simply unavailable,
-  which is the only path this codebase has to it.
+- **Chords the window server keeps for itself.** ⌘⎋ is the one that bites: macOS binds it before
+  any app sees it, so unlike ⌘. there is no keystroke left for `sendEvent` to intercept — a handler
+  in the responder chain compiles, runs never, and looks like a palette bug. `CommandEscapeTap`
+  takes it at the head of the HID stream instead, the one place earlier than the system's own
+  binding, and `prepare(mode: .launcher)`s: one chord back to the root search from any depth, window
+  still open. Each key-focus session owns a modifying `keyDown` tap on a dedicated thread and run
+  loop, so an occupied main thread never holds up ordinary input. Losing key focus ends the session
+  immediately and wakes its worker to remove the source and invalidate the port. Timeout recovery
+  cannot re-enable an ended session. The worker swallows only bare ⌘⎋ and queues the root-search
+  action on the main actor; a closed session discards that action, including across a reopen. The
+  action also checks that the panel is still key. The tap needs Accessibility — without that grant
+  the chord is unavailable, and a later key-focus session retries installation.
 
 Adding a chord that "does nothing" is almost always one of these — check `sendEvent`, and then
 whether macOS has claimed the chord, before assuming the handler is wrong.

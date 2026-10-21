@@ -10,6 +10,8 @@ final class PalettePanel: NSPanel {
     var onCommandShortcut: ((NSEvent) -> Bool)?
     /// The palette's typing context, handed over each time a field takes focus.
     var onFieldEditorFocused: ((NSTextInputContext) -> Void)?
+    var onDismissMenu: (() -> Void)?
+    private var dismissingMouseButton: Int?
     /// Arms hover from `sendEvent`, the one place both event streams pass through.
     weak var paletteState: PaletteState? {
         didSet {
@@ -138,6 +140,7 @@ final class PalettePanel: NSPanel {
     }
 
     override func sendEvent(_ event: NSEvent) {
+        if consumeMenuDismissal(event) { return }
         switch event.type {
         case .mouseMoved: paletteState?.notePointerMoved(to: NSEvent.mouseLocation)
         // Keys and scrolling both slide rows under the pointer without it choosing any of them.
@@ -164,6 +167,7 @@ final class PalettePanel: NSPanel {
         if event.type == .keyDown,
             Int(event.keyCode) == kVK_Delete,
             event.modifierFlags.isDisjoint(with: [.command, .option, .control, .shift]),
+            fieldEditor?.hasMarkedText() != true,
             onBareBackspace?() == true
         {
             return
@@ -176,6 +180,25 @@ final class PalettePanel: NSPanel {
             return
         }
         super.sendEvent(event)
+    }
+
+    private func consumeMenuDismissal(_ event: NSEvent) -> Bool {
+        switch event.type {
+        case .leftMouseDown, .rightMouseDown:
+            dismissingMouseButton = nil
+            guard paletteState?.menuOpen == true, let onDismissMenu else { return false }
+            dismissingMouseButton = event.buttonNumber
+            onDismissMenu()
+            return true
+        case .leftMouseDragged, .rightMouseDragged, .leftMouseUp, .rightMouseUp:
+            guard dismissingMouseButton == event.buttonNumber else { return false }
+            if event.type == .leftMouseUp || event.type == .rightMouseUp {
+                dismissingMouseButton = nil
+            }
+            return true
+        default:
+            return false
+        }
     }
     init<Content: View>(rootView: Content) {
         super.init(

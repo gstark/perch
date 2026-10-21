@@ -1,7 +1,20 @@
 # App launcher & root search
 
-`AppIndex.scan()` runs off-main, enumerates the user's search scopes, and dedups by bundle ID (the
-earliest scope wins; within one folder, the newest `CFBundleShortVersionString` does).
+`AppIndex.scan()` runs off-main and keeps each distinct application path in launcher results.
+Settings and app pickers retain one representative per bundle ID: the earliest scope wins;
+within one folder, the newest `CFBundleShortVersionString` does.
+
+Copies sharing a bundle ID keep app-wide aliases, visibility, ranking, favorites and global shortcuts.
+Favorites and Suggestions show the representative, while the other copies remain in ordinary results.
+Version subtitles distinguish copies; equal or missing versions also show the containing folder.
+Return opens the selected path with running-application substitution disabled, so a different running
+version cannot replace it. Restart also reopens the selected path. Bundle-ID-based operations such as
+Window Layouts retain macOS's default running-application substitution. Uninstall is unavailable while
+indexed copies share the bundle ID, because their support files and preferences may be shared.
+
+`./Scripts/run-tests.sh app-installation-test` covers the shipped index and app-wide preferences.
+Set `TINYCAST_TEST_APP_LAUNCH=1` for temporary native-app launch, quit and restart checks; the harness
+reports notification-dependent checks as skipped when the session cannot deliver workspace events.
 
 ## Invariants
 
@@ -54,11 +67,15 @@ its `Contents/Applications` and `Contents/Developer/Applications` folders, where
 Instruments, Icon Composer and Simulator, and a subfolder nested deeper than one level still needs
 its own scope.
 
+Directory symlinks work as scopes, subfolders, and embedded-app folders. App paths stay under the
+configured scope, not the resolved target. The scan skips links back to an ancestor directory to
+prevent cycles.
+
 Within one folder, bundles are listed newest `CFBundleShortVersionString` first, compared as numbers
 so `26.6` outranks `9.4`. A tie or an unreadable version falls back to Finder's name order. Because
-the scan keeps a bundle ID's first copy, two Xcodes in `/Applications` resolve to the newest, every
-scan, and the embedded apps follow their parent. Scope order still comes first: listing an older
-copy as its own earlier scope pins it (#1288).
+the first copy represents its bundle ID, the newest Xcode in `/Applications` represents the app in
+Settings and Favorites, and the embedded apps follow their parent. Scope order still comes first:
+listing an older copy as its own earlier scope pins it (#1288). Search retains every copy.
 
 The defaults cover `/Applications` and `/System/Applications` plus their `Utilities` folders,
 `/System/Library/CoreServices/Applications`, the cryptex apps under
@@ -236,8 +253,8 @@ from its own Info.plist.
 
 A renamed bundle is the other half. A Finder rename never touches `CFBundleDisplayName`, so the
 on-disk basename is indexed as an alternate title — rename `Slack.app` to `Work Chat.app` and both find
-it. Duplicate copies dedupe by bundle id, and the losing copy lends its file name to the winner
-rather than being dropped whole.
+it. Each installed copy keeps its own names and URL; a renamed copy never lends its name to a
+different installation.
 
 ### Subtitles
 
@@ -248,24 +265,30 @@ by the title's own score, then by name. The subtitle does not name the entry, so
 
 ### Category search
 
-A query that *equals* a category's own name lists that whole category under its section header, in the
-order the section shows when the field is empty. Both words a kind already carries work — the section
-title and the singular label, `Snippets`/`Snippet`, `Window Management`/`Window Command` — read straight
-off `KindDescriptor` by `AppEntry.Kind.named(by:)`, so no category name is written a second time and a
-new `Kind` case gets its category word for free.
+A query that *equals* a category's name lists that whole category under its section header, in the
+order the section shows when the field is empty. The section title and singular label,
+`Snippets`/`Snippet` or `Window Management`/`Window Command`, come straight from `KindDescriptor`.
+An entry whose display name equals the query joins the listing: `System Settings` still shows the
+installed application above its panes.
 
-**The trigger is exact equality, never a prefix or a fuzzy hit**, because a looser rule would take a word
-away from a real entry: `System Settings` names both a category and an installed application. That one
-collision is answered rather than avoided — an entry whose display name equals the query joins the
-listing, so the app appears under Applications above the panes. Since slice order is section order
-(`publishEntries`), `categoryListing` filters and then sorts within each kind's run, as the empty list
-does, and the sectioned view stays 1:1 with the flat selection. Visibility still applies downstream,
-and no `limit` does, matching the empty query.
+At three characters or more, a prefix at the start of either name or one of its words also includes
+the category. `win` and `window` include Window Management and Window Layouts; `window man` and
+`management` include Window Management alone. Exact names select their own category first.
+`LauncherOrder.CategoryQuery` uses the shared fold and collapses whitespace, so case, accents,
+full-width text and pasted whitespace behave alike. Mid-word substrings and fuzzy subsequences
+never expand a category; short queries retain ordinary search ranking.
 
-`LauncherScreen` therefore separates the two jobs the empty query used to do at once: `showSections`
-draws the headers, `pinsFavorites` pins the Favorites prefix and hands out the ⌘-digit slots. A category
-listing takes the first only. Opening a row from one records the visit but not the word — a category
-word is not a search for the row that ran, and learning it would rank that row under `s`.
+A partial category query never reorders the ordinary search. Its ranked matches, including apps and
+aliases, lead under Results in relevance order, so the best match keeps the row Return opens. The
+category's remaining entries follow under their section headers in usage order, and meetings retain
+agenda order. Those sections follow publication order, so visible rows and flat selection stay aligned;
+`AppIndex.Results.matchCount` tells the view where the ranked rows end. Visibility still applies
+downstream. The result limit bounds ordinary matches, while whole categories remain uncapped, as they
+are for an empty query.
+
+Category queries show headers without pinning favorites or handing out their ⌘-digit slots. Opening
+a row records its visit; the query is learned only when it did not match that row's category, so
+category browsing cannot teach every window command the same search term.
 
 ### Contextual commands
 
@@ -450,9 +473,9 @@ never suggested, however often they are opened:
    index, so it is never offered.
 
 A suggested entry leaves its kind section below, so no row appears twice. `AppIndex.Results` carries
-`favoriteCount`, `meetingCount` and `suggestionCount`, which `LauncherScreen` hands to `LauncherList`
-for its three leading headers. **Show suggestions** in Settings › General › Search turns the section
-off (`launcherShowsSuggestions`). `HotKeyManager.revision` is part of
+`favoriteCount`, `suggestionCount` and, for a typed query, `matchCount`, which `LauncherScreen`
+hands to `LauncherList` for its leading headers. **Show suggestions** in Settings › General › Search
+turns the section off (`launcherShowsSuggestions`). `HotKeyManager.revision` is part of
 `AppIndex`'s results key, because binding a shortcut takes an entry out of the section.
 
 ## System actions
@@ -740,15 +763,15 @@ running dot and the availability of the running-only actions:
   running, also bound to **⌃⇧Q** on the selected row. The chord guard mirrors the menu row's
   condition (an `.application` entry that `RunningAppsMonitor` reports running) so the key never
   swallows a press it won't act on, and it's skipped in the compact bar, which shows no selection.
-  `AppLauncher.quit(bundleID:)` terminates every instance of the bundle and reports whether
+  `AppLauncher.quit(bundleID:url:)` terminates instances at the selected path and reports whether
   anything was running; the palette only dismisses when something was, and it restores focus unless
   the app it just quit _was_ `previousApp`.
 - **Force Quit Application** — the row below it and **⌃⌥⇧Q**, on the same guard and
-  the same dismissal. `AppLauncher.quit(bundleID:force:)` sends `forceTerminate()` instead, so the
+  the same dismissal. `AppLauncher.quit(bundleID:url:force:)` sends `forceTerminate()` instead, so the
   app gets no chance to save or refuse.
 - **Restart Application** — the row above Quit and **⌘R**, on the same guard: all three chords resolve
   their target through `LauncherScreen.runningApplication(at:)`, the single place that condition
-  lives. `AppLauncher.restart(bundleID:url:)` snapshots the running instances, subscribes to
+  lives. `AppLauncher.restart(bundleID:url:)` snapshots instances at the selected path, subscribes to
   `NSWorkspace.DidTerminateApplicationMessage` _before_ terminating so an instance that exits at
   once can't outrun the wait, then reopens the bundle once every snapshotted PID has gone. The wait
   is bounded by a five-second grace: a quit an app refuses, or one sitting behind a save sheet the

@@ -8,7 +8,7 @@ struct LauncherList: View {
     let selectedRowID: String?
     let favoriteCount: Int
     let suggestionCount: Int
-    let showSections: Bool
+    let matchCount: Int
     /// Changes only when the list should scroll, so mouse selection never yanks it.
     let scroll: ScrollIntent
     /// The card at flat index 0, when one leads. At most one ever does.
@@ -71,17 +71,14 @@ struct LauncherList: View {
     }
 
     private var rows: [Row] {
-        var cardRows: [Row] = []
-        if let card { cardRows = [.header(card.sectionTitle), .card(card)] }
-        if !conversions.isEmpty { cardRows += [.header("Conversions")] + conversions.map(Row.conversion) }
-        guard showSections else {
-            guard !results.isEmpty else { return cardRows }
-            return cardRows + [.header("Results")] + results.map { .app($0, slot: nil) }
-        }
-        var rows: [Row] = cardRows
+        var rows: [Row] = []
+        if let card { rows = [.header(card.sectionTitle), .card(card)] }
+        if !conversions.isEmpty { rows += [.header("Conversions")] + conversions.map(Row.conversion) }
         let favorites = results.prefix(favoriteCount)
         let suggestions = results.dropFirst(favoriteCount).prefix(suggestionCount)
-        let rest = results.dropFirst(favoriteCount + suggestionCount)
+        let pinnedCount = favoriteCount + suggestionCount
+        let matches = results.dropFirst(pinnedCount).prefix(matchCount)
+        let rest = results.dropFirst(pinnedCount + matchCount)
         var grouped: [AppEntry.Kind: [AppEntry]] = [:]
         for app in rest { grouped[app.kind, default: []].append(app) }
         if !favorites.isEmpty {
@@ -94,6 +91,10 @@ struct LauncherList: View {
         if !suggestions.isEmpty {
             rows.append(.header("Suggestions"))
             rows.append(contentsOf: suggestions.map { .app($0, slot: nil) })
+        }
+        if !matches.isEmpty {
+            rows.append(.header("Results"))
+            rows.append(contentsOf: matches.map { .app($0, slot: nil) })
         }
         // Publication order, so rows match the flat index.
         let kinds: [AppEntry.Kind] = [

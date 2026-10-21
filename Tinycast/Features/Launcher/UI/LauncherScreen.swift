@@ -18,14 +18,13 @@ struct LauncherScreen: PaletteScreen {
     private let calc: CalcResult?
     /// The colour the query itself spells, if it spells one; nil for every other query.
     private let color: ColorValue?
-    /// Sections stand in for the ranked Results list, which a typed query collapses to.
-    private let showSections: Bool
     /// Only the empty query pins favorites — a category shows its sections without one of its own.
     private let pinsFavorites: Bool
     /// How many of `results` are pinned favorites; zero unless the section shows.
     private let favoriteCount: Int
     /// How many follow the favorites as Suggestions; zero unless the field is empty.
     private let suggestionCount: Int
+    private let matchCount: Int
     /// Resolved in `init`: the palette indexes this several times per event, so it can't recompute.
     let rows: [Row]
 
@@ -47,25 +46,27 @@ struct LauncherScreen: PaletteScreen {
         let ordered = appIndex.orderedResults(
             query: vm.query, visibility: visibility, favorites: favorites, hotKeys: core.hotKeys)
         var results = ordered.entries
+        var matchCount = ordered.matchCount
         // A typed web address leads: nothing the index holds answers it better.
         if let browser = CommandCatalog.openInBrowser(for: vm.query),
             visibility.isVisible(browser)
         {
             results.insert(browser, at: 0)
+            matchCount += 1
         }
         let calc = CalcMemo.evaluate(
             vm.query, rates: currencyRates.rates, format: core.calcNumberFormat)
         // After the calculator: `#FF5733` is never arithmetic, so the two can't both answer.
         let color = calc == nil ? ColorValue.parse(vm.query) : nil
         let entries = results.map(Row.entry)
-        let pinsFavorites = vm.query.trimmingCharacters(in: .whitespaces).isEmpty
+        let pinsFavorites = vm.query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         self.results = results
         self.calc = calc
         self.color = color
-        self.showSections = pinsFavorites || AppEntry.Kind.named(by: vm.query) != nil
         self.pinsFavorites = pinsFavorites
         self.favoriteCount = pinsFavorites ? ordered.favoriteCount : 0
         self.suggestionCount = pinsFavorites ? ordered.suggestionCount : 0
+        self.matchCount = matchCount
         if let calc {
             self.rows = [.calc(calc)] + calc.alternatives.map(Row.conversion) + entries
         } else if let color {
@@ -335,7 +336,7 @@ struct LauncherScreen: PaletteScreen {
             selectedRowID: row(at: selection)?.id,
             favoriteCount: favoriteCount,
             suggestionCount: suggestionCount,
-            showSections: showSections,
+            matchCount: matchCount,
             scroll: scroll,
             card: leadCard,
             conversions: calc?.alternatives ?? [],

@@ -94,13 +94,16 @@ If a change touches anything in the right column, the harness on the left is man
 | `clipboard-text-test` | Apple Vision/PDF extraction, scheduling, retry backoff and recovery |
 | `paste-sequence-test` | `Clipboard/Model/PasteSequence.swift` — the walk's order, its end, and what starts it over |
 | `clipboard-test` | `Clipboard/Model/ClipboardStore.swift`, `ClipboardFilter.swift`, `ClipboardFileKind.swift`, the colour trio |
-| `pasteboard-test` | `Clipboard/Service/ClipboardManager.swift` capture and `Paster.write` — what a Finder copy reads as, and what a file entry writes back |
+| `clipboard-thumbnail-test` | `Platform/Images/ImageThumbnail.swift` copies against the real store — a remove or clear mid-copy leaves none, same-named JPEG/PNG copies stay apart, a timeout or cancel frees the queue, and a failed or unreadable copy falls back to the original; a stand-in script plays the helper |
+| `pasteboard-test` | `Clipboard/Service/ClipboardManager.swift` capture and `Paster.write` — what a Finder copy reads as, and what a file or image entry writes back |
 | `emoji-test` | `Emoji/Model/EmojiCatalog.swift`, `EmojiGridGeometry.swift`, the generated data and keyword packs |
 | `emoji-search-test` | `Emoji/Service/EmojiIndex.swift`, `FrequentEmojiStore.swift`, `Scripts/gen-emoji.js`'s keyword format, multilingual search |
+| `command-escape-tap-test` | `Palette/CommandEscapeTap.swift` — dedicated run-loop dispatch while main is blocked, timeout recovery, stale actions, installation cancellation and teardown; private ports and unposted events only |
 | `palette-navigation-test` | `Palette/PaletteState.swift`'s screen motions — `prepare`, `replace`, `push`, `pop` |
 | `palette-selection-test` | `Features/PaletteRowIndex.swift` |
 | `interface-size-test` | `DesignSystem/InterfaceMetrics.swift`, `Features/Settings/InterfaceSize.swift`, `Extensions/Model/ExtensionFormMetrics.swift` |
 | `palette-placement-test` | `DesignSystem/Theme.swift`, `Palette/PalettePlacement.swift` |
+| `palette-menu-click-test` | `Palette/PalettePanel.swift` — complete click-away presses and subsequent control activation |
 | `hotkey-test` | `HotKeys/Model/DoubleTapModifier.swift`, `DoubleTapDetector.swift`, `ModifierKey.swift`, `ModifierKeyDetector.swift`, `HotKeyBinding.swift`, `HotKeySpelling.swift`, `HyperKey.swift`, `HotKeyAction.swift`, `Service/KeyShortcut.swift`, and the command→action mapping in `Launcher/Model/CommandID.swift` |
 | `dictation-test` | `Dictation/Model/DictationModel.swift`, `DictationTextFormatter.swift` — model paths and text formatting |
 | `dictation-field-test` | Composer rebinding and teardown, field-scoped dictation cancellation, and queued insertion validity; synthetic capture and real AppKit editors |
@@ -268,6 +271,26 @@ swiftc -O -swift-version 6 Tinycast/Platform/PasteboardFiles.swift \
 /tmp/clipboard-file-performance
 ```
 
+`Tests/clipboard-thumbnail-performance.swift` draws 10 image rows at once, then 10 previews one by one,
+as Clipboard History does, and prints the times with the footprint and its peak as JSON. `--fixtures`
+writes 10 seeded synthetic Display P3 screenshots up to 3456 × 2234, so no real clipboard is needed.
+`--original` decodes the blobs as before the copies existed; `--copies` makes and reads the
+`ImageDerivative` copies, so its first run measures a first view and later runs every other one. The
+helper must sit at `Contents/Helpers` beside the benchmark:
+
+```sh
+D=/tmp/clipboard-thumbnail-performance; mkdir -p $D/Contents/Helpers
+swiftc -O -swift-version 6 -parse-as-library \
+    Tinycast/Features/Clipboard/Service/{ClipboardTextExtractor,ClipboardTextHelper}.swift \
+    -o $D/Contents/Helpers/ClipboardTextHelper
+swiftc -O -swift-version 6 Tinycast/Platform/ProcessExit.swift \
+    Tinycast/Platform/Images/{ImageThumbnail,ImageDerivative,ThumbnailCache}.swift \
+    Tests/clipboard-thumbnail-performance.swift -o $D/clipboard-thumbnail-performance
+$D/clipboard-thumbnail-performance /tmp/ctp --fixtures
+$D/clipboard-thumbnail-performance /tmp/ctp --original
+$D/clipboard-thumbnail-performance /tmp/ctp --copies
+```
+
 `Tests/emoji-search-performance.swift` times uncached queries, typing prefixes and memo hits against
 the loaded catalog, with process RSS and footprint as JSON; `--names` also lists every catalog name
 missing from its own top five results, and `--languages fr,ja` loads those keyword packs first (run it
@@ -346,10 +369,11 @@ caches, TCC grants and login item, so this cannot disturb an installed copy.
   and run it: Escape returns to the launcher **with the query still typed and the row still
   selected**, and the next press clears it. The same screen from its own global hotkey hides the
   palette instead, and shows its own header icon rather than a back chevron
-- ⌘⎋ from any depth lands on an empty root search with the window still open — **must be checked on
-  a real keyboard**: macOS claims the chord, so `CommandEscapeTap` is the only thing that delivers it
-  and it needs Accessibility granted to the running build. With the palette closed, ⌘⎋ still does
-  whatever macOS does with it
+- ⌘⎋ from any depth lands on an empty root search with the window still open — **must be checked
+  on a real keyboard**: macOS claims the chord, so `CommandEscapeTap` is the only thing that
+  delivers it and it needs Accessibility granted to the running build. With the palette closed, ⌘⎋
+  still does whatever macOS does with it. Open a menu or dialog over the palette and verify ⌘⎋
+  passes through while the palette is not key; after dismissing it, the palette chord works again
 - A bare ⌫ in an empty field walks the same path Escape does
 - General ▸ Escape Key Behavior set to `Close window and pop to root`: Escape on any screen closes
   the window, and reopening lands on the root search whatever Pop to Root Search says
@@ -376,9 +400,13 @@ caches, TCC grants and login item, so this cannot disturb an installed copy.
   move the menu highlight. Escape clears a non-empty query, then closes the menu on the next press
 - The bottom-left app menu also searches from its bottom band; every header menu — including Emoji
   categories, File Search filters and extension dropdowns — searches from its top band
+- The app menu has no divider above Quit; Quit opens partially visible above the search band and
+  scrolls fully into view with the pointer or arrow keys. Filtering to fewer rows shrinks the menu
 - A long menu opens with unchanged row insets; while scrolling, rows can reach the panel edges
 - A click in the palette but outside its menu closes only the menu; a click outside the palette
   closes both, regardless of the menu query; the next summon accepts typing immediately
+- Click the menu search field, pause, then dismiss by clicking the other footer control. The next
+  click opens that control's menu once and leaves it open, including when the clicks form a double click
 - Footer menus are about 30pt wider; their row hover keeps the shared 10pt menu-row corner
 - Tab toggles launcher ↔ clipboard; bare Backspace on an empty query backs out of a sub-screen
 - Launching an app focuses it; escaping the palette returns focus to the app you came from
@@ -456,6 +484,8 @@ caches, TCC grants and login item, so this cannot disturb an installed copy.
 
 - A quicklink opens its destination; `{argument}` prompts in order and Backspace steps back
 - `{selection}` falls back per the Settings choice
+- In the launcher, open Actions with ⌘K and close with ⌘K or Escape. Immediately type a query, use
+  the arrows and press Return; the palette must accept keyboard input again
 - Pin, duplicate, delete and Open with Default all behave; import and export round-trip
 - Display order is pinned first by pin time, then by name
 
@@ -607,6 +637,8 @@ caches, TCC grants and login item, so this cannot disturb an installed copy.
 - A bare amount (`1 usd`) answers in the Mac's region currency, and follows a change to
   System Settings ▸ General ▸ Language & Region without a relaunch — and nothing prompts for location
 - A crypto query (`1 btc`, `0.5 sol to eur`) answers, and `1 usd to btc` stays in plain notation
+- `1000 usd in eur/12` converts and then divides; copying preserves the euro amount and code.
+  `100km/h in m/s / 2` retains the compound target, and `1000 usd in eur / 0` stays silent
 
 ### Calendar and meetings
 
