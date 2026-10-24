@@ -24,7 +24,7 @@ so upstream commits cherry-pick onto the same paths.
 Perch is built for one person and one Mac. The code is public because the licence requires it and
 because someone may find it useful to read.
 
-- There are no releases, no binaries and no Homebrew cask.
+- The releases and the Homebrew cask are for my own Macs. They are signed but not notarized.
 - Issues, pull requests, feature requests and security reports are not accepted.
 - Do not report a Perch problem to Tinycast. Perch changes too much of the code for an upstream
   report to be useful.
@@ -32,9 +32,18 @@ because someone may find it useful to read.
 
 You can fork Perch under the terms of its licence. If you do, the fork is yours to maintain.
 
+## Installing
+
+Perch needs macOS 26 or later on Apple silicon.
+
+```bash
+brew install gstark/tap/perch
+```
+
 ## Building
 
-Perch needs macOS 26 or later and Xcode 26. Run `just install` to build and install the app.
+Building needs Xcode 26. Run `just install` to build and install the app. Run `just homebrew` to
+publish a release and update the cask.
 [docs/development.md](docs/development.md) covers the toolchain and every other recipe.
 
 ## Licence
