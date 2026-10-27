@@ -122,6 +122,8 @@ struct ProcessLabelsTests {
         expect(label(reply("\"test suite in ~/api.\"")) == "test suite in ~/api", "quotes, period")
         expect(label(reply("\n\nSpotlight indexing\nmore")) == "Spotlight indexing", "first line")
         expect(label(reply("(bundler install)")) == "bundler install", "parentheses")
+        expect(label(reply("GPU for G$ Code (Alpha)")) == "GPU for G$ Code (Alpha)", "inner parentheses")
+        expect(label(reply("(a) and (b)")) == "(a) and (b)", "two parenthesized parts")
         expect(label(reply("   ")) == nil, "an empty reply")
         expect(label(Data("{}".utf8)) == nil, "no choices")
         let long = label(reply(String(repeating: "x", count: 80)))

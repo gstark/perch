@@ -89,13 +89,25 @@ enum ProcessLabelFormat {
         let line = content.split(whereSeparator: \.isNewline)
             .map { $0.trimmingCharacters(in: .whitespaces) }
             .first { !$0.isEmpty }
-        guard var label = line?.trimmingCharacters(in: CharacterSet(charactersIn: "\"'`()"))
-        else { return nil }
+        guard let line else { return nil }
+        var label = unwrapped(line.trimmingCharacters(in: CharacterSet(charactersIn: "\"'`")))
         if label.hasSuffix(".") { label.removeLast() }
         label = label.trimmingCharacters(in: .whitespaces)
         guard !label.isEmpty else { return nil }
         guard label.count > maxLabelLength else { return label }
         return String(label.prefix(maxLabelLength - 1)) + "…"
+    }
+
+    /// Drops parentheses only when one pair wraps the whole label, so "Code (Alpha)" keeps its own.
+    private static func unwrapped(_ label: String) -> String {
+        guard label.hasPrefix("("), label.hasSuffix(")") else { return label }
+        var depth = 0
+        for (offset, character) in label.enumerated() {
+            if character == "(" { depth += 1 }
+            if character == ")" { depth -= 1 }
+            if depth == 0 { return offset == label.count - 1 ? String(label.dropFirst().dropLast()) : label }
+        }
+        return label
     }
 
     private struct Message: Codable {
