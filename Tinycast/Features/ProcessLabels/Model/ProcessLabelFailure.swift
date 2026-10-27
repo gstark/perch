@@ -5,6 +5,8 @@ enum ProcessLabelFailure: Error, Equatable, Sendable {
     case unreachable(host: String)
     case rejected(status: Int)
     case malformedReply
+    /// A web app's page at the API path, as Open WebUI serves for `/v1`.
+    case webPage
 
     var message: String {
         switch self {
@@ -13,6 +15,7 @@ enum ProcessLabelFailure: Error, Equatable, Sendable {
             return "The service refused the token (HTTP \(status))"
         case .rejected(let status): return "The service answered HTTP \(status)"
         case .malformedReply: return "The reply held no answer"
+        case .webPage: return "The endpoint sent a web page, not an API reply. Check its path."
         }
     }
 }

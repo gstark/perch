@@ -21,7 +21,7 @@ enum ProcessLabelFormat {
             let scheme = components.scheme?.lowercased(), scheme == "https" || scheme == "http",
             components.host?.isEmpty == false
         else { return nil }
-        var path = components.path
+        var path = components.path.replacing(#/\/{2,}/#, with: "/")
         while path.hasSuffix("/") { path.removeLast() }
         if path.isEmpty { path = "/v1" }
         if !path.hasSuffix("/chat/completions") { path += "/chat/completions" }

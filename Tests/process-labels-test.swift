@@ -95,6 +95,7 @@ struct ProcessLabelsTests {
             ("https://api.openai.com", "https://api.openai.com/v1/chat/completions"),
             ("http://localhost:11434/v1", "http://localhost:11434/v1/chat/completions"),
             ("https://openrouter.ai/api/v1", "https://openrouter.ai/api/v1/chat/completions"),
+            ("https://x.example//v1", "https://x.example/v1/chat/completions"),
             (
                 " https://x.example/v1/chat/completions?a=1 ",
                 "https://x.example/v1/chat/completions"

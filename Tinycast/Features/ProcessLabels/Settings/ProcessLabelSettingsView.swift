@@ -6,9 +6,15 @@ struct ProcessLabelSettingsView: View {
     /// Typed here and only written to the Keychain on Save, so a half-pasted token never lands.
     @State private var token = ""
     @State private var hasToken = false
-    @State private var models: [String] = []
-    @State private var modelsFailure: String?
+    @State private var models = ModelsState.idle
     @State private var test = TestState.idle
+
+    private enum ModelsState {
+        case idle
+        case loading
+        case loaded([String])
+        case failed(String)
+    }
 
     private enum TestState {
         case idle
@@ -74,32 +80,50 @@ struct ProcessLabelSettingsView: View {
     }
 
     private func loadModels() async {
+        guard ProcessLabelFormat.modelsEndpoint(from: settings.processLabelEndpoint) != nil else {
+            models = .idle
+            return
+        }
+        models = .loading
         do throws(ProcessLabelFailure) {
             let fetched = try await core.processLabelCoordinator.availableModels()
             guard !Task.isCancelled else { return }
-            models = fetched
-            modelsFailure = nil
+            models = .loaded(fetched)
         } catch {
             guard !Task.isCancelled else { return }
-            models = []
-            modelsFailure = error.message
+            models = .failed(error.message)
         }
+    }
+
+    private var modelsStatus: String? {
+        switch models {
+        case .idle: return nil
+        case .loading: return "Loading models…"
+        case .loaded(let list) where list.isEmpty: return "The service lists no models"
+        case .loaded(let list): return "\(list.count) models. Choose one with the list button."
+        case .failed(let reason): return "Could not load models. \(reason)"
+        }
+    }
+
+    private var listedModels: [String] {
+        if case .loaded(let list) = models { return list }
+        return []
     }
 
     private var modelRow: some View {
         @Bindable var settings = settings
         return LabeledContent {
             HStack(spacing: Theme.Spacing.md) {
-                TextField("Model", text: $settings.processLabelModel, prompt: Text("gpt-5-mini"))
+                TextField(
+                    "Model", text: $settings.processLabelModel,
+                    prompt: Text("Choose or type a model"))
                     .labelsHidden()
                     .autocorrectionDisabled()
                 Menu {
-                    if let modelsFailure {
-                        Text("Could not load models: \(modelsFailure)")
-                    } else if models.isEmpty {
-                        Text("No models listed")
+                    if let modelsStatus, listedModels.isEmpty {
+                        Text(modelsStatus)
                     }
-                    ForEach(models, id: \.self) { model in
+                    ForEach(listedModels, id: \.self) { model in
                         Button(model) { settings.processLabelModel = model }
                     }
                     Divider()
@@ -113,13 +137,21 @@ struct ProcessLabelSettingsView: View {
             }
         } label: {
             SettingsRowTitle(.processLabelsService, "Model")
+            if let modelsStatus {
+                Text(modelsStatus)
+                    .foregroundStyle(
+                        isModelsFailure ? Theme.Colors.warning : Theme.Colors.textSecondary)
+            }
         }
     }
 
     @ViewBuilder private var testRow: some View {
         let coordinator = core.processLabelCoordinator
         SettingsRow(
-            title: "Test", subtitle: "Asks the model a question and shows the answer",
+            title: "Test",
+            subtitle: coordinator.isConfigured
+                ? "Asks the model a question and shows the answer"
+                : "Set an endpoint and a model first",
             anchor: .processLabelsService
         ) {
             Button("Ask") { ask() }
@@ -144,6 +176,11 @@ struct ProcessLabelSettingsView: View {
             Text(question).foregroundStyle(Theme.Colors.textSecondary)
             reply()
         }
+    }
+
+    private var isModelsFailure: Bool {
+        if case .failed = models { return true }
+        return false
     }
 
     private var isAsking: Bool {

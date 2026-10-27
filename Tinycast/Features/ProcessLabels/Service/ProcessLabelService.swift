@@ -62,6 +62,7 @@ enum ProcessLabelService {
         }
         guard let http = response as? HTTPURLResponse else { throw .malformedReply }
         guard http.statusCode == 200 else { throw .rejected(status: http.statusCode) }
+        guard http.mimeType != "text/html" else { throw .webPage }
         return data
     }
 }

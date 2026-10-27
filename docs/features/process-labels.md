@@ -75,9 +75,10 @@ the label is cut at 60 characters.
 - **The model menu.** The button next to the Model field lists what `GET <base>/models` returns.
   `ProcessLabelFormat.modelsEndpoint(from:)` builds that URL from the same base as the chat endpoint.
   The pane fetches the list on open, 600 ms after the endpoint changes, and when a token is saved or
-  removed. The list stays in memory. A service without `/models` shows the reason in the menu, and
-  the text field still works.
-- **Test.** **Ask** sends one of `ProcessLabelFormat.testQuestions` as the only message and shows the
+  removed. The list stays in memory. A line under the Model title shows the load state or the
+  reason it failed, and the text field still works. A reply of type `text/html` fails as `.webPage`,
+  because that is a web app's page at the API path, such as Open WebUI's page at `/v1`.
+- **Test.** Until an endpoint and a model are set, the row says so and **Ask** stays off. **Ask** sends one of `ProcessLabelFormat.testQuestions` as the only message and shows the
   whole answer. The test skips the pause and the cache. A success also ends a failure pause.
 
 ## The cache

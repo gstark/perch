@@ -140,7 +140,7 @@ final class ProcessLabelCoordinator {
         pausedUntil = nil
     }
 
-    /// Empty when no endpoint is set; a service without `/models` throws, and the field still works.
+    /// Empty when no endpoint is set; a service without `/models` throws.
     func availableModels() async throws(ProcessLabelFailure) -> [String] {
         guard let url = ProcessLabelFormat.modelsEndpoint(from: core.settings.processLabelEndpoint)
         else { return [] }
