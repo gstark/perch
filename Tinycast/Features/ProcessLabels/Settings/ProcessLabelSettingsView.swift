@@ -6,6 +6,19 @@ struct ProcessLabelSettingsView: View {
     /// Typed here and only written to the Keychain on Save, so a half-pasted token never lands.
     @State private var token = ""
     @State private var hasToken = false
+    @State private var models: [String] = []
+    @State private var modelsFailure: String?
+    @State private var test = TestState.idle
+
+    private enum TestState {
+        case idle
+        case asking(String)
+        case answered(question: String, answer: String)
+        case failed(question: String, reason: String)
+    }
+
+    /// Long enough that typing an endpoint fetches once, not once per keystroke.
+    private static let modelsFetchDelay: Duration = .milliseconds(600)
 
     var body: some View {
         @Bindable var settings = settings
@@ -20,11 +33,9 @@ struct ProcessLabelSettingsView: View {
                     Text("Any OpenAI-compatible service. A bare host gets /v1.")
                 }
                 .autocorrectionDisabled()
-                TextField(text: $settings.processLabelModel, prompt: Text("gpt-5-mini")) {
-                    SettingsRowTitle(.processLabelsService, "Model")
-                }
-                .autocorrectionDisabled()
+                modelRow
                 tokenRow
+                testRow
                 if let failure = coordinator.lastFailure {
                     Text(failure).foregroundStyle(Theme.Colors.warning)
                 }
@@ -55,6 +66,102 @@ struct ProcessLabelSettingsView: View {
         .onAppear { hasToken = coordinator.hasToken }
         .onChange(of: settings.processLabelEndpoint) { coordinator.connectionChanged() }
         .onChange(of: settings.processLabelModel) { coordinator.connectionChanged() }
+        .task(id: "\(settings.processLabelEndpoint)|\(hasToken)") {
+            try? await Task.sleep(for: Self.modelsFetchDelay)
+            guard !Task.isCancelled else { return }
+            await loadModels()
+        }
+    }
+
+    private func loadModels() async {
+        do throws(ProcessLabelFailure) {
+            let fetched = try await core.processLabelCoordinator.availableModels()
+            guard !Task.isCancelled else { return }
+            models = fetched
+            modelsFailure = nil
+        } catch {
+            guard !Task.isCancelled else { return }
+            models = []
+            modelsFailure = error.message
+        }
+    }
+
+    private var modelRow: some View {
+        @Bindable var settings = settings
+        return LabeledContent {
+            HStack(spacing: Theme.Spacing.md) {
+                TextField("Model", text: $settings.processLabelModel, prompt: Text("gpt-5-mini"))
+                    .labelsHidden()
+                    .autocorrectionDisabled()
+                Menu {
+                    if let modelsFailure {
+                        Text("Could not load models: \(modelsFailure)")
+                    } else if models.isEmpty {
+                        Text("No models listed")
+                    }
+                    ForEach(models, id: \.self) { model in
+                        Button(model) { settings.processLabelModel = model }
+                    }
+                    Divider()
+                    Button("Refresh") { Task { await loadModels() } }
+                } label: {
+                    Image(systemName: "list.bullet")
+                }
+                .menuIndicator(.hidden)
+                .fixedSize()
+                .help("Choose a model the service lists")
+            }
+        } label: {
+            SettingsRowTitle(.processLabelsService, "Model")
+        }
+    }
+
+    @ViewBuilder private var testRow: some View {
+        let coordinator = core.processLabelCoordinator
+        SettingsRow(
+            title: "Test", subtitle: "Asks the model a question and shows the answer",
+            anchor: .processLabelsService
+        ) {
+            Button("Ask") { ask() }
+                .disabled(!coordinator.isConfigured || isAsking)
+        }
+        switch test {
+        case .idle:
+            EmptyView()
+        case .asking(let question):
+            exchange(question) { ProgressView().controlSize(.small) }
+        case .answered(let question, let answer):
+            exchange(question) { Text(answer).textSelection(.enabled) }
+        case .failed(let question, let reason):
+            exchange(question) { Text(reason).foregroundStyle(Theme.Colors.warning) }
+        }
+    }
+
+    private func exchange(
+        _ question: String, @ViewBuilder reply: () -> some View
+    ) -> some View {
+        VStack(alignment: .leading, spacing: Theme.Spacing.sm) {
+            Text(question).foregroundStyle(Theme.Colors.textSecondary)
+            reply()
+        }
+    }
+
+    private var isAsking: Bool {
+        if case .asking = test { return true }
+        return false
+    }
+
+    private func ask() {
+        let question = ProcessLabelFormat.testQuestions.randomElement() ?? ""
+        test = .asking(question)
+        Task {
+            do throws(ProcessLabelFailure) {
+                let answer = try await core.processLabelCoordinator.testAnswer(to: question)
+                test = .answered(question: question, answer: answer)
+            } catch {
+                test = .failed(question: question, reason: error.message)
+            }
+        }
     }
 
     @ViewBuilder private var tokenRow: some View {

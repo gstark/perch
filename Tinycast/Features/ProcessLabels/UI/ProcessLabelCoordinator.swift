@@ -140,6 +140,22 @@ final class ProcessLabelCoordinator {
         pausedUntil = nil
     }
 
+    /// Empty when no endpoint is set; a service without `/models` throws, and the field still works.
+    func availableModels() async throws(ProcessLabelFailure) -> [String] {
+        guard let url = ProcessLabelFormat.modelsEndpoint(from: core.settings.processLabelEndpoint)
+        else { return [] }
+        return try await ProcessLabelService.models(endpoint: url, token: storedToken())
+    }
+
+    /// Bypasses the pause and the cache, so Settings can prove the connection at once.
+    func testAnswer(to question: String) async throws(ProcessLabelFailure) -> String {
+        guard let endpoint, !model.isEmpty else { return "" }
+        let answer = try await ProcessLabelService.answer(
+            to: question, endpoint: endpoint, model: model, token: storedToken())
+        connectionChanged()
+        return answer
+    }
+
     func clearLabels() async {
         if await !store.removeAll() {
             core.showMessage("Couldn't clear the process labels", tone: .danger)

@@ -291,6 +291,7 @@ enum SettingsSearchCatalog {
         .init(.processLabelsService, "Endpoint", keywords: ["url", "api", "ollama", "openrouter"]),
         .init(.processLabelsService, "Model", keywords: ["gpt", "claude", "llm"]),
         .init(.processLabelsService, "API Token", keywords: ["key", "bearer", "keychain"]),
+        .init(.processLabelsService, "Test", keywords: ["try", "check", "connection", "ask"]),
         .init(.processLabelsCache, "Saved Labels", keywords: ["clear", "forget", "cache"])
     ]
 

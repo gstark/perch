@@ -1,6 +1,6 @@
 import Foundation
 
-/// Asks an OpenAI-compatible chat endpoint what one process is.
+/// Talks to an OpenAI-compatible service: labels a process, lists models, answers a test question.
 enum ProcessLabelService {
     /// Cacheless, never `URLSession.shared`, so neither the request nor the reply lands on disk.
     private nonisolated static let session: URLSession = {
@@ -13,13 +13,46 @@ enum ProcessLabelService {
     nonisolated static func label(
         for signature: ProcessSignature, endpoint: URL, model: String, token: String?
     ) async throws(ProcessLabelFailure) -> String {
+        let body = ProcessLabelFormat.body(for: signature, model: model)
+        let data = try await send(endpoint, body: body, token: token)
+        guard let label = ProcessLabelFormat.label(fromReply: data) else { throw .malformedReply }
+        return label
+    }
+
+    nonisolated static func answer(
+        to question: String, endpoint: URL, model: String, token: String?
+    ) async throws(ProcessLabelFailure) -> String {
+        let body = ProcessLabelFormat.body(asking: question, model: model)
+        let data = try await send(endpoint, body: body, token: token)
+        guard let answer = ProcessLabelFormat.answer(fromReply: data) else {
+            throw .malformedReply
+        }
+        return answer
+    }
+
+    nonisolated static func models(
+        endpoint: URL, token: String?
+    ) async throws(ProcessLabelFailure) -> [String] {
+        let data = try await send(endpoint, body: nil, token: token)
+        guard let models = ProcessLabelFormat.models(fromReply: data) else {
+            throw .malformedReply
+        }
+        return models
+    }
+
+    /// A POST when there is a body, otherwise a GET.
+    private nonisolated static func send(
+        _ endpoint: URL, body: Data?, token: String?
+    ) async throws(ProcessLabelFailure) -> Data {
         var request = URLRequest(url: endpoint)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let body {
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.httpBody = body
+        }
         if let token, !token.isEmpty {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        request.httpBody = ProcessLabelFormat.body(for: signature, model: model)
         let data: Data
         let response: URLResponse
         do {
@@ -29,7 +62,6 @@ enum ProcessLabelService {
         }
         guard let http = response as? HTTPURLResponse else { throw .malformedReply }
         guard http.statusCode == 200 else { throw .rejected(status: http.statusCode) }
-        guard let label = ProcessLabelFormat.label(fromReply: data) else { throw .malformedReply }
-        return label
+        return data
     }
 }

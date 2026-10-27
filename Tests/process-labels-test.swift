@@ -21,6 +21,8 @@ struct ProcessLabelsTests {
         redaction()
         endpoints()
         replies()
+        modelLists()
+        testQuestions()
         cache()
         print("\(passes) passed, \(failures) failed")
         if failures > 0 { exit(1) }
@@ -130,6 +132,37 @@ struct ProcessLabelsTests {
         expect(json?["model"] as? String == "m", "the body names the model")
         expect(messages?.map { $0["role"] ?? "" } == ["system", "user"], "system then user")
         expect(messages?.last?["content"] == "sig", "the user message is the signature")
+    }
+
+    static func modelLists() {
+        let cases: [(String, String?)] = [
+            ("https://api.openai.com/v1", "https://api.openai.com/v1/models"),
+            ("http://192.168.0.238:8317", "http://192.168.0.238:8317/v1/models"),
+            ("https://x.example/v1/chat/completions", "https://x.example/v1/models"),
+            ("https://openrouter.ai/api/v1/", "https://openrouter.ai/api/v1/models"),
+            ("", nil)
+        ]
+        for (typed, expected) in cases {
+            let url = ProcessLabelFormat.modelsEndpoint(from: typed)?.absoluteString
+            expect(url == expected, "models: \(typed) → \(url ?? "nil")")
+        }
+        let ids = #"[{"id":"gpt-5"},{"id":"claude-2"},{"id":"claude-10"},{"id":"gpt-5"}]"#
+        let list = Data(#"{"data":\#(ids)}"#.utf8)
+        expect(
+            ProcessLabelFormat.models(fromReply: list) == ["claude-2", "claude-10", "gpt-5"],
+            "models are sorted, numbers in order, and unique")
+        expect(ProcessLabelFormat.models(fromReply: Data("{}".utf8)) == nil, "not a model list")
+    }
+
+    static func testQuestions() {
+        expect(!ProcessLabelFormat.testQuestions.isEmpty, "there is a question to ask")
+        let body = ProcessLabelFormat.body(asking: "why 42?", model: "m")
+        let json = try? JSONSerialization.jsonObject(with: body) as? [String: Any]
+        let messages = json?["messages"] as? [[String: String]]
+        expect(messages?.count == 1 && messages?.first?["role"] == "user", "only a user message")
+        expect(messages?.first?["content"] == "why 42?", "the user message is the question")
+        let answer = ProcessLabelFormat.answer(fromReply: reply("  Line one.\nLine two.  "))
+        expect(answer == "Line one.\nLine two.", "an answer keeps every line: \(answer ?? "nil")")
     }
 
     static func cache() {
