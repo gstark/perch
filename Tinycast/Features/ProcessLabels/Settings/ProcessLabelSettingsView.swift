@@ -14,7 +14,7 @@ struct ProcessLabelSettingsView: View {
             Section {
                 TextField(
                     text: $settings.processLabelEndpoint,
-                    prompt: Text("https://api.openai.com/v1")
+                    prompt: Text(verbatim: "https://api.openai.com/v1")
                 ) {
                     SettingsRowTitle(.processLabelsService, "Endpoint")
                     Text("Any OpenAI-compatible service. A bare host gets /v1.")
