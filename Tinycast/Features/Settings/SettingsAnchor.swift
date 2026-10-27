@@ -39,6 +39,9 @@ extension SettingsAnchor {
     static let proxmoxConnection = Self(tab: .proxmox, title: "Connection")
     static let proxmoxCertificate = Self(tab: .proxmox, title: "Certificate")
 
+    static let processLabelsService = Self(tab: .processLabels, title: "Service")
+    static let processLabelsCache = Self(tab: .processLabels, title: "Cache")
+
     static let gitWatchScan = Self(tab: .gitWatch, title: "Scan")
     static let gitWatchAddMachine = Self(tab: .gitWatch, title: "Add Machine")
 

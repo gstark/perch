@@ -73,6 +73,8 @@ final class AppCore {
     @ObservationIgnored private(set) lazy var diskHistoryCoordinator = DiskHistoryCoordinator(
         core: self)
 
+    @ObservationIgnored private(set) lazy var processLabelCoordinator = ProcessLabelCoordinator(
+        core: self)
     let cpuSampler = CPUSampler()
     @ObservationIgnored private(set) lazy var statusItem = StatusItemController(
         core: self, sampler: cpuSampler)
@@ -109,6 +111,7 @@ final class AppCore {
             statusItem.start()
             gitWatchCoordinator.start()
             diskHistoryCoordinator.start()
+            processLabelCoordinator.start()
             pinnedEmoji.onPersistenceFailure = { [weak self] in
                 self?.showMessage("Couldn't save Emoji & Symbols pins", tone: .danger)
             }
@@ -215,6 +218,7 @@ final class AppCore {
     func prepareForTermination() {
         settingsFile?.flush()
         cpuSampler.stop()
+        processLabelCoordinator.stop()
         clipboardTextIndexer?.stop()
         // Caps Lock first: its remap is the one teardown that outlives the process.
         hyperKeyTap.prepareForTermination()

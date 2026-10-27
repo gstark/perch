@@ -29,6 +29,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         sampler.onSample = { [weak self] in
             guard let self else { return }
             drawMeter(sampler.cores)
+            core.processLabelCoordinator.observe(sampler.topProcesses)
         }
         sampler.start()
     }
@@ -120,25 +121,45 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             menu.addItem(measuring)
             return
         }
-        for usage in processes {
-            let name = ProcessControl.name(of: usage.pid)
-            let owned = ProcessControl.isOwnedByUser(usage.pid)
-            let quit = processItem(name: name, usage: usage, owned: owned, force: false)
-            quit.toolTip = owned ? "Quit \(name)" : "Owned by another user"
+        let labels = core.processLabelCoordinator
+        let rows = processes.map { usage in
+            ProcessRow(
+                name: ProcessControl.name(of: usage.pid), description: labels.label(for: usage.pid),
+                usage: usage)
+        }
+        // A label can outgrow the default column, so the percentages move right to clear it.
+        let widest = rows.map {
+            Self.leadingText($0.name, description: $0.description).size().width
+        }.max() ?? 0
+        let column = max(Self.processColumnWidth, widest + Self.percentWidth)
+        for row in rows {
+            let owned = ProcessControl.isOwnedByUser(row.usage.pid)
+            let quit = processItem(row, column: column, owned: owned, force: false)
+            quit.toolTip = owned ? "Quit \(row.name)" : "Owned by another user"
             menu.addItem(quit)
-            menu.addItem(processItem(name: name, usage: usage, owned: owned, force: true))
+            menu.addItem(processItem(row, column: column, owned: owned, force: true))
         }
     }
 
+    private struct ProcessRow {
+        let name: String
+        /// What `ProcessLabelCoordinator` learned the process is doing, when it knows.
+        let description: String?
+        let usage: ProcessUsage
+    }
+
     private func processItem(
-        name: String, usage: ProcessUsage, owned: Bool, force: Bool
+        _ row: ProcessRow, column: CGFloat, owned: Bool, force: Bool
     ) -> NSMenuItem {
+        let name = row.name
+        let usage = row.usage
         let label = force ? "Force Quit \(name)" : name
         let item = self.item(label) { core in
             let sent = force ? ProcessControl.forceQuit(usage.pid) : ProcessControl.quit(usage.pid)
             if !sent { core.showMessage("Could not quit \(name)", tone: .danger) }
         }
-        item.attributedTitle = Self.processTitle(label, percent: usage.percent)
+        let leading = Self.leadingText(label, description: force ? nil : row.description)
+        item.attributedTitle = Self.processTitle(leading, percent: usage.percent, column: column)
         // Without an action AppKit greys the row, which is the disabled look wanted here.
         if !owned { item.action = nil }
         if force {
@@ -148,17 +169,38 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         return item
     }
 
-    /// The name on the left and the share on a right-aligned tab stop, so the numbers line up.
-    private static func processTitle(_ name: String, percent: Double) -> NSAttributedString {
-        let style = NSMutableParagraphStyle()
-        style.tabStops = [NSTextTab(textAlignment: .right, location: processColumnWidth)]
+    /// The name, then any label in the secondary colour, as "ruby (dev server in ~/dev/shop)".
+    private static func leadingText(_ name: String, description: String?) -> NSAttributedString {
+        let font: [NSAttributedString.Key: Any] = [.font: NSFont.menuFont(ofSize: 0)]
         let shown = name.count > maxNameLength ? String(name.prefix(maxNameLength - 1)) + "…" : name
-        return NSAttributedString(
-            string: "\(shown)\t\(Int(percent.rounded()))%",
-            attributes: [.paragraphStyle: style, .font: NSFont.menuFont(ofSize: 0)])
+        let text = NSMutableAttributedString(string: shown, attributes: font)
+        if let description {
+            var muted = font
+            muted[.foregroundColor] = NSColor.secondaryLabelColor
+            text.append(NSAttributedString(string: " (\(description))", attributes: muted))
+        }
+        return text
+    }
+
+    /// The leading text, then the share on a right-aligned tab stop, so the numbers line up.
+    private static func processTitle(
+        _ leading: NSAttributedString, percent: Double, column: CGFloat
+    ) -> NSAttributedString {
+        let style = NSMutableParagraphStyle()
+        style.tabStops = [NSTextTab(textAlignment: .right, location: column)]
+        let title = NSMutableAttributedString(attributedString: leading)
+        title.append(
+            NSAttributedString(
+                string: "\t\(Int(percent.rounded()))%",
+                attributes: [.font: NSFont.menuFont(ofSize: 0)]))
+        title.addAttribute(
+            .paragraphStyle, value: style, range: NSRange(location: 0, length: title.length))
+        return title
     }
 
     private static let processColumnWidth: CGFloat = 280
+    /// Room right of the widest label for a share such as "100%".
+    private static let percentWidth: CGFloat = 56
     private static let maxNameLength = 34
 
     private func item(_ title: String, action: @escaping @MainActor (AppCore) -> Void) -> NSMenuItem {

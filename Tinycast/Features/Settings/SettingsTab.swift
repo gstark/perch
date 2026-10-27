@@ -1,6 +1,6 @@
 enum SettingsTab: CaseIterable, Identifiable {
     case general, applications, systemSettings, commands, clipboard, windowManagement, emoji,
-        proxmox, gitWatch, permissions
+        proxmox, processLabels, gitWatch, permissions
     /// The case, never an index: a selectable `List` flattens section and row IDs together.
     var id: Self { self }
 
@@ -14,6 +14,7 @@ enum SettingsTab: CaseIterable, Identifiable {
         case .clipboard: return "Clipboard"
         case .emoji: return "Emoji & Symbols"
         case .proxmox: return "Proxmox"
+        case .processLabels: return "Process Labels"
         case .gitWatch: return "Git Watch"
         case .permissions: return "Permissions"
         }
@@ -29,6 +30,7 @@ enum SettingsTab: CaseIterable, Identifiable {
         case .clipboard: return "doc.on.clipboard"
         case .emoji: return "face.smiling"
         case .proxmox: return "server.rack"
+        case .processLabels: return "cpu"
         case .gitWatch: return "arrow.up.circle"
         case .permissions: return "lock.shield"
         }
@@ -55,7 +57,7 @@ enum SettingsSection: CaseIterable, Identifiable {
         case .launcher:
             return [.applications, .systemSettings, .commands]
         case .features:
-            return [.clipboard, .windowManagement, .emoji, .proxmox, .gitWatch]
+            return [.clipboard, .windowManagement, .emoji, .proxmox, .processLabels, .gitWatch]
         }
     }
 }

@@ -6,8 +6,9 @@
 > no support. For the full app, use Tinycast.
 
 A personal macOS menu-bar app: a fuzzy app launcher, global hotkeys, clipboard history, an inline
-calculator with unit conversion, an emoji picker, window management, a per-core CPU meter, and a
-panel for a Proxmox host's CPU use, and a menu bar warning for git commits that are not pushed.
+calculator with unit conversion, an emoji picker, window management, a per-core CPU meter with
+AI-written labels for busy processes, a panel for a Proxmox host's CPU use, and a menu bar warning
+for git commits that are not pushed.
 
 ## Relation to Tinycast
 

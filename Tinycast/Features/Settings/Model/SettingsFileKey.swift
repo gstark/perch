@@ -45,6 +45,8 @@ enum SettingsFileKey: String, CaseIterable, Sendable {
     case emojiCommands = "emoji.commands"
     case proxmoxAddress = "proxmox.address"
     case proxmoxTokenID = "proxmox.tokenID"
+    case processLabelEndpoint = "processLabels.endpoint"
+    case processLabelModel = "processLabels.model"
     case gitWatchMachines = "gitWatch.machines"
 
     /// The top-level object the key sits in.

@@ -16,6 +16,8 @@ enum AppSettingsKey: String {
     case proxmoxAddress = "proxmoxAddress"
     case proxmoxTokenID = "proxmoxTokenID"
     case proxmoxCertificateFingerprint = "proxmoxCertificateFingerprint"
+    case processLabelEndpoint = "processLabelEndpoint"
+    case processLabelModel = "processLabelModel"
     case gitWatchMachines = "gitWatchMachines"
     case showInMenuBar = "showInMenuBar"
     case popToRootTimeout = "popToRootTimeout"

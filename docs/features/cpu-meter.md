@@ -37,6 +37,8 @@ drawn: at menu-bar size two hues in one bar were slivers, and the process menu c
 - A click quits: an app through `NSRunningApplication.terminate()`, anything else with `SIGTERM`.
   Holding Option swaps every row for its alternate, Force Quit (`forceTerminate()` or `SIGKILL`).
 - Rows for processes another user owns are shown but disabled; the menu never asks for admin rights.
+- A row can carry a label from [process labels](process-labels.md), as `ruby (dev server in ~/shop)`.
+  The label draws in the secondary colour, and the percent column moves right to clear the widest one.
 
 ## Git Watch badge
 

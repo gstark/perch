@@ -138,6 +138,7 @@ If a change touches anything in the right column, the harness on the left is man
 | `settings-file-test` | `Settings/Model/` and `Settings/Service/` — key paths, value tokens, the printer and parser, and the repository's import, replace, save, reload and symlink handling on a scratch folder |
 | `disk-history-test` | `DiskHistory/Model/` and `Service/` — the CSV line, the hourly schedule, bucketing per range, changes, a real read of `/`, and the store's append and load on a scratch folder |
 | `proxmox-test` | `Proxmox/Model/` — the cluster-resources reply, each guest's share of the host, failure mapping, address normalisation and the certificate fingerprint |
+| `process-labels-test` | `ProcessLabels/Model/` — what a signature keeps and redacts, endpoint completion, the chat request and reply, and the cache's capacity and JSON round trip |
 | `window-file-test` | `WindowManagement/Model/WindowManagementFileFormat.swift` — command shortcuts, custom sizes, layouts and rooms as settings.json spells them, hand edits and bad records |
 | `launcher-settings-file-test` | Launcher settings application — invalid records, partial edits, deferred bundles, shortcut moves and records outside search scopes; isolated preferences and in-memory scan/Carbon effects |
 | `support-test` | `Support/Model/` — when the support reminder comes due, and a clock moved backwards |

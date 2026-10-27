@@ -3,7 +3,7 @@
 A personal macOS menu-bar app, forked from [Tinycast](https://github.com/abue-ammar/tinycast) and cut
 down to: a fuzzy app launcher, global hotkeys, a text/image clipboard history, an inline calculator
 with unit conversion, an emoji picker, window management, a per-core CPU meter whose
-menu lists the busiest processes, a panel for a Proxmox host's CPU use, a menu bar warning for
+menu lists the busiest processes with optional AI-written labels, a panel for a Proxmox host's CPU use, a menu bar warning for
 git commits that are not pushed, and an hourly history of the startup disk's free space. SwiftUI + AppKit, running as an accessory with no Dock icon
 (`LSUIElement`). Zero third-party dependencies. [PLAN.md](PLAN.md) records why it is shaped this way.
 

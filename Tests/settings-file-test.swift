@@ -47,12 +47,13 @@ struct SettingsFileTest {
             SettingsFileKey.sections == [
                 "general", "appearance", "hyperKey", "calculator", "search", "applications",
                 "systemSettings", "commands", "windowManagement", "clipboard", "emoji", "proxmox",
-                "gitWatch"
+                "processLabels", "gitWatch"
             ])
 
         // A file that could switch one of these on would grant what only the app may ask for.
         let grantPaths = [
-            "clipboard.textSearchEnabled", "proxmox.certificateFingerprint", "proxmox.tokenSecret"
+            "clipboard.textSearchEnabled", "proxmox.certificateFingerprint", "proxmox.tokenSecret",
+            "processLabels.token"
         ]
         check(
             "no capability grant has a settings.json key",

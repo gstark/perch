@@ -73,6 +73,8 @@ enum SettingsFileSchema {
         case .emojiCommands: return launcher.commandsBinding(for: key, owner: .emoji)
         case .proxmoxAddress: return bind(settings, \.proxmoxAddress)
         case .proxmoxTokenID: return bind(settings, \.proxmoxTokenID)
+        case .processLabelEndpoint: return bind(settings, \.processLabelEndpoint)
+        case .processLabelModel: return bind(settings, \.processLabelModel)
         case .gitWatchMachines:
             return bind(settings, \.gitWatchMachines) { GitWatchMachine.normalize($0) }
         }

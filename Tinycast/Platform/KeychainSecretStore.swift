@@ -12,6 +12,7 @@ struct KeychainSecretStore: Sendable {
 
     /// Every scope the app stores under, named here so the whole keychain surface is one list.
     static let proxmox = KeychainSecretStore(scope: "proxmox")
+    static let processLabels = KeychainSecretStore(scope: "process-labels")
 
     init(scope: String, bundleIdentifier: String? = Bundle.main.bundleIdentifier) {
         service = "\(bundleIdentifier ?? "com.gstark.perch").\(scope)"

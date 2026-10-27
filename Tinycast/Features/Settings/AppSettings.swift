@@ -122,6 +122,15 @@ final class AppSettings {
         }
     }
 
+    /// As typed; `ProcessLabelFormat.endpoint(from:)` completes the chat completions path.
+    var processLabelEndpoint: String {
+        didSet { defaults.set(processLabelEndpoint, forKey: Key.processLabelEndpoint.rawValue) }
+    }
+
+    var processLabelModel: String {
+        didSet { defaults.set(processLabelModel, forKey: Key.processLabelModel.rawValue) }
+    }
+
     /// Always starts with this Mac; `GitWatchMachine.normalize` keeps one machine per host.
     var gitWatchMachines: [GitWatchMachine] {
         didSet {
@@ -293,6 +302,8 @@ final class AppSettings {
         proxmoxTokenID = defaults.string(forKey: Key.proxmoxTokenID.rawValue) ?? ""
         proxmoxCertificateFingerprint =
             defaults.string(forKey: Key.proxmoxCertificateFingerprint.rawValue)
+        processLabelEndpoint = defaults.string(forKey: Key.processLabelEndpoint.rawValue) ?? ""
+        processLabelModel = defaults.string(forKey: Key.processLabelModel.rawValue) ?? ""
         gitWatchMachines = GitWatchMachine.normalize(
             defaults.data(forKey: Key.gitWatchMachines.rawValue)
                 .flatMap { try? JSONDecoder().decode([GitWatchMachine].self, from: $0) } ?? [])

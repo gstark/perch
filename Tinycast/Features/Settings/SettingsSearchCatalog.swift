@@ -109,7 +109,7 @@ enum SettingsSearchCatalog {
 
     static let entries: [SettingsSearchEntry] =
         general + applications + systemSettings + commands + clipboard + windowManagement + emoji
-        + proxmox + gitWatch + permissions
+        + proxmox + processLabels + gitWatch + permissions
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -282,6 +282,16 @@ enum SettingsSearchCatalog {
         .init(
             .proxmoxCertificate, "Trusted Certificate",
             keywords: ["fingerprint", "tls", "ssl", "self-signed", "pin"])
+    ]
+
+    private static let processLabels: [SettingsSearchEntry] = [
+        .init(
+            pane: .processLabels,
+            keywords: ["ai", "llm", "openai", "cpu", "process", "describe", "identify"]),
+        .init(.processLabelsService, "Endpoint", keywords: ["url", "api", "ollama", "openrouter"]),
+        .init(.processLabelsService, "Model", keywords: ["gpt", "claude", "llm"]),
+        .init(.processLabelsService, "API Token", keywords: ["key", "bearer", "keychain"]),
+        .init(.processLabelsCache, "Saved Labels", keywords: ["clear", "forget", "cache"])
     ]
 
     private static let gitWatch: [SettingsSearchEntry] = [
