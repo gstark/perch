@@ -4,6 +4,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Must land before the first scroll view exists, or the scroller switch shows as a flash.
     func applicationWillFinishLaunching(_ notification: Notification) {
         UserDefaults.standard.set("WhenScrolling", forKey: "AppleShowScrollBars")
+        // Started from an Electron-hosted shell, every app launched inherits this and runs as bare Node.
+        unsetenv("ELECTRON_RUN_AS_NODE")
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
