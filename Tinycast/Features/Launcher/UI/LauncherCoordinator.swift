@@ -1,8 +1,10 @@
 import AppKit
+import os
 
 /// Owns launcher activation: the one funnel from a palette row to whatever the entry's kind runs.
 @MainActor
 final class LauncherCoordinator {
+    private static let logger = Logger(subsystem: "com.gstark.perch", category: "Launcher")
     private let ranking: LauncherRankingStore
     private let windowController: PaletteWindowController
     private let paletteCoordinator: PaletteCoordinator
@@ -31,6 +33,8 @@ final class LauncherCoordinator {
     func launch(
         _ app: AppEntry, searchQuery: String? = nil
     ) {
+        Self.logger.debug(
+            "Activating \(app.id, privacy: .public) kind=\(app.kind.rawValue, privacy: .public)")
         // A category word is no search for the row: learning it would rank the row under "s".
         if !CommandCatalog.isQueryDriven(app) {
             let term = searchQuery.flatMap {
@@ -40,7 +44,10 @@ final class LauncherCoordinator {
         }
         // Commands dispatch before the palette hides: mode-switching commands keep it open.
         if app.kind == .command {
-            guard let id = CommandCatalog.command(for: app) else { return }
+            guard let id = CommandCatalog.command(for: app) else {
+                Self.logger.error("No command for \(app.id, privacy: .public)")
+                return
+            }
             // Query-driven: only this row knows the URL the typed text resolved to.
             if id == .openInBrowser {
                 paletteCoordinator.hidePalette(restoreFocus: false)
@@ -55,7 +62,10 @@ final class LauncherCoordinator {
                 windowCommandCoordinator.runWindowCommand(id: command.id)
                 return
             }
-            guard let id = CustomWindowSize.id(fromEntryID: app.id) else { return }
+            guard let id = CustomWindowSize.id(fromEntryID: app.id) else {
+                Self.logger.error("No window command for \(app.id, privacy: .public)")
+                return
+            }
             windowCommandCoordinator.runCustomWindowSize(id: id)
             return
         }
@@ -64,7 +74,10 @@ final class LauncherCoordinator {
         case .application:
             AppLauncher.launch(app.url, allowsRunningApplicationSubstitution: false)
         case .systemSettings:
-            guard let bundleID = app.bundleID else { return }
+            guard let bundleID = app.bundleID else {
+                Self.logger.error("No bundle ID for settings pane \(app.id, privacy: .public)")
+                return
+            }
             AppLauncher.openSettingsPane(bundleID: bundleID)
         case .command, .windowCommand:
             break  // handled above

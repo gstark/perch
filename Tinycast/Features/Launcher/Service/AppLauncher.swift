@@ -1,12 +1,23 @@
 import AppKit
+import os
 
 enum AppLauncher {
+    private static let logger = Logger(subsystem: "com.gstark.perch", category: "Launcher")
 
     @MainActor
     static func launch(_ url: URL, allowsRunningApplicationSubstitution: Bool = true) {
         let configuration = NSWorkspace.OpenConfiguration()
         configuration.allowsRunningApplicationSubstitution = allowsRunningApplicationSubstitution
-        NSWorkspace.shared.openApplication(at: url, configuration: configuration)
+        logger.debug("Launching \(url.path, privacy: .public)")
+        NSWorkspace.shared.openApplication(at: url, configuration: configuration) { app, error in
+            if let error {
+                logger.error(
+                    "Launch failed for \(url.path, privacy: .public): \(error, privacy: .public)")
+            } else {
+                logger.debug(
+                    "Launched \(url.path, privacy: .public) as pid \(app?.processIdentifier ?? -1)")
+            }
+        }
     }
 
     /// Hands the URL to whatever the system registers for its scheme — the default browser, for web.
@@ -73,11 +84,18 @@ enum AppLauncher {
         {
             // Dock-click semantics; a bare `activate()` does none of it reliably.
             NSWorkspace.shared.openApplication(
-                at: url, configuration: NSWorkspace.OpenConfiguration())
+                at: url, configuration: NSWorkspace.OpenConfiguration()
+            ) { _, error in
+                guard let error else { return }
+                logger.error(
+                    "Toggle failed for \(bundleID, privacy: .public): \(error, privacy: .public)")
+            }
         } else if let running {
             // Running app whose bundle URL can't be resolved (moved or deleted since launch).
             running.unhide()
             running.activate()
+        } else {
+            logger.error("Toggle found no app for \(bundleID, privacy: .public)")
         }
     }
 
