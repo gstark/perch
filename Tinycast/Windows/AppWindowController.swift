@@ -92,6 +92,19 @@ final class AppWindowController: NSObject, NSWindowDelegate {
         window.setFrame(frame, display: true, animate: false)
     }
 
+    /// Only ever taller, so a size the user chose survives; the top edge stays, inside the screen.
+    func growContent(toHeight height: CGFloat) {
+        guard let window, let visible = window.screen?.visibleFrame else { return }
+        let titlebar = window.frame.height - window.contentLayoutRect.height
+        let wanted = min(height + titlebar, visible.height)
+        guard wanted > window.frame.height else { return }
+        var frame = window.frame
+        let top = min(frame.maxY, visible.maxY)
+        frame.size.height = wanted
+        frame.origin.y = max(visible.minY, top - wanted)
+        window.setFrame(frame, display: true, animate: true)
+    }
+
     // MARK: - NSWindowDelegate
 
     func windowWillClose(_ notification: Notification) {

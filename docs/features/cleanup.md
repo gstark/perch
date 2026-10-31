@@ -6,14 +6,19 @@ folders to walk, then press **Scan**. The list shows each project's build folder
 that removing them gives back, the most space first.
 
 Each row's title is the build items that go, such as `.venv` or `tmp/cache, log/*.log`. The
-project path sits in the subtitle, so the row never reads as the whole project. The button names
-what it moves, such as **Trash .venv** or **Trash 2 items**.
+project path sits in the subtitle, so the row never reads as the whole project. Two icons sit at
+its end: a trash can moves the items to the Trash, and a red bin deletes them at once. Their help
+text names the items.
 
 The list is grouped by the kind that owns each project's largest item, so a Rails app with a small
 `node_modules` sits under Rails. `CleanupGroup.groups` sorts the groups and the projects in each by
 space, the most first. A group's header has a chevron, the kind's badge, its project count and
-space, and a **Trash All** button for the group. A click on the header, outside the button, folds
-the group, and the coordinator keeps the folded groups while the app runs.
+space, and the same two icons for the whole group. Every group starts folded, and each scan folds
+them all again. A click on the chevron, badge or text opens or folds the group, and the
+coordinator keeps the open groups while the app runs. After a scan, the window grows to show every
+folded group: the measured height of the top sections, plus one measured header per group.
+`AppWindowController.growContent` only makes a window taller, keeps its top edge, and stays inside
+the screen, so a size you chose survives.
 
 The badge is an SF Symbol on a tile of the kind's system colour. No SF Symbol is a language logo,
 so each glyph is a nod to its ecosystem, such as a gem for Rails. A row repeats its group's badge,
@@ -24,9 +29,9 @@ cannot pin a section header, so the list is a `ScrollView` with a `LazyVStack` t
 headers, and `CleanupGroupCard` draws each group's rounded card from `Theme.Colors.cardFill` and
 `cardStroke`. The pinned header paints the window background, so rows never show through it.
 
-**Move All to Trash…** in the Scan row does what **Trash All** does, for every project the filter
-lists, in every group. Each of these buttons, and each row's button, has a menu with **Delete
-Immediately…**, which skips the Trash.
+**Trash All…** and **Delete All…** in the Scan row do the same for every project the filter lists,
+in every group. They show their names, because two bare icons beside **Scan** would not say what
+they act on.
 
 ## Build items
 
@@ -55,8 +60,9 @@ A row says how many listed projects are inside the project, such as the packages
 - **Only `CleanupRunner` removes, and only after a yes.** `CleanupCoordinator.remove` is the one
   route to the runner, and it asks through `DialogController` first. The confirmation lives in the
   coordinator, so the runner stays harness-compilable.
-- **The Trash is the default.** A click moves folders to the Trash. Delete Immediately is a menu
-  item, so it always takes a deliberate second step.
+- **Every removal asks first.** Trash and Delete are separate buttons, and each opens a
+  confirmation that names the items, the space, and whether the removal can be undone. That
+  dialog, not a menu, is what stops a slip.
 - **Each folder is checked again just before it goes.** `CleanupRemovalPolicy.isSafe` accepts only
   a build folder name from the table, under an absolute project path with no `..` or empty step.
   The runner then skips a folder that is gone, or whose path now runs through a symlink.
@@ -74,6 +80,8 @@ A row says how many listed projects are inside the project, such as the packages
   scratch tree.
 - **A cancelled scan reports nothing.** `CleanupScanner.scan` returns nil, so a part walk never
   replaces the last full report.
+- **The list is empty while a scan runs.** The window hides the last report during a scan and
+  shows it again if the scan is cancelled.
 - **Cleanup has its own roots.** They are not the Git Watch roots. `settings.json` holds them as
   `cleanup.roots`, abbreviated with `~`.
 

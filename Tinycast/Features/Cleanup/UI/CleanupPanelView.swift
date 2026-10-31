@@ -3,6 +3,9 @@ import SwiftUI
 /// The roots, the age filter, and every project with build folders, grouped by kind.
 struct CleanupPanelView: View {
     @Environment(AppCore.self) private var core
+    @State private var topHeight: CGFloat = 0
+    @State private var headerHeight: CGFloat = 0
+    @State private var fitPending = false
 
     var body: some View {
         @Bindable var coordinator = core.cleanupCoordinator
@@ -21,9 +24,11 @@ struct CleanupPanelView: View {
             .formStyle(.grouped)
             .scrollDisabled(true)
             .fixedSize(horizontal: false, vertical: true)
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { topHeight = $0 }
             // A grouped Form cannot pin headers, so this list draws the grouped look itself.
             ScrollView {
-                if let report = coordinator.report {
+                // Hidden, not cleared, while a scan runs, so Cancel brings the last report back.
+                if !coordinator.isScanning, let report = coordinator.report {
                     let projects = coordinator.age.projects(in: report, now: .now, calendar: .current)
                     LazyVStack(alignment: .leading, spacing: 0, pinnedViews: [.sectionHeaders]) {
                         if projects.isEmpty {
@@ -32,13 +37,38 @@ struct CleanupPanelView: View {
                                 .padding(Theme.Spacing.xxl)
                         }
                         ForEach(CleanupGroup.groups(projects)) { group in
-                            CleanupGroupSection(group: group, coordinator: coordinator)
+                            CleanupGroupSection(group: group, coordinator: coordinator) {
+                                headerHeight = $0
+                                fitIfPending()
+                            }
                         }
                     }
-                    .padding(.bottom, Theme.Spacing.xxl)
+                    .padding(.bottom, Self.listBottomPadding)
                 }
             }
         }
+        .onChange(of: coordinator.fitRequest) {
+            fitPending = true
+            fitIfPending()
+        }
+    }
+
+    private static let listBottomPadding = Theme.Spacing.xxl
+
+    /// Every group starts folded, so the list is exactly one header per group.
+    private func fitIfPending() {
+        let coordinator = core.cleanupCoordinator
+        guard fitPending, let report = coordinator.report else { return }
+        let projects = coordinator.age.projects(in: report, now: .now, calendar: .current)
+        let groups = CGFloat(CleanupGroup.groups(projects).count)
+        // No group means no header will ever report a height, and nothing to fit.
+        guard groups > 0 else {
+            fitPending = false
+            return
+        }
+        guard topHeight > 0, headerHeight > 0 else { return }
+        fitPending = false
+        coordinator.fitWindow(contentHeight: topHeight + groups * headerHeight + Self.listBottomPadding)
     }
 }
 
@@ -76,10 +106,9 @@ private struct CleanupScanRow: View {
                 Button("Cancel") { coordinator.cancelScan() }
             } else {
                 if !listed.isEmpty {
-                    CleanupRemoveMenu(
-                        title: "Move All to Trash…",
-                        help: "Move the build items of every listed project to the Trash",
-                        projects: listed, coordinator: coordinator)
+                    CleanupRemoveButtons(
+                        subject: "the build items of every listed project", projects: listed,
+                        coordinator: coordinator, titles: ("Trash All…", "Delete All…"))
                 }
                 Button("Scan") { coordinator.startScan() }
                     .disabled(coordinator.roots.isEmpty || coordinator.isRemoving)
@@ -113,10 +142,12 @@ private struct CleanupScanRow: View {
 private struct CleanupGroupSection: View {
     let group: CleanupGroup
     let coordinator: CleanupCoordinator
+    /// Every header has the same height, which the window fit multiplies by the group count.
+    let onHeaderHeight: (CGFloat) -> Void
 
     var body: some View {
         Section {
-            if !coordinator.collapsedGroups.contains(group.id) {
+            if coordinator.expandedGroups.contains(group.id) {
                 CleanupGroupCard(projects: group.projects, coordinator: coordinator)
                     .padding(.horizontal, Theme.Spacing.xxl)
                     .padding(.bottom, Theme.Spacing.lg)
@@ -127,6 +158,7 @@ private struct CleanupGroupSection: View {
                 .padding(.vertical, Theme.Spacing.sm)
                 // Opaque, so rows scrolling under the pinned header never show through it.
                 .background(.background)
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { onHeaderHeight($0) }
         }
     }
 }
@@ -148,8 +180,8 @@ private struct CleanupGroupCard: View {
                     CleanupKindBadge(kind: project.primaryKind)
                 } trailing: {
                     Text(DiskBytes.text(project.reclaimable)).monospacedDigit()
-                    CleanupRemoveMenu(
-                        title: trashTitle(project), help: "Move these build items to the Trash",
+                    CleanupRemoveButtons(
+                        subject: project.artifacts.map(\.name).joined(separator: ", "),
                         projects: [project], coordinator: coordinator)
                     Button("Show in Finder", systemImage: "magnifyingglass") {
                         coordinator.reveal(project)
@@ -166,13 +198,6 @@ private struct CleanupGroupCard: View {
         .overlay(
             RoundedRectangle(cornerRadius: Theme.Radius.card)
                 .strokeBorder(Theme.Colors.cardStroke))
-    }
-
-    private func trashTitle(_ project: CleanupProject) -> String {
-        guard project.artifacts.count == 1, let only = project.artifacts.first else {
-            return "Trash \(project.artifacts.count) items"
-        }
-        return "Trash \(only.name)"
     }
 
     private func detail(_ project: CleanupProject) -> String {
@@ -199,7 +224,7 @@ private struct CleanupGroupHeader: View {
     var body: some View {
         let title = group.kind?.title ?? "Other"
         let count = group.projects.count == 1 ? "1 project" : "\(group.projects.count) projects"
-        let isExpanded = !coordinator.collapsedGroups.contains(group.id)
+        let isExpanded = coordinator.expandedGroups.contains(group.id)
         HStack(spacing: Theme.Spacing.md) {
             Button {
                 withAnimation(.snappy) { coordinator.toggleGroup(group.id) }
@@ -212,12 +237,14 @@ private struct CleanupGroupHeader: View {
                     CleanupKindBadge(kind: group.kind, isHeader: true)
                     VStack(alignment: .leading, spacing: Theme.Spacing.xxs) {
                         Text(title).font(.headline)
-                        Text("\(count) · \(DiskBytes.text(group.reclaimable))")
-                            .font(.caption)
+                        let size = Text(DiskBytes.text(group.reclaimable))
+                            .fontWeight(.semibold)
+                            .foregroundStyle(.primary)
+                        Text("\(count) · \(size)")
+                            .font(.body)
                             .foregroundStyle(.secondary)
                             .monospacedDigit()
                     }
-                    Spacer()
                 }
                 .contentShape(.rect)
             }
@@ -225,34 +252,48 @@ private struct CleanupGroupHeader: View {
             .accessibilityLabel("\(title), \(count)")
             .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
             .accessibilityHint(isExpanded ? "Collapses the group" : "Expands the group")
-            CleanupRemoveMenu(
-                title: "Trash All \(title)",
-                help: "Move the build items of every \(title) project in this group to the Trash",
+            // Outside the button, so only the chevron, badge and text fold the group.
+            Spacer()
+            CleanupRemoveButtons(
+                subject: "the build items of every \(title) project in this group",
                 projects: group.projects, coordinator: coordinator)
         }
         .padding(.vertical, Theme.Spacing.xs)
     }
 }
 
-/// Move to Trash on a click; Delete Immediately waits in the menu, so it is never the easy one.
-private struct CleanupRemoveMenu: View {
-    let title: String
-    let help: String
+/// Trash and Delete side by side; the confirmation dialog, not a menu, is what stops a slip.
+private struct CleanupRemoveButtons: View {
+    /// What the buttons act on, for their help text, such as `.venv`.
+    let subject: String
     let projects: [CleanupProject]
     let coordinator: CleanupCoordinator
+    /// Nil draws the two icons alone.
+    var titles: (trash: String, delete: String)?
 
     var body: some View {
-        Menu {
-            Button("Delete Immediately…", role: .destructive) { remove(.delete) }
-        } label: {
-            Text(title)
-        } primaryAction: {
-            remove(.trash)
+        HStack(spacing: Theme.Spacing.md) {
+            button(
+                titles?.trash ?? "Move to Trash", systemImage: "trash",
+                help: "Move \(subject) to the Trash", mode: .trash)
+            button(
+                titles?.delete ?? "Delete Immediately", systemImage: "xmark.bin",
+                help: "Delete \(subject) now, without the Trash", mode: .delete)
+            .foregroundStyle(.red)
         }
-        .menuStyle(.button)
-        .fixedSize()
         .disabled(coordinator.isRemoving)
-        .help(help)
+    }
+
+    @ViewBuilder
+    private func button(
+        _ title: String, systemImage: String, help: String, mode: CleanupRemovalMode
+    ) -> some View {
+        let button = Button(title, systemImage: systemImage) { remove(mode) }.help(help)
+        if titles == nil {
+            button.labelStyle(.iconOnly).buttonStyle(.borderless)
+        } else {
+            button.labelStyle(.titleAndIcon)
+        }
     }
 
     private func remove(_ mode: CleanupRemovalMode) {

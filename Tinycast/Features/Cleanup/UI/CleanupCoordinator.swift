@@ -11,8 +11,10 @@ final class CleanupCoordinator {
     private(set) var progress: CleanupProgress?
     /// Kept while the app runs, so reopening the window shows the same list.
     var age: CleanupAge = .threeMonths
-    /// Group ids folded shut; every group starts open.
-    private(set) var collapsedGroups: Set<String> = []
+    /// Group ids folded open; each scan folds every group shut again.
+    private(set) var expandedGroups: Set<String> = []
+    /// Bumped when a scan lands, so the window can grow to fit the new groups once.
+    private(set) var fitRequest = 0
     @ObservationIgnored private var scan: Task<Void, Never>?
     @ObservationIgnored private let window: AppWindowController
     /// Environment injection and settings only — never for state this type owns.
@@ -58,12 +60,19 @@ final class CleanupCoordinator {
             guard let self, !Task.isCancelled else { return }
             isScanning = false
             progress = nil
-            if let report { self.report = report }
+            guard let report else { return }
+            self.report = report
+            expandedGroups = []
+            fitRequest += 1
         }
     }
 
     func toggleGroup(_ id: String) {
-        if collapsedGroups.remove(id) == nil { collapsedGroups.insert(id) }
+        if expandedGroups.remove(id) == nil { expandedGroups.insert(id) }
+    }
+
+    func fitWindow(contentHeight: CGFloat) {
+        window.growContent(toHeight: contentHeight)
     }
 
     func cancelScan() {
