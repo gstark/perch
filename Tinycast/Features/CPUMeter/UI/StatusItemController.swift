@@ -109,6 +109,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             menu.addItem(DiskMenuSummary.menuItem(current: current, samples: disk.store.samples))
         }
         menu.addItem(item("Disk History…") { $0.diskHistoryCoordinator.showPanel() })
+        menu.addItem(item("Clean Up Projects…") { $0.cleanupCoordinator.showPanel() })
     }
 
     /// Each row quits its process; holding Option turns every row into Force Quit.

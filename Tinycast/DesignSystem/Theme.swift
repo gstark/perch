@@ -153,6 +153,9 @@ enum Theme {
         static let diskHistoryWindow = CGSize(width: 620, height: 520)
         static let diskHistoryWindowMinimum = CGSize(width: 460, height: 400)
         static let diskHistoryChart: CGFloat = 260
+        /// Opening size; resizable down to `cleanupWindowMinimum`.
+        static let cleanupWindow = CGSize(width: 640, height: 620)
+        static let cleanupWindowMinimum = CGSize(width: 480, height: 400)
         /// The CPU menu's disk row; the process rows' tab stop already makes the menu this wide.
         static let diskMenuSummaryWidth: CGFloat = 310
         static let diskMenuSparkline: CGFloat = 32

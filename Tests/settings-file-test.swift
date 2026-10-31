@@ -47,7 +47,7 @@ struct SettingsFileTest {
             SettingsFileKey.sections == [
                 "general", "appearance", "hyperKey", "calculator", "search", "applications",
                 "systemSettings", "commands", "windowManagement", "clipboard", "emoji", "proxmox",
-                "processLabels", "gitWatch"
+                "processLabels", "gitWatch", "cleanup"
             ])
 
         // A file that could switch one of these on would grant what only the app may ask for.

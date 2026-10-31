@@ -45,6 +45,7 @@ The CPU menu has a **Startup Disk** section after the process list:
 1. A view item: "412 GB free of 1 TB", the change in used space over the last week, and a
    line of free space over the last 30 days. It appears after the first read.
 2. **Disk History…**, which opens the window.
+3. **Clean Up Projects…**, which opens the [Cleanup](cleanup.md) window.
 
 ## The window
 
@@ -70,4 +71,4 @@ The window has two segmented pickers.
 ## Later
 
 Per-folder use is out of scope. A full walk of the disk takes minutes, which an hourly sample
-cannot afford.
+cannot afford. [Cleanup](cleanup.md) walks chosen folders, and only on request.

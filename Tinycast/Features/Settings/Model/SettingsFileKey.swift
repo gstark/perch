@@ -48,6 +48,7 @@ enum SettingsFileKey: String, CaseIterable, Sendable {
     case processLabelEndpoint = "processLabels.endpoint"
     case processLabelModel = "processLabels.model"
     case gitWatchMachines = "gitWatch.machines"
+    case cleanupRoots = "cleanup.roots"
 
     /// The top-level object the key sits in.
     var section: String { String(rawValue.prefix { $0 != "." }) }

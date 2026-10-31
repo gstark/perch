@@ -72,6 +72,7 @@ final class AppCore {
     @ObservationIgnored private(set) lazy var gitWatchCoordinator = GitWatchCoordinator(core: self)
     @ObservationIgnored private(set) lazy var diskHistoryCoordinator = DiskHistoryCoordinator(
         core: self)
+    @ObservationIgnored private(set) lazy var cleanupCoordinator = CleanupCoordinator(core: self)
 
     @ObservationIgnored private(set) lazy var processLabelCoordinator = ProcessLabelCoordinator(
         core: self)

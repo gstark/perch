@@ -353,6 +353,9 @@ run git-watch-test         Tinycast/Features/GitWatch/Model/*.swift \
                            Tinycast/Platform/ProcessExit.swift
 run disk-history-test      Tinycast/Features/DiskHistory/Model/*.swift \
                            Tinycast/Features/DiskHistory/Service/*.swift
+run cleanup-test           Tinycast/Features/Cleanup/Model/*.swift \
+                           Tinycast/Features/Cleanup/Service/CleanupScanner.swift \
+                           Tinycast/Features/Cleanup/Service/CleanupRunner.swift
 run settings-history-test  Tinycast/Features/Settings/SettingsTab.swift \
                            Tinycast/Features/Settings/SettingsHistory.swift \
                            Tinycast/Features/Settings/SettingsAnchor.swift \

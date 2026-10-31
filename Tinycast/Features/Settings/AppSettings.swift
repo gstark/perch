@@ -139,6 +139,11 @@ final class AppSettings {
         }
     }
 
+    /// The folders Clean Up Projects walks, `~`-abbreviated by `CleanupRoots.normalize`.
+    var cleanupRoots: [String] {
+        didSet { defaults.set(cleanupRoots, forKey: Key.cleanupRoots.rawValue) }
+    }
+
     /// How long a closed palette keeps its state before popping back to the root launcher.
     var popToRootTimeout: PopToRootTimeout {
         didSet { defaults.set(popToRootTimeout.rawValue, forKey: Key.popToRootTimeout.rawValue) }
@@ -307,6 +312,7 @@ final class AppSettings {
         gitWatchMachines = GitWatchMachine.normalize(
             defaults.data(forKey: Key.gitWatchMachines.rawValue)
                 .flatMap { try? JSONDecoder().decode([GitWatchMachine].self, from: $0) } ?? [])
+        cleanupRoots = defaults.stringArray(forKey: Key.cleanupRoots.rawValue) ?? []
         popToRootTimeout =
             PopToRootTimeout(rawValue: defaults.integer(forKey: Key.popToRootTimeout.rawValue))
             ?? .immediately

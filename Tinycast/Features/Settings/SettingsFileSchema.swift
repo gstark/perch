@@ -77,6 +77,10 @@ enum SettingsFileSchema {
         case .processLabelModel: return bind(settings, \.processLabelModel)
         case .gitWatchMachines:
             return bind(settings, \.gitWatchMachines) { GitWatchMachine.normalize($0) }
+        case .cleanupRoots:
+            return bind(settings, \.cleanupRoots) {
+                CleanupRoots.normalize($0, home: NSHomeDirectory())
+            }
         }
     }
 

@@ -19,6 +19,7 @@ enum AppSettingsKey: String {
     case processLabelEndpoint = "processLabelEndpoint"
     case processLabelModel = "processLabelModel"
     case gitWatchMachines = "gitWatchMachines"
+    case cleanupRoots = "cleanupRoots"
     case showInMenuBar = "showInMenuBar"
     case popToRootTimeout = "popToRootTimeout"
     case escapeKeyBehavior = "escapeKeyBehavior"
