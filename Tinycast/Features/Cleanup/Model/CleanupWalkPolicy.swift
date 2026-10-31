@@ -17,8 +17,11 @@ enum CleanupWalkPolicy {
         return !packageExtensions.contains(String(name[name.index(after: dot)...]))
     }
 
+    /// `git status` rewrites `.git`, so the last commit, in this file, dates a repository instead.
+    static let commitLog = ".git/logs/HEAD"
+
     /// Finder rewrites `.DS_Store` on a visit, which would make every browsed project look active.
     static func dates(_ name: String) -> Bool {
-        name != ".DS_Store"
+        name != ".DS_Store" && name != ".git"
     }
 }

@@ -142,6 +142,7 @@
 		62843DEAE518675AD4BF18D6 /* ProxmoxSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C983E047F1788D60C4207A0B /* ProxmoxSettingsView.swift */; };
 		630330D8825D04686DAC1899 /* CalcNumberBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECE7139E923132C7408F5DA8 /* CalcNumberBase.swift */; };
 		635BAD676C753C180A6519D2 /* StatusItemController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3010689C3513FF994262C731 /* StatusItemController.swift */; };
+		64FCF8580CC0477E760AB56A /* CleanupArtifactRule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F8180FEF58CF471307B9824 /* CleanupArtifactRule.swift */; };
 		65EF65F243FDAB8055E04296 /* PalettePanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF0C3D25CBD47DA750D4803F /* PalettePanel.swift */; };
 		6689C8C9702EAA9BE43FA223 /* SettingsComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACF5C7FEC39F0EBD236DEAAF /* SettingsComponents.swift */; };
 		672270BA10759D69AC654109 /* BundleNameCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 591992236A2A44A3785B0D3F /* BundleNameCache.swift */; };
@@ -560,6 +561,7 @@
 		8E4EDD3C673B8332BE7B8D98 /* CleanupRemovalQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupRemovalQuestion.swift; sourceTree = "<group>"; };
 		8EE1D4F453E7EB6864740E1B /* HotKeySettingsFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeySettingsFile.swift; sourceTree = "<group>"; };
 		8EEE58AF144C8DAC9EDFA630 /* LauncherItemsTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LauncherItemsTable.swift; sourceTree = "<group>"; };
+		8F8180FEF58CF471307B9824 /* CleanupArtifactRule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CleanupArtifactRule.swift; sourceTree = "<group>"; };
 		903B689E15F416DB141D8775 /* CalcUnits.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcUnits.swift; sourceTree = "<group>"; };
 		90A99C975B76AB85A6FF6412 /* ArmedHover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArmedHover.swift; sourceTree = "<group>"; };
 		90DC1A574A61481289143207 /* ProcessLabelService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessLabelService.swift; sourceTree = "<group>"; };
@@ -887,6 +889,7 @@
 			isa = PBXGroup;
 			children = (
 				D7DB4553AA9DE903814A0C58 /* CleanupAge.swift */,
+				8F8180FEF58CF471307B9824 /* CleanupArtifactRule.swift */,
 				E50C8DA6D07565EA404DB52B /* CleanupProgress.swift */,
 				280FA504A3A26DDF329337E9 /* CleanupProject.swift */,
 				453667466B4FD870DD316AFE /* CleanupProjectKind.swift */,
@@ -1814,6 +1817,7 @@
 				569374FC94491944B818E788 /* CalloutPlacement.swift in Sources */,
 				FE5CADB8913110C5FF9D6F97 /* CalloutShape.swift in Sources */,
 				76897C1839546E284B055951 /* CleanupAge.swift in Sources */,
+				64FCF8580CC0477E760AB56A /* CleanupArtifactRule.swift in Sources */,
 				488C09ADA00F904FE6419DEE /* CleanupCoordinator.swift in Sources */,
 				EEB69804EE48C6111C177E09 /* CleanupPanelView.swift in Sources */,
 				398FDB1FAC301D938E9EDB26 /* CleanupProgress.swift in Sources */,

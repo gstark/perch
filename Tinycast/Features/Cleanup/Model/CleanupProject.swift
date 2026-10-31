@@ -4,6 +4,7 @@ import Foundation
 struct CleanupArtifact: Equatable, Sendable {
     /// Relative to the project folder, as `CleanupProjectKind.artifacts` spells it.
     var name: String
+    var rule: CleanupArtifactRule = .folder
     var bytes: Int64
     /// Files hard-linked elsewhere, as in a pnpm store; removing this copy frees none of it.
     var sharedBytes: Int64
@@ -18,9 +19,31 @@ struct CleanupProject: Equatable, Sendable, Identifiable {
     var artifacts: [CleanupArtifact]
     /// The newest change outside every build folder, nested projects included.
     var lastModified: Date
+    /// Listed projects inside this one; many can mean a stray marker file made this a project.
+    var nestedProjects = 0
 
     var id: String { path }
     var reclaimable: Int64 { artifacts.reduce(0) { $0 + $1.reclaimable } }
+}
+
+extension CleanupProject {
+    /// Drops file rules that matched nothing and projects left empty, then counts nested projects.
+    static func settled(_ projects: [CleanupProject]) -> [CleanupProject] {
+        let kept = projects.compactMap { project -> CleanupProject? in
+            var project = project
+            project.artifacts.removeAll {
+                if case .files = $0.rule { return $0.bytes == 0 }
+                return false
+            }
+            return project.artifacts.isEmpty ? nil : project
+        }
+        return kept.map { project in
+            var project = project
+            let prefix = project.path + "/"
+            project.nestedProjects = kept.count { $0.path.hasPrefix(prefix) }
+            return project
+        }
+    }
 }
 
 /// One finished walk of the roots.

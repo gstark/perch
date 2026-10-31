@@ -26,9 +26,12 @@ struct CleanupTests {
         roots()
         age()
         removalPolicy()
+        rules()
         do {
             try await scan()
+            try await scanRulesAndEnvironments()
             try removal()
+            try ruleRemoval()
         } catch {
             expect(false, "the scratch tree builds: \(error)")
         }
@@ -53,6 +56,11 @@ struct CleanupTests {
             "a Godot project's .csproj is not a .NET project")
         expect(kinds(["App.fsproj"]) == [.dotnet], "an .fsproj marks .NET")
         expect(
+            kinds(["Gemfile", "config.ru", "package.json"], ["config"]) == [.node, .rails],
+            "a Rails app with a package.json is both")
+        expect(kinds(["Gemfile", "config.ru"]).isEmpty, "a Rack app with no config folder is no Rails app")
+        expect(kinds(["pyproject.toml"]) == [.python], "pyproject.toml marks Python")
+        expect(
             CleanupProjectKind.artifacts(of: [.gradle, .cmake])
                 == ["build", ".gradle", "cmake-build-debug", "cmake-build-release"],
             "a build folder two kinds share is listed once")
@@ -66,6 +74,7 @@ struct CleanupTests {
         expect(!CleanupWalkPolicy.descends(into: "tmp"), "nor a scratch folder")
         expect(!CleanupWalkPolicy.dates(".DS_Store"), "Finder's .DS_Store does not date a project")
         expect(CleanupWalkPolicy.dates("main.swift"), "a source file does")
+        expect(!CleanupWalkPolicy.dates(".git"), "git status rewrites .git, so it does not date either")
     }
 
     static func roots() {
@@ -168,6 +177,9 @@ struct CleanupTests {
                 == ["personal/app", "personal/app/spa", "personal/tool", "personal/mobile", "old"],
             "the walk goes past a stray marker and into nested projects: \(byPath.keys.sorted())")
         expect(byPath["personal"] == nil, "a project with no build folder is not listed")
+        expect(
+            byPath["personal/app"]?.nestedProjects == 1 && byPath["personal/app/spa"]?.nestedProjects == 0,
+            "a project counts the listed projects inside it")
         expect(byPath["personal/linked"] == nil, "a symlinked build folder is not claimed")
         expect(
             byPath["personal/app"]?.artifacts.map(\.name) == ["node_modules"]
@@ -291,5 +303,138 @@ struct CleanupTests {
         }
         expect(deleted.removed == [target("two")], "delete removes the folder")
         expect(!fm.fileExists(atPath: target("two").path), "without the trash")
+    }
+
+    static func rules() {
+        expect(CleanupArtifactRule(tableName: "node_modules") == .folder, "a plain name is a folder")
+        expect(CleanupArtifactRule(tableName: "log/*.log") == .files(suffix: ".log"), "dir/*.ext is files")
+        expect(CleanupArtifactRule.folder(of: "log/*.log") == "log", "a file rule works in its folder")
+        expect(CleanupArtifactRule.folder(of: "ios/Pods") == "ios/Pods", "a folder rule in the folder")
+
+        func safe(_ project: String, _ name: String, _ rule: CleanupArtifactRule) -> Bool {
+            CleanupRemovalPolicy.isSafe(CleanupRemovalTarget(projectPath: project, name: name, rule: rule))
+        }
+        expect(safe("/p", "log/*.log", .files(suffix: ".log")), "the Rails log rule is safe")
+        expect(!safe("/p", "log/*.log", .folder), "but not as a folder")
+        expect(!safe("/p", "log", .files(suffix: ".log")), "nor under a name the table lacks")
+        expect(safe("/p", "parquet-venv", .virtualEnvironment), "an environment folder of any name is safe")
+        expect(!safe("/p", "a/venv", .virtualEnvironment), "but only directly in its project")
+        expect(!safe("/p", "..", .virtualEnvironment), "and never a step out")
+
+        let logs = CleanupArtifact(name: "log/*.log", rule: .files(suffix: ".log"), bytes: 0, sharedBytes: 0)
+        let cache = CleanupArtifact(name: "tmp/cache", bytes: 0, sharedBytes: 0)
+        let settled = CleanupProject.settled([
+            CleanupProject(path: "/a", kinds: [.rails], artifacts: [cache, logs], lastModified: now),
+            CleanupProject(path: "/a/b", kinds: [.rails], artifacts: [logs], lastModified: now),
+        ])
+        expect(
+            settled.map(\.path) == ["/a"] && settled.first?.artifacts.map(\.name) == ["tmp/cache"],
+            "a file rule that matched nothing goes, and a project left empty with it")
+    }
+
+    static func scanRulesAndEnvironments() async throws {
+        let fm = FileManager.default
+        let root = fm.temporaryDirectory.appending(path: "cleanup-rules-\(UUID().uuidString)")
+        defer { try? fm.removeItem(at: root) }
+
+        func file(_ path: String, bytes: Int = 1) throws {
+            let url = root.appending(path: path)
+            try fm.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try Data(count: bytes).write(to: url)
+        }
+        func age(_ path: String, _ date: Date) throws {
+            try fm.setAttributes([.modificationDate: date], ofItemAtPath: root.appending(path: path).path)
+        }
+
+        for path in ["rails/Gemfile", "rails/config.ru", "rails/config/application.rb", "rails/log/.keep"] {
+            try file(path)
+        }
+        try file("rails/tmp/cache/assets.bin", bytes: 10_000)
+        try file("rails/log/development.log", bytes: 20_000)
+        try file("rails/log/archive/old.log", bytes: 50_000)
+        for path in ["quiet/Gemfile", "quiet/config.ru", "quiet/config/application.rb", "quiet/log/.keep"] {
+            try file(path)
+        }
+        try file("quiet/tmp/cache/assets.bin", bytes: 10_000)
+        try file("tools/env/pyvenv.cfg")
+        try file("tools/env/lib/pkg/__init__.py")
+        try file("tools/env/lib/pkg/__pycache__/init.pyc", bytes: 30_000)
+        try file("app/main.py")
+        try file("app/__pycache__/main.pyc")
+        try file("app/venv/pyvenv.cfg", bytes: 40_000)
+
+        let committed = calendar.date(byAdding: .year, value: -1, to: .now)!
+        let edited = calendar.date(byAdding: .year, value: -2, to: .now)!
+        try file("repo/package.json")
+        try file("repo/node_modules/x.bin")
+        try file("repo/src/a.js")
+        try file("repo/.git/logs/HEAD")
+        for path in ["repo/package.json", "repo/src/a.js", "repo/src"] { try age(path, edited) }
+        try age("repo/.git/logs/HEAD", committed)
+
+        let now = Self.now
+        let report = await Task.detached { await CleanupScanner.scan(roots: [root], now: now) }.value
+        guard let report else { return expect(false, "the rules scan finishes") }
+        let rootPath = root.standardizedFileURL.resolvingSymlinksInPath().path
+        let byPath = Dictionary(
+            uniqueKeysWithValues: report.projects.map {
+                (String($0.path.dropFirst(rootPath.count + 1)), $0)
+            })
+
+        let rails = byPath["rails"]
+        expect(
+            rails?.kinds == [.rails] && rails?.artifacts.map(\.name) == ["tmp/cache", "log/*.log"],
+            "a Rails app lists tmp/cache and its log files")
+        let logs = rails?.artifacts.last
+        expect(
+            logs.map { $0.rule == .files(suffix: ".log") && $0.bytes >= 20_000 && $0.bytes < 50_000 }
+                == true,
+            "only the .log files directly in log count")
+        expect(
+            byPath["quiet"]?.artifacts.map(\.name) == ["tmp/cache"],
+            "a Rails app with no log file lists none")
+        let tools = byPath["tools"]
+        expect(
+            tools?.kinds == [.pythonEnvironment] && tools?.artifacts.map(\.name) == ["env"]
+                && tools?.artifacts.first?.rule == .virtualEnvironment,
+            "an environment folder belongs to the folder that holds it")
+        expect(
+            tools.map { $0.reclaimable >= 30_000 } == true, "an environment is sized as a whole")
+        expect(
+            !byPath.keys.contains { $0.hasPrefix("tools/env") }, "and nothing inside it is a project")
+        let app = byPath["app"]
+        expect(
+            app?.kinds == [.python, .pythonEnvironment]
+                && app?.artifacts.map(\.name) == ["__pycache__", "venv"],
+            "a Python project's own environment joins its build items")
+        expect(
+            byPath["repo"].map { abs($0.lastModified.timeIntervalSince(committed)) < 1 } == true,
+            "the last commit dates a repository, not the .git folder")
+    }
+
+    static func ruleRemoval() throws {
+        let fm = FileManager.default
+        let root = fm.temporaryDirectory.appending(path: "cleanup-rule-removal-\(UUID().uuidString)")
+            .resolvingSymlinksInPath()
+        defer { try? fm.removeItem(at: root) }
+        for path in ["rails/log/development.log", "rails/log/test.log", "rails/log/.keep", "fake/env/x.py"] {
+            let url = root.appending(path: path)
+            try fm.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try Data(count: 1).write(to: url)
+        }
+        let logs = CleanupRemovalTarget(
+            projectPath: root.appending(path: "rails").path, name: "log/*.log", rule: .files(suffix: ".log"))
+        let fake = CleanupRemovalTarget(
+            projectPath: root.appending(path: "fake").path, name: "env", rule: .virtualEnvironment)
+        let outcome = CleanupRunner.remove([logs, fake], mode: .delete) { _ in
+            fatalError("delete mode must not use the trash")
+        }
+        expect(outcome.removed == [logs], "the log files go")
+        expect(
+            (try? fm.contentsOfDirectory(atPath: root.appending(path: "rails/log").path)) == [".keep"],
+            "and the log folder stays with its .keep")
+        expect(
+            outcome.failures.map(\.target) == [fake],
+            "a folder with no pyvenv.cfg is no environment to remove")
     }
 }

@@ -9,6 +9,26 @@ Each row's trash button moves that project's build folders to the Trash. **Move 
 does the same for every project the filter lists. Both buttons have a menu with **Delete
 Immediately…**, which skips the Trash.
 
+## Build items
+
+Most build items are folders that a project kind names, such as `node_modules`. Two other rules
+exist, and `CleanupArtifactRule` names each one:
+
+| Rule | Example | What goes |
+| --- | --- | --- |
+| Folder | `node_modules`, `tmp/cache` | The whole folder |
+| Files | `log/*.log` | The `.log` files directly in `log`. The folder and its `.keep` stay, and so does a subfolder. |
+| Virtual environment | `venv`, `parquet-venv` | Any folder that holds `pyvenv.cfg`, whatever its name |
+
+A Rails app is a folder with `Gemfile`, `config.ru` and a `config` folder. Its build items are
+`tmp/cache` and `log/*.log`. A file rule that matches no file is left out of the list.
+
+A virtual environment belongs to the folder that holds it. If that folder is no project, it is
+listed as a "Python environment". The walk does not enter the environment, so its packages are
+never listed as projects.
+
+A row says how many listed projects are inside the project, such as the packages of a monorepo.
+
 ## Invariants
 
 - **A scan never changes a file.** `CleanupScanner` lists folders and reads their sizes and dates.
@@ -57,12 +77,14 @@ Perch has no third-party dependencies, so `CleanupProjectKind` restates the tabl
 | Case | kondo | Perch |
 | --- | --- | --- |
 | A project inside a project | Stops at the outer project | Walks on and lists both |
-| A stray marker, such as a `package.json` in a folder of projects | Hides every project under it | Lists the projects under it. The stray folder is listed only if it has a build folder. |
+| A stray marker, such as a `package.json` in a folder of projects | Hides every project under it | Lists the projects under it. The stray folder is listed only if it has a build folder, and its row says how many projects it holds. |
 | A folder with two markers, such as a Rails app with `package.json` | One kind, from whichever file `readdir` returns first | Every kind, and the union of their build folders |
 | A build folder that is a symlink | Follows it | Skips it |
 | A hard-linked file, as in a pnpm store | Counts it as freed | Counts it as shared, not reclaimable |
 | Size | Logical file length | Allocated size, which is what the disk gets back |
-| Age | The newest file in the project, build folders included | The newest entry outside every build folder, without `.DS_Store` |
+| Age | The newest file in the project, build folders included | The newest entry outside every build folder, without `.DS_Store` or `.git`, and the last commit from `.git/logs/HEAD` |
+| Rails | Not a kind | `tmp/cache` and `log/*.log` |
+| A virtual environment not named `.venv` | Each package folder is a Python project | One build item of the folder that holds it |
 
 A build folder belongs to the first project that names it. `ios/Pods` in a React Native project is
 the React Native project's, so the `Podfile` under `ios/` is not a second project.
@@ -97,6 +119,7 @@ Sizing separate folders at the same time scaled to 3.7 times at 8 folders. One p
 ## Limits
 
 - APFS clones look like separate files, so a cloned folder can show more space than a delete frees.
-- `tmp/cache` in a Rails app is not a build folder yet.
-- A Python virtual environment that is not hidden and not under `tmp`, such as `venv`, shows each
-  package folder as a project. Its `pyvenv.cfg` file can mark it.
+- A running Rails server keeps writing to a log file after it is removed. The disk gets that space
+  back only when the server restarts.
+- A `git status` rewrites the `.git` folder without a commit, so `.git` does not date a project.
+  A checkout, pull or commit updates `.git/logs/HEAD`, and that does.

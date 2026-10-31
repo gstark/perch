@@ -15,36 +15,43 @@ nonisolated enum CleanupScanner {
     ) async -> CleanupReport? {
         var walk = Walk(progress: progress)
         for root in roots {
-            walk.visit(root.standardizedFileURL.resolvingSymlinksInPath())
+            walk.visit(root.standardizedFileURL.resolvingSymlinksInPath(), isRoot: true)
         }
         guard !Task.isCancelled else { return nil }
-        let sizes = await size(walk.pending.map(\.path), counted: walk.counted, progress: progress)
+        let sizes = await size(walk.pending, counted: walk.counted, progress: progress)
         guard !Task.isCancelled else { return nil }
         var projects = walk.projects
         for (pending, size) in zip(walk.pending, sizes) {
             projects[pending.project].artifacts[pending.artifact].bytes = size.bytes
             projects[pending.project].artifacts[pending.artifact].sharedBytes = size.shared
         }
-        return CleanupReport(projects: projects, unreadable: walk.unreadable, date: now)
+        return CleanupReport(
+            projects: CleanupProject.settled(projects), unreadable: walk.unreadable, date: now)
     }
 
     private struct Entry {
         var url: URL
         var name: String
         var isDirectory: Bool
+        var isFile: Bool
         var modified: Date
+        var allocated: Int64
+        var links: Int
     }
 
-    /// A claimed build folder, sized after the walk so the walk itself stays quick.
-    private struct Pending {
+    /// A claimed build item, sized after the walk so the walk itself stays quick.
+    private struct Pending: Sendable {
         var project: Int
         var artifact: Int
+        /// The folder the rule works in.
         var path: String
+        var rule: CleanupArtifactRule
     }
 
     private struct Walk {
         let progress: Progress
         var projects: [CleanupProject] = []
+        var projectIndex: [String: Int] = [:]
         var pending: [Pending] = []
         var unreadable: [String] = []
         /// Every build folder found so far; a nested project must not claim one a parent owns.
@@ -53,22 +60,31 @@ nonisolated enum CleanupScanner {
 
         /// The newest dated entry in the folder's tree, or nil when nothing in it dates it.
         @discardableResult
-        mutating func visit(_ folder: URL) -> Date? {
+        mutating func visit(_ folder: URL, isRoot: Bool = false) -> Date? {
             guard !Task.isCancelled else { return nil }
             report()
             guard let entries = CleanupScanner.list(folder) else {
                 unreadable.append(folder.path)
                 return nil
             }
-            let found = claimArtifacts(in: folder, entries: entries)
+            let marker = CleanupArtifactRule.virtualEnvironmentMarker
+            if !isRoot, entries.contains(where: { $0.isFile && $0.name == marker }) {
+                addEnvironment(folder)
+                return nil
+            }
+            claimArtifacts(in: folder, entries: entries)
             var newest: Date?
             for entry in entries where !claimed.contains(entry.url.path) {
                 if CleanupWalkPolicy.dates(entry.name) { newest = later(newest, entry.modified) }
                 guard entry.isDirectory, CleanupWalkPolicy.descends(into: entry.name) else { continue }
                 newest = later(newest, visit(entry.url))
             }
-            if let found {
-                projects[found].lastModified = newest ?? .distantPast
+            if entries.contains(where: { $0.isDirectory && $0.name == ".git" }) {
+                let log = folder.appending(path: CleanupWalkPolicy.commitLog, directoryHint: .notDirectory)
+                newest = later(newest, CleanupScanner.modified(log.path))
+            }
+            if let index = projectIndex[folder.path] {
+                projects[index].lastModified = newest ?? .distantPast
             }
             return newest
         }
@@ -79,25 +95,62 @@ nonisolated enum CleanupScanner {
         }
 
         /// Records the project before its children, so a parent sits above a nested project.
-        private mutating func claimArtifacts(in folder: URL, entries: [Entry]) -> Int? {
+        private mutating func claimArtifacts(in folder: URL, entries: [Entry]) {
             let kinds = CleanupProjectKind.kinds(
                 fileNames: Set(entries.filter { !$0.isDirectory }.map(\.name)),
                 directoryNames: Set(entries.filter(\.isDirectory).map(\.name)))
-            guard !kinds.isEmpty else { return nil }
-            let names = CleanupProjectKind.artifacts(of: kinds).filter { name in
-                claim(folder.appending(path: name, directoryHint: .isDirectory))
+            guard !kinds.isEmpty else { return }
+            let artifacts = CleanupProjectKind.artifacts(of: kinds).compactMap { name in
+                let url = folder.appending(
+                    path: CleanupArtifactRule.folder(of: name), directoryHint: .isDirectory)
+                return claim(url) ? (name, url.path) : nil
             }
-            guard !names.isEmpty else { return nil }
-            let index = projects.count
-            for (artifact, name) in names.enumerated() {
-                let path = folder.appending(path: name, directoryHint: .isDirectory)
-                pending.append(Pending(project: index, artifact: artifact, path: path.path))
-            }
-            projects.append(
+            guard !artifacts.isEmpty else { return }
+            let index = register(
                 CleanupProject(
                     path: folder.path, kinds: kinds,
-                    artifacts: names.map { CleanupArtifact(name: $0, bytes: 0, sharedBytes: 0) },
+                    artifacts: artifacts.map {
+                        CleanupArtifact(
+                            name: $0.0, rule: CleanupArtifactRule(tableName: $0.0), bytes: 0,
+                            sharedBytes: 0)
+                    },
                     lastModified: .distantPast))
+            for (artifact, (name, path)) in artifacts.enumerated() {
+                pending.append(
+                    Pending(
+                        project: index, artifact: artifact, path: path,
+                        rule: CleanupArtifactRule(tableName: name)))
+            }
+        }
+
+        /// A virtual environment belongs to the folder that holds it, whatever that folder is.
+        private mutating func addEnvironment(_ folder: URL) {
+            claimed.insert(folder.path)
+            let parent = folder.deletingLastPathComponent().path
+            let artifact = CleanupArtifact(
+                name: folder.lastPathComponent, rule: .virtualEnvironment, bytes: 0, sharedBytes: 0)
+            let index: Int
+            if let existing = projectIndex[parent] {
+                index = existing
+                projects[index].artifacts.append(artifact)
+                let kinds = Set(projects[index].kinds + [.pythonEnvironment])
+                projects[index].kinds = CleanupProjectKind.allCases.filter(kinds.contains)
+            } else {
+                index = register(
+                    CleanupProject(
+                        path: parent, kinds: [.pythonEnvironment], artifacts: [artifact],
+                        lastModified: .distantPast))
+            }
+            pending.append(
+                Pending(
+                    project: index, artifact: projects[index].artifacts.count - 1,
+                    path: folder.path, rule: .virtualEnvironment))
+        }
+
+        private mutating func register(_ project: CleanupProject) -> Int {
+            let index = projects.count
+            projects.append(project)
+            projectIndex[project.path] = index
             counted.projectsFound = projects.count
             return index
         }
@@ -136,17 +189,25 @@ nonisolated enum CleanupScanner {
             let type = info.st_mode & S_IFMT
             guard type != S_IFLNK else { continue }
             let isDirectory = type == S_IFDIR
-            let modified = info.st_mtimespec
             entries.append(
                 Entry(
                     url: folder.appending(
                         path: name, directoryHint: isDirectory ? .isDirectory : .notDirectory),
-                    name: name, isDirectory: isDirectory,
-                    modified: Date(
-                        timeIntervalSince1970: TimeInterval(modified.tv_sec)
-                            + TimeInterval(modified.tv_nsec) / 1_000_000_000)))
+                    name: name, isDirectory: isDirectory, isFile: type == S_IFREG,
+                    modified: date(info.st_mtimespec), allocated: Int64(info.st_blocks) * 512,
+                    links: Int(info.st_nlink)))
         }
         return entries
+    }
+
+    private static func modified(_ path: String) -> Date? {
+        var info = stat()
+        guard lstat(path, &info) == 0 else { return nil }
+        return date(info.st_mtimespec)
+    }
+
+    private static func date(_ time: timespec) -> Date {
+        Date(timeIntervalSince1970: TimeInterval(time.tv_sec) + TimeInterval(time.tv_nsec) / 1_000_000_000)
     }
 
     /// A symlinked build folder points at space this project does not own.
@@ -157,19 +218,19 @@ nonisolated enum CleanupScanner {
 
     /// Sizes in the order given, a few folders at a time.
     private static func size(
-        _ paths: [String], counted: CleanupProgress, progress: Progress
+        _ items: [Pending], counted: CleanupProgress, progress: Progress
     ) async -> [(bytes: Int64, shared: Int64)] {
-        var sizes = Array(repeating: (bytes: Int64(0), shared: Int64(0)), count: paths.count)
+        var sizes = Array(repeating: (bytes: Int64(0), shared: Int64(0)), count: items.count)
         var counted = counted
-        counted.foldersToSize = paths.count
+        counted.foldersToSize = items.count
         progress(counted)
         await withTaskGroup(of: (Int, (bytes: Int64, shared: Int64)).self) { group in
             var next = 0
             func start() {
-                guard next < paths.count else { return }
+                guard next < items.count else { return }
                 let index = next
                 next += 1
-                group.addTask { (index, allocated(in: paths[index])) }
+                group.addTask { (index, measure(items[index])) }
             }
             for _ in 0..<sizingWidth { start() }
             for await (index, size) in group {
@@ -180,6 +241,20 @@ nonisolated enum CleanupScanner {
             }
         }
         return sizes
+    }
+
+    private static func measure(_ item: Pending) -> (bytes: Int64, shared: Int64) {
+        switch item.rule {
+        case .folder, .virtualEnvironment:
+            return allocated(in: item.path)
+        case .files(let suffix):
+            let files = (list(URL(filePath: item.path, directoryHint: .isDirectory)) ?? [])
+                .filter { $0.isFile && $0.name.hasSuffix(suffix) }
+            return (
+                files.reduce(0) { $0 + $1.allocated },
+                files.filter { $0.links > 1 }.reduce(0) { $0 + $1.allocated }
+            )
+        }
     }
 
     /// `fts` with `lstat` is about twice as fast as `FileManager`'s enumerator on a large tree.

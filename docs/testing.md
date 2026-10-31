@@ -136,7 +136,7 @@ If a change touches anything in the right column, the harness on the left is man
 | `entry-icon-test` | `EntryIcon` — that each case draws, caches and prints apart from the others, and that a moved `FileIconStamp` retires the bitmap decoded before it |
 | `text-diff-test` | `QuickActions/Model/TextDiffEngine.swift` — exact chunks, Unicode, ties, token-cap boundaries and fast paths |
 | `settings-file-test` | `Settings/Model/` and `Settings/Service/` — key paths, value tokens, the printer and parser, and the repository's import, replace, save, reload and symlink handling on a scratch folder |
-| `cleanup-test` | `Cleanup/Model/` and `Service/` — marker files, the walk rules, roots, the age filter, the removal rules and dialog wording, a real scan of a scratch tree with nested projects, a stray marker, symlinks and hard links, and removal through a stand-in Trash |
+| `cleanup-test` | `Cleanup/Model/` and `Service/` — marker files, the walk rules, roots, the age filter, the removal rules and dialog wording, real scans of scratch trees with nested projects, a stray marker, symlinks, hard links, Rails logs, virtual environments and commit dates, and removal through a stand-in Trash |
 | `disk-history-test` | `DiskHistory/Model/` and `Service/` — the CSV line, the hourly schedule, bucketing per range, changes, a real read of `/`, and the store's append and load on a scratch folder |
 | `proxmox-test` | `Proxmox/Model/` — the cluster-resources reply, each guest's share of the host, failure mapping, address normalisation and the certificate fingerprint |
 | `process-labels-test` | `ProcessLabels/Model/` — what a signature keeps and redacts, endpoint completion, the chat request and reply, and the cache's capacity and JSON round trip |

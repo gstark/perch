@@ -132,7 +132,12 @@ private struct CleanupResultsSection: View {
         let kinds = project.kinds.map(\.title).formatted(.list(type: .and))
         let folders = project.artifacts.map(\.name).joined(separator: ", ")
         let changed = project.lastModified.formatted(.relative(presentation: .named))
-        return "\(kinds) · \(folders) · changed \(changed)"
+        let detail = "\(kinds) · \(folders) · changed \(changed)"
+        switch project.nestedProjects {
+        case 0: return detail
+        case 1: return detail + " · holds 1 other project"
+        default: return detail + " · holds \(project.nestedProjects) other projects"
+        }
     }
 }
 
