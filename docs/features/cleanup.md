@@ -5,8 +5,23 @@ A list of build folders that projects can rebuild, such as `node_modules`, `targ
 folders to walk, then press **Scan**. The list shows each project's build folders and the space
 that removing them gives back, the most space first.
 
-Each row's trash button moves that project's build folders to the Trash. **Move All to Trash…**
-does the same for every project the filter lists. Both buttons have a menu with **Delete
+Each row's title is the build items that go, such as `.venv` or `tmp/cache, log/*.log`. The
+project path sits in the subtitle, so the row never reads as the whole project. The button names
+what it moves, such as **Trash .venv** or **Trash 2 items**.
+
+The list is grouped by the kind that owns each project's largest item, so a Rails app with a small
+`node_modules` sits under Rails. `CleanupGroup.groups` sorts the groups and the projects in each by
+space, the most first. A group's header has a chevron, the kind's badge, its project count and
+space, and a **Trash All** button for the group. A click on the header, outside the button, folds
+the group, and the coordinator keeps the folded groups while the app runs. Each row keeps its own
+badge too.
+
+The header stays pinned at the top of the list while its group scrolls under it. A grouped `Form`
+cannot pin a section header, so the list is a `ScrollView` with a `LazyVStack` that pins section
+headers, and `CleanupGroupCard` draws each group's rounded card from `Theme.Colors.cardFill` and
+`cardStroke`. The pinned header paints the window background, so rows never show through it. The badge is an SF Symbol on a tile of the kind's system
+colour. No SF Symbol is a language logo, so each glyph is a nod to its ecosystem, such as a gem
+for Rails. **Move All to Trash…** does the same for every project the filter lists. Both buttons have a menu with **Delete
 Immediately…**, which skips the Trash.
 
 ## Build items

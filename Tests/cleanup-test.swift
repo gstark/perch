@@ -330,6 +330,34 @@ struct CleanupTests {
         expect(
             settled.map(\.path) == ["/a"] && settled.first?.artifacts.map(\.name) == ["tmp/cache"],
             "a file rule that matched nothing goes, and a project left empty with it")
+
+        func item(_ name: String, _ bytes: Int64, _ rule: CleanupArtifactRule = .folder) -> CleanupArtifact {
+            CleanupArtifact(name: name, rule: rule, bytes: bytes, sharedBytes: 0)
+        }
+        func badge(_ artifacts: [CleanupArtifact]) -> CleanupProjectKind? {
+            CleanupProject(path: "/a", kinds: [.node, .rails], artifacts: artifacts, lastModified: now)
+                .primaryKind
+        }
+        expect(
+            badge([item("node_modules", 10), item("tmp/cache", 90)]) == .rails,
+            "the badge follows the largest build item's kind")
+        expect(badge([item("node_modules", 90), item("tmp/cache", 10)]) == .node, "whichever is larger")
+        expect(
+            badge([item("env", 5, .virtualEnvironment)]) == .pythonEnvironment,
+            "an environment shows as one")
+        expect(badge([]) == .node, "with nothing sized, the first kind")
+
+        func project(_ path: String, _ kind: CleanupProjectKind, _ bytes: Int64) -> CleanupProject {
+            CleanupProject(
+                path: path, kinds: [kind], artifacts: [item(kind.artifacts[0], bytes)], lastModified: now)
+        }
+        let groups = CleanupGroup.groups([
+            project("/s1", .swift, 30), project("/n1", .node, 50), project("/s2", .swift, 40),
+            project("/n2", .node, 10),
+        ])
+        expect(groups.map(\.kind) == [.swift, .node], "the group with the most space comes first")
+        expect(groups.first?.projects.map(\.path) == ["/s2", "/s1"], "and the largest project in it")
+        expect(groups.map(\.reclaimable) == [70, 60], "a group's space is its projects' space")
     }
 
     static func scanRulesAndEnvironments() async throws {

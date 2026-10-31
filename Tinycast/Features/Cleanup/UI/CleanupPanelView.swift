@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The roots, the age filter, and every project with build folders, the most space first.
+/// The roots, the age filter, and every project with build folders, grouped by kind.
 struct CleanupPanelView: View {
     @Environment(AppCore.self) private var core
 
@@ -21,14 +21,23 @@ struct CleanupPanelView: View {
             .formStyle(.grouped)
             .scrollDisabled(true)
             .fixedSize(horizontal: false, vertical: true)
-            Form {
+            // A grouped Form cannot pin headers, so this list draws the grouped look itself.
+            ScrollView {
                 if let report = coordinator.report {
-                    CleanupResultsSection(
-                        projects: coordinator.age.projects(in: report, now: .now, calendar: .current),
-                        coordinator: coordinator)
+                    let projects = coordinator.age.projects(in: report, now: .now, calendar: .current)
+                    LazyVStack(alignment: .leading, spacing: 0, pinnedViews: [.sectionHeaders]) {
+                        if projects.isEmpty {
+                            Text("No project matches this filter.")
+                                .foregroundStyle(.secondary)
+                                .padding(Theme.Spacing.xxl)
+                        }
+                        ForEach(CleanupGroup.groups(projects)) { group in
+                            CleanupGroupSection(group: group, coordinator: coordinator)
+                        }
+                    }
+                    .padding(.bottom, Theme.Spacing.xxl)
                 }
             }
-            .formStyle(.grouped)
         }
     }
 }
@@ -68,7 +77,9 @@ private struct CleanupScanRow: View {
             } else {
                 if !listed.isEmpty {
                     CleanupRemoveMenu(
-                        title: "Move All to Trash…", projects: listed, coordinator: coordinator)
+                        title: "Move All to Trash…",
+                        help: "Move the build items of every listed project to the Trash",
+                        projects: listed, coordinator: coordinator)
                 }
                 Button("Scan") { coordinator.startScan() }
                     .disabled(coordinator.roots.isEmpty || coordinator.isRemoving)
@@ -99,22 +110,47 @@ private struct CleanupScanRow: View {
     }
 }
 
-private struct CleanupResultsSection: View {
-    let projects: [CleanupProject]
+private struct CleanupGroupSection: View {
+    let group: CleanupGroup
     let coordinator: CleanupCoordinator
 
     var body: some View {
         Section {
-            if projects.isEmpty {
-                Text("No project matches this filter.").foregroundStyle(.secondary)
+            if !coordinator.collapsedGroups.contains(group.id) {
+                CleanupGroupCard(projects: group.projects, coordinator: coordinator)
+                    .padding(.horizontal, Theme.Spacing.xxl)
+                    .padding(.bottom, Theme.Spacing.lg)
             }
+        } header: {
+            CleanupGroupHeader(group: group, coordinator: coordinator)
+                .padding(.horizontal, Theme.Spacing.xxl)
+                .padding(.vertical, Theme.Spacing.sm)
+                // Opaque, so rows scrolling under the pinned header never show through it.
+                .background(.background)
+        }
+    }
+}
+
+/// The group's rows on one rounded card, as a grouped Form draws a section.
+private struct CleanupGroupCard: View {
+    let projects: [CleanupProject]
+    let coordinator: CleanupCoordinator
+
+    var body: some View {
+        VStack(spacing: 0) {
             ForEach(projects) { project in
+                if project.id != projects.first?.id { Divider() }
+                // The title is what goes, so the button beside it never reads as the whole project.
                 SettingsRow(
-                    title: CleanupRoots.abbreviate(project.path, home: NSHomeDirectory()),
+                    title: project.artifacts.map(\.name).joined(separator: ", "),
                     subtitle: detail(project)
                 ) {
+                    CleanupKindBadge(kind: project.primaryKind)
+                } trailing: {
                     Text(DiskBytes.text(project.reclaimable)).monospacedDigit()
-                    CleanupRemoveMenu(title: nil, projects: [project], coordinator: coordinator)
+                    CleanupRemoveMenu(
+                        title: trashTitle(project), help: "Move these build items to the Trash",
+                        projects: [project], coordinator: coordinator)
                     Button("Show in Finder", systemImage: "magnifyingglass") {
                         coordinator.reveal(project)
                     }
@@ -122,17 +158,31 @@ private struct CleanupResultsSection: View {
                     .buttonStyle(.borderless)
                     .help("Show in Finder")
                 }
+                .padding(.vertical, Theme.Spacing.md)
             }
-        } header: {
-            Text("Projects")
         }
+        .padding(.horizontal, Theme.Spacing.lg)
+        .background(Theme.Colors.cardFill, in: .rect(cornerRadius: Theme.Radius.card))
+        .overlay(
+            RoundedRectangle(cornerRadius: Theme.Radius.card)
+                .strokeBorder(Theme.Colors.cardStroke))
+    }
+
+    private func trashTitle(_ project: CleanupProject) -> String {
+        guard project.artifacts.count == 1, let only = project.artifacts.first else {
+            return "Trash \(project.artifacts.count) items"
+        }
+        return "Trash \(only.name)"
     }
 
     private func detail(_ project: CleanupProject) -> String {
-        let kinds = project.kinds.map(\.title).formatted(.list(type: .and))
-        let folders = project.artifacts.map(\.name).joined(separator: ", ")
+        let path = CleanupRoots.abbreviate(project.path, home: NSHomeDirectory())
         let changed = project.lastModified.formatted(.relative(presentation: .named))
-        let detail = "\(kinds) · \(folders) · changed \(changed)"
+        var detail = "in \(path) · changed \(changed)"
+        // The group header names the kind; only a project of several kinds says more.
+        if project.kinds.count > 1 {
+            detail += " · " + project.kinds.map(\.title).formatted(.list(type: .and))
+        }
         switch project.nestedProjects {
         case 0: return detail
         case 1: return detail + " · holds 1 other project"
@@ -141,10 +191,53 @@ private struct CleanupResultsSection: View {
     }
 }
 
+/// The kind's badge and name, its projects and space, and one button for the whole group.
+private struct CleanupGroupHeader: View {
+    let group: CleanupGroup
+    let coordinator: CleanupCoordinator
+
+    var body: some View {
+        let title = group.kind?.title ?? "Other"
+        let count = group.projects.count == 1 ? "1 project" : "\(group.projects.count) projects"
+        let isExpanded = !coordinator.collapsedGroups.contains(group.id)
+        HStack(spacing: Theme.Spacing.md) {
+            Button {
+                withAnimation(.snappy) { coordinator.toggleGroup(group.id) }
+            } label: {
+                HStack(spacing: Theme.Spacing.md) {
+                    Image(systemName: "chevron.right")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                    CleanupKindBadge(kind: group.kind, isHeader: true)
+                    VStack(alignment: .leading, spacing: Theme.Spacing.xxs) {
+                        Text(title).font(.headline)
+                        Text("\(count) · \(DiskBytes.text(group.reclaimable))")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .monospacedDigit()
+                    }
+                    Spacer()
+                }
+                .contentShape(.rect)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("\(title), \(count)")
+            .accessibilityValue(isExpanded ? "Expanded" : "Collapsed")
+            .accessibilityHint(isExpanded ? "Collapses the group" : "Expands the group")
+            CleanupRemoveMenu(
+                title: "Trash All \(title)",
+                help: "Move the build items of every \(title) project in this group to the Trash",
+                projects: group.projects, coordinator: coordinator)
+        }
+        .padding(.vertical, Theme.Spacing.xs)
+    }
+}
+
 /// Move to Trash on a click; Delete Immediately waits in the menu, so it is never the easy one.
 private struct CleanupRemoveMenu: View {
-    /// Nil draws the trash icon alone, for a row.
-    let title: String?
+    let title: String
+    let help: String
     let projects: [CleanupProject]
     let coordinator: CleanupCoordinator
 
@@ -152,22 +245,14 @@ private struct CleanupRemoveMenu: View {
         Menu {
             Button("Delete Immediately…", role: .destructive) { remove(.delete) }
         } label: {
-            if let title {
-                Text(title)
-            } else {
-                Label("Move to Trash", systemImage: "trash").labelStyle(.iconOnly)
-            }
+            Text(title)
         } primaryAction: {
             remove(.trash)
         }
         .menuStyle(.button)
-        .buttonStyle(.borderless)
         .fixedSize()
         .disabled(coordinator.isRemoving)
-        .help(
-            title == nil
-                ? "Move build folders to the Trash"
-                : "Move the build folders of every listed project to the Trash")
+        .help(help)
     }
 
     private func remove(_ mode: CleanupRemovalMode) {

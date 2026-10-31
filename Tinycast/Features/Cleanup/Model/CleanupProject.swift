@@ -24,6 +24,15 @@ struct CleanupProject: Equatable, Sendable, Identifiable {
 
     var id: String { path }
     var reclaimable: Int64 { artifacts.reduce(0) { $0 + $1.reclaimable } }
+
+    /// The kind that owns the largest build item, so a Rails app's logs show Rails, not Node.
+    var primaryKind: CleanupProjectKind? {
+        guard let largest = artifacts.max(by: { $0.reclaimable < $1.reclaimable }) else {
+            return kinds.first
+        }
+        if largest.rule == .virtualEnvironment { return .pythonEnvironment }
+        return kinds.first { $0.artifacts.contains(largest.name) } ?? kinds.first
+    }
 }
 
 extension CleanupProject {

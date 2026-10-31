@@ -11,6 +11,8 @@ final class CleanupCoordinator {
     private(set) var progress: CleanupProgress?
     /// Kept while the app runs, so reopening the window shows the same list.
     var age: CleanupAge = .threeMonths
+    /// Group ids folded shut; every group starts open.
+    private(set) var collapsedGroups: Set<String> = []
     @ObservationIgnored private var scan: Task<Void, Never>?
     @ObservationIgnored private let window: AppWindowController
     /// Environment injection and settings only — never for state this type owns.
@@ -58,6 +60,10 @@ final class CleanupCoordinator {
             progress = nil
             if let report { self.report = report }
         }
+    }
+
+    func toggleGroup(_ id: String) {
+        if collapsedGroups.remove(id) == nil { collapsedGroups.insert(id) }
     }
 
     func cancelScan() {
