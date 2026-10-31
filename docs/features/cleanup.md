@@ -13,15 +13,19 @@ The list is grouped by the kind that owns each project's largest item, so a Rail
 `node_modules` sits under Rails. `CleanupGroup.groups` sorts the groups and the projects in each by
 space, the most first. A group's header has a chevron, the kind's badge, its project count and
 space, and a **Trash All** button for the group. A click on the header, outside the button, folds
-the group, and the coordinator keeps the folded groups while the app runs. Each row keeps its own
-badge too.
+the group, and the coordinator keeps the folded groups while the app runs.
+
+The badge is an SF Symbol on a tile of the kind's system colour. No SF Symbol is a language logo,
+so each glyph is a nod to its ecosystem, such as a gem for Rails. A row repeats its group's badge,
+smaller and at lower opacity.
 
 The header stays pinned at the top of the list while its group scrolls under it. A grouped `Form`
 cannot pin a section header, so the list is a `ScrollView` with a `LazyVStack` that pins section
 headers, and `CleanupGroupCard` draws each group's rounded card from `Theme.Colors.cardFill` and
-`cardStroke`. The pinned header paints the window background, so rows never show through it. The badge is an SF Symbol on a tile of the kind's system
-colour. No SF Symbol is a language logo, so each glyph is a nod to its ecosystem, such as a gem
-for Rails. **Move All to Trash…** does the same for every project the filter lists. Both buttons have a menu with **Delete
+`cardStroke`. The pinned header paints the window background, so rows never show through it.
+
+**Move All to Trash…** in the Scan row does what **Trash All** does, for every project the filter
+lists, in every group. Each of these buttons, and each row's button, has a menu with **Delete
 Immediately…**, which skips the Trash.
 
 ## Build items
@@ -55,7 +59,11 @@ A row says how many listed projects are inside the project, such as the packages
   item, so it always takes a deliberate second step.
 - **Each folder is checked again just before it goes.** `CleanupRemovalPolicy.isSafe` accepts only
   a build folder name from the table, under an absolute project path with no `..` or empty step.
-  The runner then skips a folder that is gone or that a symlink replaced since the scan.
+  The runner then skips a folder that is gone, or whose path now runs through a symlink.
+- **No path runs through a symlink.** `CleanupScanner.isRealFolder` requires a path to equal its
+  own `realpath`, so a symlinked `project` in `project/target`, or a symlinked parent folder, never
+  leads a scan or a removal to another folder. It uses `realpath`, because `standardizedFileURL`
+  and `resolvingSymlinksInPath` strip `/private` from an existing path and would then disagree.
 - **The harness never uses the real Trash.** `CleanupRunner.remove` takes the trash operation as a
   parameter, and `cleanup-test` passes one that moves folders inside its scratch tree.
 - **A scan runs only on request.** Nothing walks the roots on a schedule or at launch. A walk of a

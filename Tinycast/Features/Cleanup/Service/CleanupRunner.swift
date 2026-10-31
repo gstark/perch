@@ -27,8 +27,10 @@ nonisolated enum CleanupRunner {
     ) -> String? {
         guard CleanupRemovalPolicy.isSafe(target) else { return "Not a build folder." }
         let folder = URL(filePath: target.folderPath, directoryHint: .isDirectory)
-        // A folder replaced by a symlink since the scan would take its target with it.
-        guard isRealFolder(folder) else { return "The folder is gone or no longer a folder." }
+        // A path that gained a symlink since the scan would take the symlink's target with it.
+        guard CleanupScanner.isRealFolder(folder) else {
+            return "The folder is gone, or a symlink now leads to it."
+        }
         do {
             switch target.rule {
             case .folder:
@@ -67,10 +69,5 @@ nonisolated enum CleanupRunner {
                 return url.lastPathComponent.hasSuffix(suffix) && values?.isRegularFile == true
                     && values?.isSymbolicLink != true
             }
-    }
-
-    private static func isRealFolder(_ url: URL) -> Bool {
-        let values = try? url.resourceValues(forKeys: [.isDirectoryKey, .isSymbolicLinkKey])
-        return values?.isDirectory == true && values?.isSymbolicLink != true
     }
 }

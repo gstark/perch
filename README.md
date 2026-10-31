@@ -7,8 +7,9 @@
 
 A personal macOS menu-bar app: a fuzzy app launcher, global hotkeys, clipboard history, an inline
 calculator with unit conversion, an emoji picker, window management, a per-core CPU meter with
-AI-written labels for busy processes, a panel for a Proxmox host's CPU use, and a menu bar warning
-for git commits that are not pushed, and a cleaner that moves rebuildable project build folders to the Trash.
+AI-written labels for busy processes, a panel for a Proxmox host's CPU use, a menu bar warning for
+git commits that are not pushed, and a cleaner that moves rebuildable project build folders to the
+Trash.
 
 ## Relation to Tinycast
 

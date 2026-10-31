@@ -18,6 +18,10 @@ struct CleanupTests {
     }
 
     static let now = Date(timeIntervalSince1970: 1_800_000_000)
+    /// `/var/folders` is a symlink to `/private/var/folders`, which the scanner would reject.
+    static let scratch = URL(
+        filePath: CleanupScanner.canonicalPath(FileManager.default.temporaryDirectory.path)!,
+        directoryHint: .isDirectory)
     static let calendar = Calendar(identifier: .gregorian)
 
     static func main() async {
@@ -116,7 +120,7 @@ struct CleanupTests {
 
     static func scan() async throws {
         let fm = FileManager.default
-        let root = fm.temporaryDirectory.appending(path: "cleanup-test-\(UUID().uuidString)")
+        let root = scratch.appending(path: "cleanup-test-\(UUID().uuidString)")
         defer { try? fm.removeItem(at: root) }
 
         func file(_ path: String, bytes: Int = 1, modified: Date? = nil) throws {
@@ -149,12 +153,17 @@ struct CleanupTests {
         try fm.createSymbolicLink(
             at: root.appending(path: "personal/linked/node_modules"),
             withDestinationURL: root.appending(path: "store"))
+        try file("scala/build.sbt")
+        try file("scala/target/own.bin", bytes: 5_000)
+        try file("shared/target/theirs.bin", bytes: 5_000)
+        try fm.createSymbolicLink(
+            at: root.appending(path: "scala/project"), withDestinationURL: root.appending(path: "shared"))
         try file("old/Cargo.toml", modified: old)
         try file("old/target/fresh.bin", bytes: 5_000)
         try fm.setAttributes([.modificationDate: old], ofItemAtPath: root.appending(path: "old").path)
 
         let now = Self.now
-        let rootPath = root.standardizedFileURL.resolvingSymlinksInPath().path
+        let rootPath = root.path
         let last = Mutex<CleanupProgress?>(nil)
         let report = await Task.detached {
             await CleanupScanner.scan(roots: [root], now: now) { progress in
@@ -165,7 +174,7 @@ struct CleanupTests {
         let final = last.withLock { $0 }
         expect(
             final?.isSizing == true && final?.foldersSized == final?.foldersToSize
-                && final?.foldersToSize == 5 && final?.projectsFound == 5,
+                && final?.foldersToSize == 6 && final?.projectsFound == 6,
             "progress ends with every build folder sized: \(String(describing: final))")
         let byPath = Dictionary(
             uniqueKeysWithValues: report.projects.map {
@@ -174,13 +183,16 @@ struct CleanupTests {
 
         expect(
             Set(byPath.keys)
-                == ["personal/app", "personal/app/spa", "personal/tool", "personal/mobile", "old"],
+                == ["personal/app", "personal/app/spa", "personal/tool", "personal/mobile", "scala", "old"],
             "the walk goes past a stray marker and into nested projects: \(byPath.keys.sorted())")
         expect(byPath["personal"] == nil, "a project with no build folder is not listed")
         expect(
             byPath["personal/app"]?.nestedProjects == 1 && byPath["personal/app/spa"]?.nestedProjects == 0,
             "a project counts the listed projects inside it")
         expect(byPath["personal/linked"] == nil, "a symlinked build folder is not claimed")
+        expect(
+            byPath["scala"]?.artifacts.map(\.name) == ["target"],
+            "nor is project/target when project is a symlink to another folder")
         expect(
             byPath["personal/app"]?.artifacts.map(\.name) == ["node_modules"]
                 && byPath["personal/app"].map { $0.reclaimable >= 100_000 } == true,
@@ -265,8 +277,7 @@ struct CleanupTests {
 
     static func removal() throws {
         let fm = FileManager.default
-        let root = fm.temporaryDirectory.appending(path: "cleanup-removal-\(UUID().uuidString)")
-            .resolvingSymlinksInPath()
+        let root = scratch.appending(path: "cleanup-removal-\(UUID().uuidString)")
         defer { try? fm.removeItem(at: root) }
         let bin = root.appending(path: "bin")
         try fm.createDirectory(at: bin, withIntermediateDirectories: true)
@@ -297,6 +308,18 @@ struct CleanupTests {
             outcome.failures.map(\.target) == [target("three"), target("missing"), target("one", "src")],
             "a symlink, a missing folder and a source folder each fail with a reason")
         expect(fm.fileExists(atPath: root.appending(path: "elsewhere").path), "a symlink's target stays")
+
+        try fm.createDirectory(
+            at: root.appending(path: "real/node_modules"), withIntermediateDirectories: true)
+        try fm.createSymbolicLink(
+            at: root.appending(path: "alias"), withDestinationURL: root.appending(path: "real"))
+        let throughLink = CleanupRunner.remove([target("alias")], mode: .delete) { _ in
+            fatalError("delete mode must not use the trash")
+        }
+        expect(
+            throughLink.removed.isEmpty
+                && fm.fileExists(atPath: root.appending(path: "real/node_modules").path),
+            "a project path that runs through a symlink removes nothing")
 
         let deleted = CleanupRunner.remove([target("two")], mode: .delete) { _ in
             fatalError("delete mode must not use the trash")
@@ -362,7 +385,7 @@ struct CleanupTests {
 
     static func scanRulesAndEnvironments() async throws {
         let fm = FileManager.default
-        let root = fm.temporaryDirectory.appending(path: "cleanup-rules-\(UUID().uuidString)")
+        let root = scratch.appending(path: "cleanup-rules-\(UUID().uuidString)")
         defer { try? fm.removeItem(at: root) }
 
         func file(_ path: String, bytes: Int = 1) throws {
@@ -403,7 +426,7 @@ struct CleanupTests {
         let now = Self.now
         let report = await Task.detached { await CleanupScanner.scan(roots: [root], now: now) }.value
         guard let report else { return expect(false, "the rules scan finishes") }
-        let rootPath = root.standardizedFileURL.resolvingSymlinksInPath().path
+        let rootPath = root.path
         let byPath = Dictionary(
             uniqueKeysWithValues: report.projects.map {
                 (String($0.path.dropFirst(rootPath.count + 1)), $0)
@@ -442,8 +465,7 @@ struct CleanupTests {
 
     static func ruleRemoval() throws {
         let fm = FileManager.default
-        let root = fm.temporaryDirectory.appending(path: "cleanup-rule-removal-\(UUID().uuidString)")
-            .resolvingSymlinksInPath()
+        let root = scratch.appending(path: "cleanup-rule-removal-\(UUID().uuidString)")
         defer { try? fm.removeItem(at: root) }
         for path in ["rails/log/development.log", "rails/log/test.log", "rails/log/.keep", "fake/env/x.py"] {
             let url = root.appending(path: path)

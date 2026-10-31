@@ -15,7 +15,9 @@ nonisolated enum CleanupScanner {
     ) async -> CleanupReport? {
         var walk = Walk(progress: progress)
         for root in roots {
-            walk.visit(root.standardizedFileURL.resolvingSymlinksInPath(), isRoot: true)
+            // Canonical, so every path below it compares equal to its own `realpath`.
+            let path = canonicalPath(root.path) ?? root.path
+            walk.visit(URL(filePath: path, directoryHint: .isDirectory), isRoot: true)
         }
         guard !Task.isCancelled else { return nil }
         let sizes = await size(walk.pending, counted: walk.counted, progress: progress)
@@ -156,7 +158,7 @@ nonisolated enum CleanupScanner {
         }
 
         private mutating func claim(_ url: URL) -> Bool {
-            let path = url.standardizedFileURL.path
+            let path = url.path
             guard !claimed.contains(path), CleanupScanner.isRealFolder(url) else { return false }
             claimed.insert(path)
             return true
@@ -210,10 +212,17 @@ nonisolated enum CleanupScanner {
         Date(timeIntervalSince1970: TimeInterval(time.tv_sec) + TimeInterval(time.tv_nsec) / 1_000_000_000)
     }
 
-    /// A symlinked build folder points at space this project does not own.
-    private static func isRealFolder(_ url: URL) -> Bool {
-        let values = try? url.resourceValues(forKeys: [.isDirectoryKey, .isSymbolicLinkKey])
-        return values?.isDirectory == true && values?.isSymbolicLink != true
+    /// A symlink anywhere in the path, such as `ios` in `ios/Pods`, leads to space not ours.
+    static func isRealFolder(_ url: URL) -> Bool {
+        guard canonicalPath(url.path) == url.path else { return false }
+        return (try? url.resourceValues(forKeys: [.isDirectoryKey]))?.isDirectory == true
+    }
+
+    /// `realpath`: `resolvingSymlinksInPath` and `standardizedFileURL` strip `/private` instead.
+    static func canonicalPath(_ path: String) -> String? {
+        guard let resolved = realpath(path, nil) else { return nil }
+        defer { free(resolved) }
+        return String(cString: resolved)
     }
 
     /// Sizes in the order given, a few folders at a time.
