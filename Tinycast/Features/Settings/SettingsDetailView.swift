@@ -11,6 +11,7 @@ struct SettingsDetailView: View {
             case .general: GeneralSettingsView()
             case .applications: ApplicationsSettingsView()
             case .systemSettings: SystemSettingsSettingsView()
+            case .folders: FoldersSettingsView()
             case .commands: CommandsSettingsView()
             case .windowManagement: WindowManagementSettingsView()
             case .clipboard: ClipboardSettingsView()

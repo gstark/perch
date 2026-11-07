@@ -20,6 +20,8 @@ extension SettingsAnchor {
 
     static let systemSettingsSystemSettings = Self(tab: .systemSettings, title: "System Settings")
 
+    static let foldersFolders = Self(tab: .folders, title: "Folders")
+
     static let commandsCommands = Self(tab: .commands, title: "Commands")
 
     static let windowManagementWindowManagement = Self(

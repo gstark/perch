@@ -25,6 +25,8 @@ enum SettingsFileKey: String, CaseIterable, Sendable {
     case applications = "applications.apps"
     case systemSettingsEnabled = "systemSettings.enabled"
     case systemSettings = "systemSettings.panes"
+    case foldersEnabled = "folders.enabled"
+    case folders = "folders.items"
     case builtInCommandsEnabled = "commands.builtInEnabled"
     case builtInCommands = "commands.builtIn"
     case windowManagementEnabled = "windowManagement.enabled"

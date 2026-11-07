@@ -4,6 +4,7 @@ struct AppEntry: Identifiable, Hashable, Sendable {
     enum Kind: String, CaseIterable, Sendable {
         case application
         case systemSettings
+        case folder
         case command
         case windowCommand
 
@@ -19,6 +20,11 @@ struct AppEntry: Identifiable, Hashable, Sendable {
                     label: "System Setting", sectionTitle: "System Settings",
                     openVerb: "Open System Setting", canHideFromSearch: true,
                     canRevealInFinder: true, canDragOut: false, isSymbolIcon: false, rankPriority: 1)
+            case .folder:
+                return KindDescriptor(
+                    label: "Folder", sectionTitle: "Folders",
+                    openVerb: "Open Folder", canHideFromSearch: true,
+                    canRevealInFinder: true, canDragOut: false, isSymbolIcon: false, rankPriority: 2)
             case .command:
                 return KindDescriptor(
                     label: "Command", sectionTitle: "Commands",
@@ -113,6 +119,8 @@ struct AppEntry: Identifiable, Hashable, Sendable {
             return bundleID.map { .app(bundleID: $0) }
         case .systemSettings:
             return bundleID.map { .settingsPane(bundleID: $0) }
+        case .folder:
+            return nil
         case .windowCommand:
             if let command = WindowCommandCatalog.command(forEntryID: id) {
                 return .windowCommand(id: command.id)
@@ -143,7 +151,7 @@ struct AppEntry: Identifiable, Hashable, Sendable {
         case .windowCommand:
             return WindowCommandCatalog.command(forEntryID: id)?.sfSymbol
                 ?? CustomWindowSize.sfSymbol
-        case .application, .systemSettings: return "questionmark"
+        case .application, .systemSettings, .folder: return "questionmark"
         }
     }
 
@@ -166,6 +174,11 @@ extension AppEntry {
             bundleID: nil, kind: .windowCommand)
     }
 
+    init(_ folder: FolderCatalog.Folder) {
+        self.init(
+            id: folder.id, name: folder.name, url: folder.url, bundleID: nil, kind: .folder,
+            keywords: folder.keywords, iconStamp: FileIconStamp.value(for: folder.url))
+    }
 }
 
 extension AppEntry.Kind {
@@ -429,8 +442,11 @@ final class AppIndex {
             }
             // Settings panes are `.appex` bundles, which carry no Spotlight alternate names.
             let (panes, panesCache) = SettingsPaneScanner.scan(languages: languages, cache: paneCache)
+            let folders = FolderCatalog.folders(home: FileManager.default.homeDirectoryForCurrentUser)
+                .filter { FileManager.default.fileExists(atPath: $0.url.path) }
+                .map(AppEntry.init)
             // Named here, not at publish: romanizing a CJK index is ~50 ms of main-actor time.
-            return (AppIndex.named(apps + panes), cache, panesCache)
+            return (AppIndex.named(apps + panes + folders), cache, panesCache)
         }
     }
 

@@ -1,6 +1,6 @@
 import Foundation
 
-/// Launcher items in settings.json: each app, pane, system action and built-in command as a record.
+/// Launcher items in settings.json: each app, pane, folder and built-in command as a record.
 @MainActor
 final class LauncherSettingsFile {
     private typealias Record = LauncherFileFormat.Record
@@ -60,6 +60,14 @@ final class LauncherSettingsFile {
                 action: id.hotKeyAction)
         }
         return catalogBinding(for: key, items: items, noun: "command")
+    }
+
+    /// Named by the catalog ID, not the display name, so a file still matches after a rename.
+    func foldersBinding(for key: SettingsFileKey) -> SettingsFileBinding {
+        let items = FolderCatalog.folders(home: FileManager.default.homeDirectoryForCurrentUser).map {
+            Item(name: String($0.id.drop { $0 != ":" }.dropFirst()), preferenceKey: $0.id, action: nil)
+        }
+        return catalogBinding(for: key, items: items, noun: "folder")
     }
 
     func kindBinding(for key: SettingsFileKey, kind: AppEntry.Kind) -> SettingsFileBinding {

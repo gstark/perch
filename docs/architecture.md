@@ -248,8 +248,8 @@ shell rather than the feature.
 
 Every `SettingsTab` maps to one `…SettingsView`, and each is a stock `Form` with
 `.formStyle(.grouped)` — see [ui.md](ui.md#settings). A pane lives with its feature; only a pane no
-feature owns (General, Permissions) lives in `Settings/Panes/`. The four launcher-category panes —
-Applications, System Settings, System Actions, Commands — are thin wrappers over the shared
+feature owns (General, Permissions) lives in `Settings/Panes/`. The launcher-category panes —
+Applications, System Settings, Folders, System Actions, Commands — are thin wrappers over the shared
 `LauncherItemsSection`; Apple Shortcuts pairs its feature switch with the same `LauncherItemsList`.
 
 `SettingsTab` and `SettingsSection` both identify by the case itself, never by an index. A selectable

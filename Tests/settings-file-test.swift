@@ -46,7 +46,7 @@ struct SettingsFileTest {
             "sections follow the Settings sidebar",
             SettingsFileKey.sections == [
                 "general", "appearance", "hyperKey", "calculator", "search", "applications",
-                "systemSettings", "commands", "windowManagement", "clipboard", "emoji", "proxmox",
+                "systemSettings", "folders", "commands", "windowManagement", "clipboard", "emoji", "proxmox",
                 "processLabels", "gitWatch", "cleanup"
             ])
 

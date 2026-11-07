@@ -40,6 +40,7 @@
 		1C4C3004CA3C7C585F5F7D45 /* GitWatchReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1541FB91DB8B1B7084AE7FC0 /* GitWatchReport.swift */; };
 		1DCF2B231DDE8872482A758B /* ClipboardTextIndexer.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACA6CF2FCCB1C22B2FD79BC9 /* ClipboardTextIndexer.swift */; };
 		1DEDAA166A350722A07B7D8F /* RedactedPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E30BFA7C79ED95FAAC3EA4A /* RedactedPlaceholder.swift */; };
+		1E45A8754836E0123DFBC3C1 /* FoldersSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA3D977AE3837ACDD2A13553 /* FoldersSettingsView.swift */; };
 		1E513E446BC933D8A093964C /* EmojiCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9567CB029C83AB8F665CAB3 /* EmojiCoordinator.swift */; };
 		1EB457B554FD3A5B9679514F /* EmojiGridView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AD1FCBAE02CF7CB8BFC9BED /* EmojiGridView.swift */; };
 		1EEA24D8B50BA8735CDF2598 /* GitWatchEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A303EE8767C9187D9965977 /* GitWatchEntry.swift */; };
@@ -89,6 +90,7 @@
 		3D652DFD6B80A5EF0A3FB56A /* ShortcutRecorderPopover.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31FC9341182A83843CE2D110 /* ShortcutRecorderPopover.swift */; };
 		3E686372FF5C00C56EF3C344 /* CalcDateTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = ED729CC5614A7383D78DCE80 /* CalcDateTime.swift */; };
 		3E71E8D08BB3EAEB1F909E19 /* ProcessExit.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDCC51C8DFEC3375499665D2 /* ProcessExit.swift */; };
+		3E8FEAF743D1592D6E950E0B /* FolderCatalog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A9BCEF3422BC367974C269 /* FolderCatalog.swift */; };
 		3EB16CA13135D13017165101 /* ProcessSignature.swift in Sources */ = {isa = PBXBuildFile; fileRef = C87F3872AD6BA0EFAA315F2C /* ProcessSignature.swift */; };
 		3F118BBF8720CCD49610FC56 /* PaletteDropGuideView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5D8FC9C007E82C25D8BA029 /* PaletteDropGuideView.swift */; };
 		41AD0F9A5618A3AE366B5627 /* CalculatorHistoryScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C891AA2FDD367FAD4B6CBB /* CalculatorHistoryScreen.swift */; };
@@ -385,6 +387,7 @@
 		0730882FA77465427BA7A3C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		087D715753BF3BFD93D0FB9E /* CompactFavoritesRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactFavoritesRow.swift; sourceTree = "<group>"; };
 		09845AF9F357886B40D9D6D8 /* FocusRelease.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FocusRelease.swift; sourceTree = "<group>"; };
+		09A9BCEF3422BC367974C269 /* FolderCatalog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderCatalog.swift; sourceTree = "<group>"; };
 		0AFC3AB94D04BDC553414BBC /* MenuPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuPanel.swift; sourceTree = "<group>"; };
 		0BCA373AB3434EEE6BCABBD9 /* PalettePlacement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PalettePlacement.swift; sourceTree = "<group>"; };
 		0BE3F3B3176E98DF40CB6123 /* CalcMath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcMath.swift; sourceTree = "<group>"; };
@@ -629,6 +632,7 @@
 		B7945FD1E9B1E718EB64849B /* SearchRelevance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRelevance.swift; sourceTree = "<group>"; };
 		BA16CECDE4495E40B0DEF3C9 /* WindowMover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowMover.swift; sourceTree = "<group>"; };
 		BA30482BE55B3BD8D5C9FE75 /* GitWatchBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GitWatchBadge.swift; sourceTree = "<group>"; };
+		BA3D977AE3837ACDD2A13553 /* FoldersSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoldersSettingsView.swift; sourceTree = "<group>"; };
 		BA5E7778544E7DD8F5723143 /* SettingsFileBinding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFileBinding.swift; sourceTree = "<group>"; };
 		BD3D15F2615A86EF8017B532 /* HyperKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HyperKey.swift; sourceTree = "<group>"; };
 		BDA78011B41566078A84F21E /* SettingsFileMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsFileMonitor.swift; sourceTree = "<group>"; };
@@ -1314,6 +1318,7 @@
 				9881A773C9B0B61DB6648D00 /* CommandID.swift */,
 				2187826DBBF1527919DAD696 /* EntryNaming.swift */,
 				73F6CFF75E79A17C8D33F3E6 /* FavoriteSlots.swift */,
+				09A9BCEF3422BC367974C269 /* FolderCatalog.swift */,
 				44D5150262992DB5F91587C5 /* LauncherFileFormat.swift */,
 				AD38958C832C0714407C5CD4 /* LauncherMatch.swift */,
 				619D61DDDC5D83B0A206318F /* LauncherOrder.swift */,
@@ -1333,6 +1338,7 @@
 				FD976293D0C8DE093007D413 /* AppPickerPopover.swift */,
 				DE993CFFED8980ADEB447F64 /* DisabledApplicationsSection.swift */,
 				0214D46A2DF67E11BE1209DA /* FeatureCommandsSection.swift */,
+				BA3D977AE3837ACDD2A13553 /* FoldersSettingsView.swift */,
 				D61ACDF9264D352FCEDAA946 /* LauncherItemsSection.swift */,
 				8EEE58AF144C8DAC9EDFA630 /* LauncherItemsTable.swift */,
 				3FEE655720A68DEC98AF7F1E /* SearchScopesSection.swift */,
@@ -1909,6 +1915,8 @@
 				37AACC3D86CE2493F42106AA /* FilePreviewStage.swift in Sources */,
 				4FA762F27C2C5A1D8075D040 /* FilePreviewThumbnail.swift in Sources */,
 				72ACB4B23F4DF69B64816797 /* FocusRelease.swift in Sources */,
+				3E8FEAF743D1592D6E950E0B /* FolderCatalog.swift in Sources */,
+				1E45A8754836E0123DFBC3C1 /* FoldersSettingsView.swift in Sources */,
 				ECA65B9FB6237B7154FB57CC /* FormWindowChrome.swift in Sources */,
 				70AC1E5076335023935D4459 /* FrequentEmojiStore.swift in Sources */,
 				81810D70867B1BC367314CDA /* GeneralSettingsView.swift in Sources */,

@@ -92,6 +92,16 @@ Book. Don't reintroduce such a heuristic.
 `AppIndex.start(settings:)` observes `$searchScopes`, so an edit re-indexes immediately; overlapping
 refreshes collapse into a single trailing scan.
 
+## Folders
+
+`Model/FolderCatalog.swift` lists the standard folders: Home, Desktop, Documents, Downloads, Pictures,
+Movies, Music, Public, iCloud Drive, Library, Applications, Utilities, Macintosh HD and Trash. Each
+scan keeps the ones that exist, so iCloud Drive is absent when it is off. Return opens the folder in a
+Finder window through `AppLauncher.open`. The icon is the folder's own Finder icon.
+
+A folder has no global shortcut. Its alias and launcher checkbox are in Settings › Folders, and its
+ID (`folder:downloads`) is stable, so a rename never loses them.
+
 ## Search fields
 
 | Field | What lands in it | Compared against | Ranks |
@@ -172,7 +182,7 @@ the Zed app: rule 3 only protects an exact title past three characters.
 ### Kind priority and boosts
 
 - **Apps win the ties.** `KindDescriptor.rankPriority` puts applications (4) above command-like kinds
-  (3), quicklinks (2), and System Settings panes and meetings (1), so a first-party app is never
+  (3), quicklinks and folders (2), and System Settings panes and meetings (1), so a first-party app is never
   shadowed by the Perch command named after it: Calculator over Calculator History.
 - **One boosted command.** Only AI Chat carries boosted terms (`CommandID.boostedTerms`); boosting Show
   Notes would shadow Apple's Notes.
@@ -731,7 +741,7 @@ no such menu item.
 
 ## Reveal in Finder
 
-Application and System Settings results expose **Show in Finder** in their ⌘K Actions menu and on
+Application, System Settings and folder results expose **Show in Finder** in their ⌘K Actions menu and on
 **⌘↵**. Synthetic command results have no filesystem location, so neither the menu row nor the
 shortcut is available for them. `AppEntry.canRevealInFinder` is the one rule both the menu row and
 the key handler read, so the advertised chord can't drift from the behavior.

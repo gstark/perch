@@ -79,6 +79,8 @@ final class LauncherCoordinator {
                 return
             }
             AppLauncher.openSettingsPane(bundleID: bundleID)
+        case .folder:
+            AppLauncher.open(app.url)
         case .command, .windowCommand:
             break  // handled above
         }

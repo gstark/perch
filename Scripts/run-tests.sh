@@ -126,7 +126,7 @@ run app-name-test          Tinycast/Platform/AppDisplayName.swift \
 run favorites-test         $L/FavoriteSlots.swift
 run app-installation-test  $L/SearchRelevance.swift $L/ScriptRomanization.swift \
                            $L/LauncherMatch.swift $L/EntryNaming.swift $L/LauncherOrder.swift \
-                           $L/LauncherRankingStore.swift $L/LauncherSuggestions.swift $L/SearchScopes.swift \
+                           $L/LauncherRankingStore.swift $L/LauncherSuggestions.swift $L/SearchScopes.swift $L/FolderCatalog.swift \
                            Tinycast/Features/Launcher/Service/AppIndex.swift \
                            Tinycast/Features/Launcher/Service/AppLauncher.swift \
                            Tinycast/Features/Launcher/Service/RunningAppsMonitor.swift \
@@ -142,6 +142,7 @@ run launcher-file-test     $L/LauncherFileFormat.swift \
 run launcher-settings-file-test $L/LauncherFileFormat.swift \
                                 $L/CommandID.swift \
                                 $L/CommandCatalog.swift \
+                                $L/FolderCatalog.swift \
                                 Tinycast/Features/Launcher/Service/LauncherSettingsFile.swift \
                                 Tinycast/Features/Launcher/Service/AliasStore.swift \
                                 Tinycast/Features/Launcher/Service/VisibilityStore.swift \

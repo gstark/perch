@@ -108,7 +108,7 @@ enum SettingsSearchCatalog {
     // Pane order, then section order within a pane, so this reads as a table of contents.
 
     static let entries: [SettingsSearchEntry] =
-        general + applications + systemSettings + commands + clipboard + windowManagement + emoji
+        general + applications + systemSettings + folders + commands + clipboard + windowManagement + emoji
         + proxmox + processLabels + gitWatch + permissions
 
     private static let general: [SettingsSearchEntry] = [
@@ -192,6 +192,15 @@ enum SettingsSearchCatalog {
         .init(
             .systemSettingsSystemSettings, "Enable System Settings",
             keywords: ["hide panes", "visibility"])
+    ]
+
+    private static let folders: [SettingsSearchEntry] = [
+        .init(
+            pane: .folders,
+            keywords: ["finder", "desktop", "downloads", "documents", "pictures", "home"]),
+        .init(
+            .foldersFolders, "Enable Folders",
+            keywords: ["hide folders", "visibility"])
     ]
 
     private static let commands: [SettingsSearchEntry] = [

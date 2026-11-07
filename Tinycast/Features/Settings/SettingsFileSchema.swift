@@ -48,6 +48,8 @@ enum SettingsFileSchema {
         case .applications: return launcher.appsBinding(for: key)
         case .systemSettingsEnabled: return launcher.kindBinding(for: key, kind: .systemSettings)
         case .systemSettings: return launcher.panesBinding(for: key)
+        case .foldersEnabled: return launcher.kindBinding(for: key, kind: .folder)
+        case .folders: return launcher.foldersBinding(for: key)
         case .builtInCommandsEnabled: return launcher.kindBinding(for: key, kind: .command)
         case .builtInCommands: return launcher.commandsBinding(for: key, owner: nil)
         case .windowManagementEnabled: return bind(settings, \.windowManagementEnabled)

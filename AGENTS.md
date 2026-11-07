@@ -1,7 +1,7 @@
 # Perch
 
 A personal macOS menu-bar app, forked from [Tinycast](https://github.com/abue-ammar/tinycast) and cut
-down to: a fuzzy app launcher, global hotkeys, a text/image clipboard history, an inline calculator
+down to: a fuzzy app and folder launcher, global hotkeys, a text/image clipboard history, an inline calculator
 with unit conversion, an emoji picker, window management, a per-core CPU meter whose
 menu lists the busiest processes with optional AI-written labels, a panel for a Proxmox host's CPU use, a menu bar warning for
 git commits that are not pushed, an hourly history of the startup disk's free space, and a cleaner that moves rebuildable project build folders to the Trash. SwiftUI + AppKit, running as an accessory with no Dock icon
