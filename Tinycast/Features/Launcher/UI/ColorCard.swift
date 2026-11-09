@@ -3,6 +3,7 @@ import SwiftUI
 /// The launcher's colour card, built from the calculator card's parts so it reads as one answer.
 struct ColorCard: View {
     @Environment(\.metrics) private var metrics
+    @Environment(AppCore.self) private var core
     let color: ColorValue
     let selected: Bool
 
@@ -10,7 +11,7 @@ struct ColorCard: View {
     private static let swatchWidth: CGFloat = 108
 
     /// Stated and copied as one notation, so ↵ never yields a colour the card didn't show.
-    private var primary: ColorFormat { ColorFormat.primary(for: color) }
+    private var primary: ColorFormat { core.colorCoordinator.preferredFormat(for: color) }
 
     var body: some View {
         HStack(spacing: 0) {
@@ -36,7 +37,7 @@ struct ColorCard: View {
 @MainActor
 enum ColorActionsMenu {
     static func content(color: ColorValue, core: AppCore) -> PopoverMenuContent {
-        let primary = ColorFormat.primary(for: color)
+        let primary = core.colorCoordinator.preferredFormat(for: color)
         return PopoverMenuContent(
             header: "Copy Color as…",
             items: ColorFormat.offered(for: color).map { format in
@@ -44,7 +45,7 @@ enum ColorActionsMenu {
                     title: format.title, icon: .blank,
                     shortcut: format == primary ? "↵" : nil, detail: format.string(for: color)
                 ) {
-                    core.clipboardCoordinator.copyColor(color, as: format)
+                    core.colorCoordinator.copyColor(color, as: format)
                 }
             })
     }

@@ -177,12 +177,6 @@ final class ClipboardCoordinator {
         }
     }
 
-    /// Unmarked, so a converted colour enters history itself — it is one you meant to keep.
-    func copyColor(_ color: ColorValue, as format: ColorFormat) {
-        paletteCoordinator.hidePalette(restoreFocus: false)
-        Paster.copyPlainText(format.string(for: color))
-    }
-
     func revealClip(_ item: ClipboardItem) {
         guard let url = clipURL(for: item) else { return }
         paletteCoordinator.hidePalette(restoreFocus: false)

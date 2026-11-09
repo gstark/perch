@@ -105,6 +105,11 @@ final class AppSettings {
         didSet { defaults.set(emojiGridColumns.rawValue, forKey: Key.emojiGridColumns.rawValue) }
     }
 
+    /// The notation ↵ copies a colour in, and the one the picker copies.
+    var colorNotation: ColorNotation {
+        didSet { defaults.set(colorNotation.rawValue, forKey: Key.colorNotation.rawValue) }
+    }
+
     /// As typed; `ProxmoxConnection.baseURL(from:)` fills in the scheme and port.
     var proxmoxAddress: String {
         didSet { defaults.set(proxmoxAddress, forKey: Key.proxmoxAddress.rawValue) }
@@ -303,6 +308,8 @@ final class AppSettings {
         emojiGridColumns =
             EmojiGridColumns(rawValue: defaults.integer(forKey: Key.emojiGridColumns.rawValue))
             ?? .default
+        colorNotation =
+            defaults.string(forKey: Key.colorNotation.rawValue).flatMap(ColorNotation.init) ?? .hex
         proxmoxAddress = defaults.string(forKey: Key.proxmoxAddress.rawValue) ?? ""
         proxmoxTokenID = defaults.string(forKey: Key.proxmoxTokenID.rawValue) ?? ""
         proxmoxCertificateFingerprint =

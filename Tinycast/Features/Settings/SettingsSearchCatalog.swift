@@ -109,7 +109,7 @@ enum SettingsSearchCatalog {
 
     static let entries: [SettingsSearchEntry] =
         general + applications + systemSettings + folders + commands + clipboard + windowManagement + emoji
-        + proxmox + processLabels + gitWatch + permissions
+        + colors + proxmox + processLabels + gitWatch + permissions
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -279,6 +279,18 @@ enum SettingsSearchCatalog {
         .init(
             .emojiAppearance, "Column Count",
             keywords: ["columns", "density", "zoom", "six", "eight", "ten"])
+    ]
+
+    private static let colors: [SettingsSearchEntry] = [
+        .init(
+            pane: .colors,
+            keywords: ["colour", "eyedropper", "picker", "sampler", "swatch"]),
+        .init(
+            group: .colorsCommands, "Color commands",
+            keywords: ["shortcut", "hotkey", "launcher", "pick color", "eyedropper"]),
+        .init(
+            .colorsCopying, "Copy colors as",
+            keywords: ["format", "notation", "hex", "rgb", "hsl", "oklch", "default"])
     ]
 
     private static let proxmox: [SettingsSearchEntry] = [

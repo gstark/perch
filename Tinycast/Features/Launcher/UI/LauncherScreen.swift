@@ -170,7 +170,8 @@ struct LauncherScreen: PaletteScreen {
         case .calc(let result), .conversion(let result):
             core.calculatorCoordinator.copyCalculatorResult(result)
         case .color(let color):
-            core.clipboardCoordinator.copyColor(color, as: ColorFormat.primary(for: color))
+            core.colorCoordinator.copyColor(
+                color, as: core.colorCoordinator.preferredFormat(for: color))
         case .entry(let app):
             core.launcherCoordinator.launch(
                 app, searchQuery: vm.query)

@@ -1,6 +1,6 @@
 import Foundation
 
-/// The notations a parsed colour can be rewritten as. See docs/features/clipboard.md#colours.
+/// The notations a parsed colour can be rewritten as. See docs/features/colors.md#formats.
 enum ColorFormat: CaseIterable, Hashable, Sendable {
     case hex
     case hexWithAlpha
@@ -45,11 +45,6 @@ enum ColorFormat: CaseIterable, Hashable, Sendable {
     /// An alpha-bearing row only where there is alpha, so no opaque duplicate is ever offered.
     static func offered(for color: ColorValue) -> [ColorFormat] {
         allCases.filter { color.hasAlpha || !$0.carriesAlpha }
-    }
-
-    /// What the card states and ↵ copies: the shortest notation that keeps the colour whole.
-    static func primary(for color: ColorValue) -> ColorFormat {
-        color.hasAlpha ? .hexWithAlpha : .hex
     }
 
     private var carriesAlpha: Bool {

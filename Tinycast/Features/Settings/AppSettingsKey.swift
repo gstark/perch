@@ -13,6 +13,7 @@ enum AppSettingsKey: String {
     case hyperKeyQuickPress = "hyperKeyQuickPress"
     case emojiSkinTone = "emojiSkinTone"
     case emojiGridColumns = "emojiGridColumns"
+    case colorNotation = "colorNotation"
     case proxmoxAddress = "proxmoxAddress"
     case proxmoxTokenID = "proxmoxTokenID"
     case proxmoxCertificateFingerprint = "proxmoxCertificateFingerprint"

@@ -11,6 +11,7 @@ final class LauncherCoordinator {
     private let settingsCoordinator: SettingsCoordinator
     private let windowCommandCoordinator: WindowCommandCoordinator
     private let clipboardCoordinator: ClipboardCoordinator
+    private let colorCoordinator: ColorCoordinator
 
     init(
         ranking: LauncherRankingStore,
@@ -18,7 +19,8 @@ final class LauncherCoordinator {
         paletteCoordinator: PaletteCoordinator,
         settingsCoordinator: SettingsCoordinator,
         windowCommandCoordinator: WindowCommandCoordinator,
-        clipboardCoordinator: ClipboardCoordinator
+        clipboardCoordinator: ClipboardCoordinator,
+        colorCoordinator: ColorCoordinator
     ) {
         self.ranking = ranking
         self.windowController = windowController
@@ -26,6 +28,7 @@ final class LauncherCoordinator {
         self.settingsCoordinator = settingsCoordinator
         self.windowCommandCoordinator = windowCommandCoordinator
         self.clipboardCoordinator = clipboardCoordinator
+        self.colorCoordinator = colorCoordinator
     }
 
     // MARK: - Activation
@@ -97,6 +100,8 @@ final class LauncherCoordinator {
             clipboardCoordinator.pasteNextInSequence()
         case .searchEmoji:
             paletteCoordinator.togglePalette(mode: .emoji)
+        case .pickColor:
+            colorCoordinator.pickColor()
         case .openInBrowser:
             break  // Query-driven: each runs where the typed text is, never through this funnel.
         case .settings:

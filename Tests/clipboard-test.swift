@@ -397,9 +397,19 @@ struct ClipboardTests {
             ColorFormat.hexWithAlpha.string(for: translucent) == "#FF573380",
             "alpha is the fourth hex channel")
         expect(
-            ColorFormat.primary(for: translucent) == .hexWithAlpha,
-            "the notation ↵ copies keeps a translucent colour whole")
-        expect(ColorFormat.primary(for: color) == .hex, "an opaque colour copies as plain hex")
+            ColorNotation.hex.format(for: translucent) == .hexWithAlpha,
+            "the hex notation keeps a translucent colour whole")
+        expect(ColorNotation.hex.format(for: color) == .hex, "an opaque colour copies as plain hex")
+        expect(
+            ColorNotation.hsl.format(for: translucent) == .hslWithAlpha
+                && ColorNotation.hsl.format(for: color) == .hsl,
+            "the hsl notation states alpha only where there is any")
+        expect(
+            ColorNotation.allCases.allSatisfy {
+                ColorValue.parse($0.format(for: translucent).string(for: translucent))
+                    != nil
+            },
+            "every preferred notation reads back as a colour")
     }
 
     /// The CSS Color 4 spaces, against values a neutral and a known colour must produce.

@@ -73,6 +73,8 @@ enum SettingsFileSchema {
         case .emojiSkinTone: return bind(settings, \.emojiSkinTone)
         case .emojiGridColumns: return bind(settings, \.emojiGridColumns)
         case .emojiCommands: return launcher.commandsBinding(for: key, owner: .emoji)
+        case .colorNotation: return bind(settings, \.colorNotation)
+        case .colorCommands: return launcher.commandsBinding(for: key, owner: .colors)
         case .proxmoxAddress: return bind(settings, \.proxmoxAddress)
         case .proxmoxTokenID: return bind(settings, \.proxmoxTokenID)
         case .processLabelEndpoint: return bind(settings, \.processLabelEndpoint)
@@ -100,6 +102,7 @@ extension WindowCycle: SettingsFileRawValue {}
 extension ClipboardDefaultAction: SettingsFileRawValue {}
 extension EmojiSkinTone: SettingsFileRawValue {}
 extension EmojiGridColumns: SettingsFileRawValue {}
+extension ColorNotation: SettingsFileRawValue {}
 
 extension ClipboardRetention: SettingsFileToken {
     var settingsToken: SettingsFileJSON {

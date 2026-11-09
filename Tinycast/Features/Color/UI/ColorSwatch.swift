@@ -18,7 +18,7 @@ struct ColorSwatch: View {
             .overlay { shape.strokeBorder(Theme.Colors.cardStroke, lineWidth: 1) }
             // A swatch renders no text at all, so VoiceOver would otherwise reach nothing.
             .accessibilityElement()
-            .accessibilityLabel(ColorFormat.primary(for: color).string(for: color))
+            .accessibilityLabel(ColorNotation.hex.format(for: color).string(for: color))
     }
 }
 

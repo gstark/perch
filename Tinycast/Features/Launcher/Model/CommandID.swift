@@ -6,6 +6,7 @@ enum CommandID: String, CaseIterable, Sendable {
     case clipboardHistory = "command:clipboard-history"
     case pasteSequentially = "command:paste-sequentially"
     case searchEmoji = "command:search-emoji"
+    case pickColor = "command:pick-color"
     case openInBrowser = "command:open-in-browser"
     case settings = "command:settings"
     case quit = "command:quit"
@@ -16,6 +17,7 @@ enum CommandID: String, CaseIterable, Sendable {
         case .clipboardHistory: return "Clipboard History"
         case .pasteSequentially: return "Paste Sequentially"
         case .searchEmoji: return "Search Emoji & Symbols"
+        case .pickColor: return "Pick Color"
         case .openInBrowser: return "Open in Browser"
         case .settings: return "Perch Settings"
         case .quit: return "Quit Perch"
@@ -28,12 +30,12 @@ enum CommandID: String, CaseIterable, Sendable {
         case .clipboardHistory: return "doc.on.clipboard"
         case .pasteSequentially: return "list.bullet.clipboard"
         case .searchEmoji: return "face.smiling"
+        case .pickColor: return "eyedropper"
         case .openInBrowser: return "globe"
         case .settings: return "gearshape"
         case .quit: return "power"
         }
     }
-
 
     /// Suggested, highest first, until the user's own habits fill the section.
     var suggestionPriority: Int? {

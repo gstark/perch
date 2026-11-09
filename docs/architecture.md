@@ -17,8 +17,8 @@ Independently of the folder tree, every mature subsystem has converged on the sa
 │ SearchRelevance · LauncherMatch · EntryNaming · ScriptRomanization ·       │
 │ LauncherOrder · LauncherSuggestions · LauncherRankingStore · SearchScopes · │
 │ FileSearch{Query,Result,Scope} ·                                           │
-│ Calculator/* · EmojiCatalog · EmojiGridGeometry · SystemAction ·            │
-│ VolumeLevel ·                                                              │
+│ Calculator/* · EmojiCatalog · EmojiGridGeometry · Color/Model/* ·           │
+│ SystemAction · VolumeLevel ·                                               │
 │ WindowCommand · WindowPlacementEngine · WindowActionMemory · WindowLayout/* ·      │
 │ CustomWindowSize{,Store} · Room/* ·                                        │
 │ PaletteRowIndex ·                                                          │
@@ -230,7 +230,7 @@ Tinycast/
   Assets.xcassets/  the app icon and the bundled image sets some catalog symbols resolve to
   Features/
     PaletteRowIndex.swift   the flat selection index — palette-owned, so it sits at the top
-    Launcher/ Clipboard/ Calculator/ Emoji/ HotKeys/ WindowManagement/ CPUMeter/ ProcessLabels/ Proxmox/ GitWatch/ DiskHistory/ Cleanup/ Settings/
+    Launcher/ Clipboard/ Calculator/ Emoji/ Color/ HotKeys/ WindowManagement/ CPUMeter/ ProcessLabels/ Proxmox/ GitWatch/ DiskHistory/ Cleanup/ Settings/
         Model/      pure — the harness inputs
         Service/    effects — stores, monitors, runners, AppKit glue
         UI/         screens, views, and the feature's coordinator

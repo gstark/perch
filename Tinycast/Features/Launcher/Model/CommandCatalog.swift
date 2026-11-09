@@ -52,6 +52,7 @@ extension SettingsTab {
         switch self {
         case .clipboard: [.clipboardHistory, .pasteSequentially]
         case .emoji: [.searchEmoji]
+        case .colors: [.pickColor]
         default: []
         }
     }

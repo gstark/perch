@@ -25,6 +25,7 @@ open with an `## Invariants` section; read it before changing anything in that a
 [clipboard](features/clipboard.md) ·
 [calculator](features/calculator.md) ·
 [emoji](features/emoji.md) ·
+[colors](features/colors.md) ·
 [hotkeys](features/hotkeys.md) ·
 [window management](features/window-management.md) ·
 [settings file](features/settings-file.md) ·
