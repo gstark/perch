@@ -109,7 +109,7 @@ enum SettingsSearchCatalog {
 
     static let entries: [SettingsSearchEntry] =
         general + applications + systemSettings + folders + commands + clipboard + windowManagement + emoji
-        + colors + proxmox + processLabels + gitWatch + permissions
+        + colors + worldClock + proxmox + processLabels + gitWatch + permissions
 
     private static let general: [SettingsSearchEntry] = [
         .init(pane: .general, keywords: ["preferences", "settings"]),
@@ -279,6 +279,18 @@ enum SettingsSearchCatalog {
         .init(
             .emojiAppearance, "Column Count",
             keywords: ["columns", "density", "zoom", "six", "eight", "ten"])
+    ]
+
+    private static let worldClock: [SettingsSearchEntry] = [
+        .init(
+            pane: .worldClock,
+            keywords: ["time zone", "timezone", "clock", "city", "convert time", "utc"]),
+        .init(
+            group: .worldClockCommands, "World Clock commands",
+            keywords: ["shortcut", "hotkey", "launcher", "clipboard", "screenshot", "convert time"]),
+        .init(
+            .worldClockClocks, "Add a clock",
+            keywords: ["city", "country", "airport", "zone", "remove"])
     ]
 
     private static let colors: [SettingsSearchEntry] = [

@@ -17,6 +17,7 @@ struct SettingsDetailView: View {
             case .clipboard: ClipboardSettingsView()
             case .emoji: EmojiSettingsView()
             case .colors: ColorSettingsView()
+            case .worldClock: WorldClockSettingsView()
             case .proxmox: ProxmoxSettingsView()
             case .processLabels: ProcessLabelSettingsView()
             case .gitWatch: GitWatchSettingsView()

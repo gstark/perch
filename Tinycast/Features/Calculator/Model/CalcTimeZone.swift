@@ -73,7 +73,8 @@ enum CalcTimeZone {
             source = SourceMoment(date: shifted, zone: source.zone)
         }
 
-        guard let dayNote = dayOffsetNote(source, target: target, calendar: calendar) else { return nil }
+        guard let dayNote = dayOffsetNote(source.date, from: source.zone, to: target, calendar: calendar)
+        else { return nil }
         let time = clockString(source.date, zone: target, calendar: calendar)
 
         return CalcResult(
@@ -183,12 +184,7 @@ enum CalcTimeZone {
         else { return nil }
 
         let home = calendar.timeZone
-        let minutes =
-            (target.secondsFromGMT(for: now) - home.secondsFromGMT(for: now)) / 60
-        let sign = minutes < 0 ? "-" : "+"
-        let whole = abs(minutes) / 60
-        let part = abs(minutes) % 60
-        let text = part == 0 ? "\(sign)\(whole)h" : "\(sign)\(whole)h \(part)m"
+        let text = differenceText(from: home, to: target, at: now)
 
         return CalcResult(
             expression: clockString(now, zone: home, calendar: calendar),
@@ -197,6 +193,15 @@ enum CalcTimeZone {
             payload: .value(
                 display: "\(clockString(now, zone: target, calendar: calendar)) (\(text))",
                 copyText: text))
+    }
+
+    /// `+14h`, `-5h 30m`: how far `target`'s clock runs ahead of `home`'s at `date`.
+    static func differenceText(from home: TimeZone, to target: TimeZone, at date: Date) -> String {
+        let minutes = (target.secondsFromGMT(for: date) - home.secondsFromGMT(for: date)) / 60
+        let sign = minutes < 0 ? "-" : "+"
+        let whole = abs(minutes) / 60
+        let part = abs(minutes) % 60
+        return part == 0 ? "\(sign)\(whole)h" : "\(sign)\(whole)h \(part)m"
     }
 
     private static func sourceMoment(
@@ -283,7 +288,7 @@ enum CalcTimeZone {
         return (meridiem == "pm" ? (hour % 12) + 12 : hour % 12, minute)
     }
 
-    private static func zone(named words: [String]) -> TimeZone? {
+    static func zone(named words: [String]) -> TimeZone? {
         // `são paulo` and `zürich` are how the cities are spelled; the identifiers are not.
         let phrase = words.joined(separator: " ")
             .folding(options: [.diacriticInsensitive], locale: nil)
@@ -350,7 +355,7 @@ enum CalcTimeZone {
         ],
         "Asia/Seoul": ["kst", "icn", "busan", "incheon", "daegu"],
         "Australia/Sydney": ["aest", "aedt", "syd", "canberra", "newcastle"],
-        "Asia/Singapore": ["sgp", "sin"],
+        "Asia/Singapore": ["sgt", "sgp", "sin"],
         "Asia/Ho_Chi_Minh": ["saigon", "hcmc", "hanoi", "haiphong", "hue", "da nang"],
         "Europe/Berlin": [
             "munich", "frankfurt", "hamburg", "cologne", "fra", "muc", "txl", "ber", "hannover", "hanover",
@@ -367,7 +372,7 @@ enum CalcTimeZone {
             "geneva", "zrh", "gva", "basel", "bern", "lausanne", "lucerne", "luzern", "winterthur",
             "st gallen", "lugano"
         ],
-        "Europe/Moscow": ["st petersburg", "svo", "led"],
+        "Europe/Moscow": ["msk", "st petersburg", "svo", "led"],
         "Europe/Kyiv": ["kyiv", "lviv", "odesa"],
         "Asia/Tel_Aviv": ["tel aviv", "tlv"],
         "Asia/Shanghai": [
@@ -376,9 +381,9 @@ enum CalcTimeZone {
         ],
         "Australia/Melbourne": ["melbourne", "mel"],
         "Australia/Brisbane": ["brisbane", "bne", "gold coast"],
-        "Australia/Perth": ["perth", "per"],
+        "Australia/Perth": ["awst", "perth", "per"],
         "America/Sao_Paulo": [
-            "rio", "rio de janeiro", "gru", "brasilia", "salvador", "curitiba", "porto alegre",
+            "brt", "rio", "rio de janeiro", "gru", "brasilia", "salvador", "curitiba", "porto alegre",
             "belo horizonte", "recife"
         ],
         "America/Mexico_City": ["cdmx", "mexico city", "mex", "guadalajara", "puebla"],
@@ -392,20 +397,20 @@ enum CalcTimeZone {
         "Europe/Stockholm": ["arn", "gothenburg", "malmo"],
         "Europe/Helsinki": ["hel", "tampere", "turku"],
         "Europe/Dublin": ["dub", "cork", "galway"],
-        "Europe/Lisbon": ["lis", "porto"],
-        "Europe/Athens": ["ath", "thessaloniki"],
+        "Europe/Lisbon": ["wet", "lis", "porto"],
+        "Europe/Athens": ["eet", "eest", "ath", "thessaloniki"],
         "Europe/Prague": ["prg", "brno", "ostrava"],
         "Europe/Warsaw": ["waw", "krakow", "gdansk", "wroclaw", "poznan", "lodz"],
         "Europe/Budapest": ["bud"],
         "Europe/Brussels": ["bru", "antwerp", "ghent", "bruges"],
         "Asia/Dubai": ["uae", "dxb", "auh", "sharjah"],
         "Asia/Qatar": ["doh", "doha"],
-        "Asia/Hong_Kong": ["hkg"],
-        "Asia/Bangkok": ["bkk", "phuket", "chiang mai"],
+        "Asia/Hong_Kong": ["hkt", "hkg"],
+        "Asia/Bangkok": ["ict", "bkk", "phuket", "chiang mai"],
         "Asia/Kuala_Lumpur": ["kul", "penang", "johor bahru"],
-        "Asia/Jakarta": ["cgk", "surabaya", "medan", "bandung", "denpasar", "bali"],
-        "Asia/Manila": ["mnl", "cebu", "davao"],
-        "Pacific/Auckland": ["akl", "wellington", "christchurch"],
+        "Asia/Jakarta": ["wib", "cgk", "surabaya", "medan", "bandung", "denpasar", "bali"],
+        "Asia/Manila": ["pht", "mnl", "cebu", "davao"],
+        "Pacific/Auckland": ["nzst", "nzdt", "akl", "wellington", "christchurch"],
         "America/Toronto": ["yyz", "yul", "ottawa", "quebec", "montreal"],
         "America/Vancouver": ["yvr", "victoria"],
         "America/Phoenix": ["phx"],
@@ -413,13 +418,13 @@ enum CalcTimeZone {
         "America/Santiago": ["scl", "valparaiso"],
         "America/Bogota": ["bog", "medellin", "cali", "cartagena"],
         "America/Lima": ["lim", "arequipa"],
-        "Africa/Johannesburg": ["jnb", "cpt", "durban", "pretoria", "soweto"],
+        "Africa/Johannesburg": ["sast", "jnb", "cpt", "durban", "pretoria", "soweto"],
         "Africa/Cairo": ["cai", "alexandria", "giza"],
         "Africa/Nairobi": ["nbo", "mombasa"],
         "Africa/Lagos": ["los", "abuja", "kano", "ibadan"],
         "Africa/Casablanca": ["cmn", "marrakech", "rabat", "fes", "tangier"],
         "Europe/Istanbul": ["ankara", "izmir"],
-        "Asia/Karachi": ["lahore", "islamabad", "faisalabad", "rawalpindi", "multan", "peshawar"],
+        "Asia/Karachi": ["pkt", "lahore", "islamabad", "faisalabad", "rawalpindi", "multan", "peshawar"],
         "America/Guayaquil": ["quito"],
         "Europe/Malta": ["valletta"],
         "Asia/Dhaka": ["chittagong", "chattogram"],
@@ -428,7 +433,9 @@ enum CalcTimeZone {
         "Asia/Kuwait": ["kuwait city"],
         "Asia/Bahrain": ["manama"],
         "Asia/Jerusalem": ["haifa"],
-        "America/Edmonton": ["calgary"]
+        "America/Edmonton": ["calgary"],
+        "Pacific/Honolulu": ["hst"],
+        "America/Anchorage": ["akst", "akdt"]
     ]
 
     /// Flattened once from the grouping above, which is the form that gets edited.
@@ -444,27 +451,38 @@ enum CalcTimeZone {
     /// Not `localizedName`, which needs a `Locale` — banned in `Model/`.
     static func label(for zone: TimeZone) -> String {
         if zone.identifier == "GMT" || zone.identifier == "UTC" { return "UTC" }
+        if zone.identifier.hasPrefix("GMT+") || zone.identifier.hasPrefix("GMT-") {
+            return offsetLabel(zone.secondsFromGMT())
+        }
         guard let city = zone.identifier.split(separator: "/").last else { return zone.identifier }
         return city.replacingOccurrences(of: "_", with: " ")
+    }
+
+    /// A fixed zone has no city, so `GMT+0800` reads as the `UTC+8` a page would print.
+    private static func offsetLabel(_ seconds: Int) -> String {
+        let minutes = abs(seconds) / 60
+        let sign = seconds < 0 ? "-" : "+"
+        let part = minutes % 60 == 0 ? "" : String(format: ":%02d", minutes % 60)
+        return "UTC\(sign)\(minutes / 60)\(part)"
     }
 
     private static func clockString(_ date: Date, zone: TimeZone, calendar: Calendar) -> String {
         CalcDateFormatters.string(from: date, calendar: calendar, zone: zone, template: "jmm")
     }
 
-    private static func dayOffsetNote(
-        _ source: SourceMoment, target: TimeZone, calendar: Calendar
+    static func dayOffsetNote(
+        _ date: Date, from source: TimeZone, to target: TimeZone, calendar: Calendar
     ) -> String? {
         var here = calendar
-        here.timeZone = source.zone
+        here.timeZone = source
         var there = calendar
         there.timeZone = target
         // Compare civil dates in one zone so offsets and DST cannot shorten the day count.
         var dates = calendar
         dates.timeZone = .gmt
         guard
-            let from = dates.date(from: here.dateComponents([.era, .year, .month, .day], from: source.date)),
-            let to = dates.date(from: there.dateComponents([.era, .year, .month, .day], from: source.date)),
+            let from = dates.date(from: here.dateComponents([.era, .year, .month, .day], from: date)),
+            let to = dates.date(from: there.dateComponents([.era, .year, .month, .day], from: date)),
             let days = dates.dateComponents([.day], from: from, to: to).day
         else { return nil }
         switch days {

@@ -47,6 +47,8 @@ enum SettingsFileKey: String, CaseIterable, Sendable {
     case emojiCommands = "emoji.commands"
     case colorNotation = "colors.notation"
     case colorCommands = "colors.commands"
+    case worldClockZones = "worldClock.zones"
+    case worldClockCommands = "worldClock.commands"
     case proxmoxAddress = "proxmox.address"
     case proxmoxTokenID = "proxmox.tokenID"
     case processLabelEndpoint = "processLabels.endpoint"

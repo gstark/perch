@@ -161,6 +161,7 @@ run launcher-settings-file-test $L/LauncherFileFormat.swift \
                                 Tinycast/Features/WindowManagement/Model/WindowCommand.swift
 run calc-test              Tinycast/Features/Calculator/Model/*.swift
 run index calc-performance Tinycast/Features/Calculator/Model/*.swift
+run world-clock-test       Tinycast/Features/Calculator/Model/*.swift Tinycast/Features/WorldClock/Model/*.swift
 run clipboard-test         Tinycast/Features/Clipboard/Model/ClipboardStore.swift \
                            Tinycast/Platform/Images/ImageDerivative.swift \
                            Tests/clipboard-seed.swift \

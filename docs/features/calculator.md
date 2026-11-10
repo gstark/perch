@@ -52,6 +52,8 @@ The one exception is the five words that name the current moment or its neighbou
    `today + 3 weeks`)
 2. **Time zones** (`CalcTimeZone`, e.g. `time in Tokyo`, `5pm ldn in sf`) — before tokenizing,
    because a zone phrase is words rather than calculator input
+   Then **written moments** (`CalcZonedMoment`, e.g. `November 10, 2026 7:36 AM (UTC +08:00)`),
+   read from the raw text so a locale's number rules never see a pasted date
 3. Tokenize, then preserve the complete prefix of a trailing binary operator
 4. Base conversion
 5. **Typed quantity arithmetic** (`10kg + 500g`, `$10 + €5`, `5m * 4m`,
@@ -402,6 +404,34 @@ order is `aliases`, then `cities`, then countries, so no curated name is ever sh
 Order settles the collisions. Time zones run **last** among the named paths, after units and
 currency, so `10 cordoba to usd` stays money and `1 cup to ml` stays volume. `cordoba` is the one
 word the zone and currency tables both claim.
+
+## Written moments
+
+`CalcZonedMoment` reads a moment the way a web page, a tracking page or an email header prints it:
+`November 10, 2026\n7:36 AM (UTC +08:00)`, `Tue, 10 Nov 2026 07:36:00 +0800`,
+`2026-11-10 07:36 GMT+8`, `nov 10 7:36am singapore`. It converts to the Mac's own zone, or to a
+trailing `in <zone>` / `to <zone>`. It runs after `CalcTimeZone`, so every phrase that grammar
+already answers keeps its meaning: `7:36 am utc + 8` is still eight hours after 7:36 UTC.
+
+- **Every word must be claimed** — a month, a day, a year, a weekday, a clock, a zone, or one of a
+  few fillers (`on`, `the`, `@`). `delivered 7:36 AM UTC+8` therefore stays silent, which is what keeps
+  ordinary searches out. `at` is a filler only between a date and its clock.
+- **A clock and a zone are both required.** The zone is a numeric offset (`+0800`, `+08:00`,
+  `UTC+8`, `GMT-5`, `Z`) or any name the zone tables resolve. A target alone also counts:
+  `nov 10 7:36am in tokyo` reads the clock in the Mac's zone.
+- **A slash date must be unambiguous.** `13/11/2026` is 13 November; `10/11/2026` stays silent,
+  since `Model/` reads no `Locale` to choose between day-first and month-first. ISO (`2026-11-10`)
+  and dotted (`10.11.2026`, day first) dates always read.
+- A written date answers with the date on both sides, and the year only when it is not this year. A
+  clock without a date uses today in its own zone and the `(tomorrow)` note `CalcTimeZone` uses.
+- A fixed offset badges as `UTC+8` or `UTC+5:30`, through `CalcTimeZone.label`.
+
+`find(in:)` scans free text for the first moment, joining up to three neighbouring lines, because a
+page often prints the date and the clock on separate lines. The clipboard command and screenshot OCR
+use it.
+
+`CalcMemo` evaluates against `Calendar.autoupdatingCurrent` and keys its cache on the zone, so a Mac
+that changes zone converts to the new one at the next keystroke.
 
 ## Months and years
 

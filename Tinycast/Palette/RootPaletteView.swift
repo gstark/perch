@@ -54,6 +54,8 @@ struct RootPaletteView: View {
             return CalculatorHistoryScreen(
                 history: calcHistory, currencyRates: currencyRates, core: core, vm: vm,
                 openActions: openActions)
+        case .worldClock:
+            return WorldClockScreen(settings: settings, core: core, vm: vm, openActions: openActions)
         }
     }
 

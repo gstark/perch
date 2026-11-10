@@ -78,6 +78,10 @@ enum CalcEngine {
         if let zone = CalcTimeZone.evaluate(query, now: now, calendar: calendar) {
             return unchained(zone)
         }
+        // The raw text: a pasted `November 10, 2026` must not pass through a locale's number rules.
+        if let moment = CalcZonedMoment.evaluate(trimmed, now: now, calendar: calendar) {
+            return unchained(moment)
+        }
 
         guard let tokens = CalcTokenizer.tokenize(query), !tokens.isEmpty else { return nil }
 

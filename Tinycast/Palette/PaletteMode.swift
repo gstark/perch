@@ -5,6 +5,7 @@ enum PaletteMode: String, CaseIterable, Identifiable {
     case clipboard
     case calculatorHistory
     case emoji
+    case worldClock
 
     var id: String { rawValue }
 
@@ -14,6 +15,7 @@ enum PaletteMode: String, CaseIterable, Identifiable {
         case .clipboard: return "doc.on.doc"
         case .calculatorHistory: return "plus.forwardslash.minus"
         case .emoji: return "face.smiling"
+        case .worldClock: return "globe"
         }
     }
     var placeholder: String {
@@ -22,6 +24,7 @@ enum PaletteMode: String, CaseIterable, Identifiable {
         case .clipboard: return "Type to filter entries…"
         case .calculatorHistory: return "Do math, convert units, or search your past calculations…"
         case .emoji: return "Search emoji and symbols…"
+        case .worldClock: return "Type a time to convert, or a city to add…"
         }
     }
 }

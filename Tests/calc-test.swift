@@ -1505,6 +1505,45 @@ struct CalcTests {
         expectBadgesAt("time in canada", source: "UTC", target: "Toronto")
         expectBadgesAt("time in russia", source: "UTC", target: "Moscow")
         expectBadgesAt("time in uae", source: "UTC", target: "Dubai")
+
+        // Written moments, as tracking pages and email headers print them
+        var chicago = clock.calendar
+        chicago.timeZone = TimeZone(identifier: "America/Chicago")!
+        let dhl = "November 10, 2026\n\n7:36 AM (UTC +08:00)"
+        expectDisplayAt(dhl, "Mon, Nov 9 at 5:36 PM", calendar: chicago)
+        expectBadgesAt(dhl, source: "UTC+8", target: "Chicago", calendar: chicago)
+        expectDisplayAt("Tue, 10 Nov 2026 07:36:00 +0800", "Mon, Nov 9 at 11:36 PM")
+        expectDisplayAt("2026-11-10 07:36 GMT+8", "Mon, Nov 9 at 11:36 PM")
+        expectDisplayAt("10th nov 2026 7:36am sgt", "Mon, Nov 9 at 11:36 PM")
+        expectDisplayAt("nov 10 7:36am singapore", "Mon, Nov 9 at 11:36 PM")
+        expectDisplayAt("Nov 10, 2026 at 7:36 AM UTC+8", "Mon, Nov 9 at 11:36 PM")
+        expectDisplayAt("Jan 3 2027 9:00 pm pst", "Mon, Jan 4, 2027 at 5:00 AM")
+        expectDisplayAt("13/11/2026 07:36 utc", "Fri, Nov 13 at 7:36 AM")
+        expectDisplayAt("10.11.2026 07:36 utc", "Tue, Nov 10 at 7:36 AM")
+        expectDisplayAt("7:36 AM UTC+8", "11:36 PM (yesterday)")
+        expectDisplayAt("7:36 +0530", "2:06 AM")
+        expectBadgesAt("7:36 +0530", source: "UTC+5:30", target: "UTC")
+        expectDisplayAt("7:36 am gmt-5", "12:36 PM")
+        // A named target overrides the Mac's own zone, and the Mac's zone is the source when none is written
+        expectDisplayAt("nov 10, 2026 7:36 AM UTC+8 to tokyo", "Tue, Nov 10 at 8:36 AM")
+        expectBadgesAt("nov 10 7:36am in tokyo", source: "UTC", target: "Tokyo")
+        // A slash date whose order is in doubt, a stray word, or no zone at all stays silent
+        expectNilAt("10/11/2026 07:36 utc")
+        expectNilAt("delivered 7:36 AM UTC+8")
+        expectNilAt("nov 10 7:36")
+        expectNilAt("nov 10 7:36 utc to atlantis")
+        // `+ 8` keeps its old meaning of eight hours later
+        expectDisplayAt("7:36 am utc + 8", "3:36 PM")
+        let page = "Shipment picked up\nNovember 10, 2026\n7:36 AM (UTC +08:00)\nSingapore - Hub"
+        check(
+            "find in page",
+            expected: "UTC+8",
+            got: CalcZonedMoment.find(in: page, now: clock.now, calendar: clock.calendar)
+                .map { CalcTimeZone.label(for: $0.zone) } ?? "nil")
+        check(
+            "find keeps the date",
+            expected: "true",
+            got: String(CalcZonedMoment.find(in: page, now: clock.now, calendar: clock.calendar)?.hasDate ?? false))
         // A unit spelled like a country code stays a unit
         expectDisplay("10 ms to us", "10,000 µs")
         expectNilAt("time in antarctica")

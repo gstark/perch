@@ -110,6 +110,11 @@ final class AppSettings {
         didSet { defaults.set(colorNotation.rawValue, forKey: Key.colorNotation.rawValue) }
     }
 
+    /// IANA identifiers the World Clock lists after the Mac's own zone, in the order shown.
+    var worldClockZones: [String] {
+        didSet { defaults.set(worldClockZones, forKey: Key.worldClockZones.rawValue) }
+    }
+
     /// As typed; `ProxmoxConnection.baseURL(from:)` fills in the scheme and port.
     var proxmoxAddress: String {
         didSet { defaults.set(proxmoxAddress, forKey: Key.proxmoxAddress.rawValue) }
@@ -310,6 +315,7 @@ final class AppSettings {
             ?? .default
         colorNotation =
             defaults.string(forKey: Key.colorNotation.rawValue).flatMap(ColorNotation.init) ?? .hex
+        worldClockZones = defaults.stringArray(forKey: Key.worldClockZones.rawValue) ?? []
         proxmoxAddress = defaults.string(forKey: Key.proxmoxAddress.rawValue) ?? ""
         proxmoxTokenID = defaults.string(forKey: Key.proxmoxTokenID.rawValue) ?? ""
         proxmoxCertificateFingerprint =

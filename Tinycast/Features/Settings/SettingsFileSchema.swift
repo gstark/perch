@@ -75,6 +75,9 @@ enum SettingsFileSchema {
         case .emojiCommands: return launcher.commandsBinding(for: key, owner: .emoji)
         case .colorNotation: return bind(settings, \.colorNotation)
         case .colorCommands: return launcher.commandsBinding(for: key, owner: .colors)
+        case .worldClockZones:
+            return bind(settings, \.worldClockZones) { WorldClockBoard.normalized($0) }
+        case .worldClockCommands: return launcher.commandsBinding(for: key, owner: .worldClock)
         case .proxmoxAddress: return bind(settings, \.proxmoxAddress)
         case .proxmoxTokenID: return bind(settings, \.proxmoxTokenID)
         case .processLabelEndpoint: return bind(settings, \.processLabelEndpoint)

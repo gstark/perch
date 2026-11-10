@@ -53,6 +53,7 @@ extension SettingsTab {
         case .clipboard: [.clipboardHistory, .pasteSequentially]
         case .emoji: [.searchEmoji]
         case .colors: [.pickColor]
+        case .worldClock: [.worldClock, .convertClipboardTime]
         default: []
         }
     }

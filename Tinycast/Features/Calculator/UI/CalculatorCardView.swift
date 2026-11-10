@@ -10,6 +10,7 @@ extension AppCore {
 enum CalcMemo {
     private struct Cache {
         let query: String
+        let zone: String
         let stamp: Date?
         let region: String?
         let format: CalcNumberFormat
@@ -21,14 +22,19 @@ enum CalcMemo {
     /// The answer stays canonical, so history keeps one spelling whatever the format becomes.
     static func evaluate(_ query: String, rates: CurrencyRates?, format: CalcNumberFormat) -> CalcResult? {
         let region = RegionCurrency.code
-        if let cache, cache.query == query, cache.stamp == rates?.fetchedAt, cache.region == region,
-            cache.format == format
+        // Autoupdating, so a Mac that crosses a zone converts to the new one without a relaunch.
+        let calendar = Calendar.autoupdatingCurrent
+        let zone = calendar.timeZone.identifier
+        if let cache, cache.query == query, cache.zone == zone, cache.stamp == rates?.fetchedAt,
+            cache.region == region, cache.format == format
         {
             return cache.result
         }
         let result = CalcEngine.evaluate(
-            query, now: Date(), calendar: .current, rates: rates, region: region, format: format)
-        cache = Cache(query: query, stamp: rates?.fetchedAt, region: region, format: format, result: result)
+            query, now: Date(), calendar: calendar, rates: rates, region: region, format: format)
+        cache = Cache(
+            query: query, zone: zone, stamp: rates?.fetchedAt, region: region, format: format,
+            result: result)
         return result
     }
 }

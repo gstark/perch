@@ -41,6 +41,9 @@ extension SettingsAnchor {
     static let colorsCommands = Self(tab: .colors, title: "Commands")
     static let colorsCopying = Self(tab: .colors, title: "Copying")
 
+    static let worldClockCommands = Self(tab: .worldClock, title: "Commands")
+    static let worldClockClocks = Self(tab: .worldClock, title: "Clocks")
+
     static let proxmoxConnection = Self(tab: .proxmox, title: "Connection")
     static let proxmoxCertificate = Self(tab: .proxmox, title: "Certificate")
 

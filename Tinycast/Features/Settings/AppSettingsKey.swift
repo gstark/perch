@@ -14,6 +14,7 @@ enum AppSettingsKey: String {
     case emojiSkinTone = "emojiSkinTone"
     case emojiGridColumns = "emojiGridColumns"
     case colorNotation = "colorNotation"
+    case worldClockZones = "worldClockZones"
     case proxmoxAddress = "proxmoxAddress"
     case proxmoxTokenID = "proxmoxTokenID"
     case proxmoxCertificateFingerprint = "proxmoxCertificateFingerprint"
