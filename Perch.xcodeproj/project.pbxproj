@@ -147,6 +147,7 @@
 		5EF022364CC0A8AFDAF59B6F /* EmojiScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B25982E0FF984412BA36027 /* EmojiScreen.swift */; };
 		5F0D2740600334A689AAF920 /* ClipDrag.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E7634E743B1A46524B35AE /* ClipDrag.swift */; };
 		5F29A50EA0D1CF6D35F9B82C /* ColorDot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6BD9418EF68FE7E928005CF /* ColorDot.swift */; };
+		5FFC11E959FB8B33080ABF89 /* FanMenuSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A335F3CCB31C1FF94C51373 /* FanMenuSummary.swift */; };
 		6108E77DD565F62307EC7D9A /* ProcessLabelFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E3D55A642AF3FAC587796D /* ProcessLabelFormat.swift */; };
 		61DC7CA55A4B9EB6C1644739 /* OverflowFade.swift in Sources */ = {isa = PBXBuildFile; fileRef = C02F2A45A64319393714DEF2 /* OverflowFade.swift */; };
 		62843DEAE518675AD4BF18D6 /* ProxmoxSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C983E047F1788D60C4207A0B /* ProxmoxSettingsView.swift */; };
@@ -534,6 +535,7 @@
 		676F42733396F4A1D29A12B4 /* ScreenTarget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenTarget.swift; sourceTree = "<group>"; };
 		68DC2D605D3D2982D89B1C5B /* ProcessLabelCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessLabelCache.swift; sourceTree = "<group>"; };
 		6A0ACB89437772B1013A28AA /* PaletteDropGuideController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteDropGuideController.swift; sourceTree = "<group>"; };
+		6A335F3CCB31C1FF94C51373 /* FanMenuSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FanMenuSummary.swift; sourceTree = "<group>"; };
 		6B2F1D6398329BF82485FB3D /* FilePreviewThumbnail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilePreviewThumbnail.swift; sourceTree = "<group>"; };
 		6BD704AE57015E899498C795 /* PaletteTabAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteTabAction.swift; sourceTree = "<group>"; };
 		6BEDEA6024CC9C1075FF4C4F /* SelectionReveal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionReveal.swift; sourceTree = "<group>"; };
@@ -790,6 +792,7 @@
 		08D7BC1124FF437D910DFA23 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				6A335F3CCB31C1FF94C51373 /* FanMenuSummary.swift */,
 				ED9FEEFBA017469230E76368 /* MeterImage.swift */,
 				3010689C3513FF994262C731 /* StatusItemController.swift */,
 			);
@@ -2009,6 +2012,7 @@
 				A73A13FA9407B569C0A547EE /* EscapeKeyBehavior.swift in Sources */,
 				985CDE5B580A70EC8D44F4F4 /* ExecutableLocator.swift in Sources */,
 				5DC554A32E98AAC11175D6DC /* ExecutablePicker.swift in Sources */,
+				5FFC11E959FB8B33080ABF89 /* FanMenuSummary.swift in Sources */,
 				EAA21731C3034DEBB3AF381D /* FanReader.swift in Sources */,
 				10C9D78D0836BA6E23B46EE7 /* FanSpeed.swift in Sources */,
 				7D945B063BB4E44FB41F5132 /* FavoriteSlots.swift in Sources */,

@@ -108,20 +108,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         let fans = FanReader.read()
         guard !fans.isEmpty else { return }
         menu.addItem(.sectionHeader(title: "Fans"))
-        for (index, fan) in fans.enumerated() {
-            let name = FanReading.name(index: index, count: fans.count)
-            let row = NSMenuItem(title: "\(name) \(fan.speedText)", action: nil, keyEquivalent: "")
-            let title = NSMutableAttributedString(
-                attributedString: Self.columnTitle(
-                    Self.leadingText(name, description: nil), trailing: fan.speedText,
-                    column: Self.processColumnWidth))
-            // AppKit greys a row with no action unless its title names its own colour.
-            title.addAttribute(
-                .foregroundColor, value: NSColor.labelColor,
-                range: NSRange(location: 0, length: title.length))
-            row.attributedTitle = title
-            menu.addItem(row)
-        }
+        menu.addItem(FanMenuSummary.menuItem(fans: fans))
         menu.addItem(.separator())
     }
 

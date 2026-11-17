@@ -58,7 +58,8 @@ and the **Startup Disk** section follows it, with a free-space summary and **Dis
 `FanReader` reads the AppleSMC driver when the menu opens. The read needs no admin rights and takes
 about a millisecond, so it is not polled. The SMC (System Management Controller) gives `FNum` for the
 fan count, `F<n>Ac` for the speed and `F<n>Mx` for the top speed. Each row shows the rpm and the share
-of the top speed, as `2,340 rpm · 34%`. Apple silicon stops an idle fan, so a speed under 100 rpm reads
+of the top speed, as `2,340 rpm · 34%`. `FanMenuSummary` draws the rows as one SwiftUI view item,
+because AppKit greys a text row that has no action, even when its title sets a colour. Apple silicon stops an idle fan, so a speed under 100 rpm reads
 **Off**. A Mac with no fan has no `FNum` key and gets no section. `SMCValue` decodes the `flt ` type
 of Apple silicon and the `fpe2` type of an Intel Mac. `SMCParamStruct` must match the 80-byte C layout
 of the driver, and the padding field in `KeyInfo` keeps that layout.
