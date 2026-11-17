@@ -23,6 +23,7 @@ struct CPUMeterTests {
         processLoads()
         zones()
         layout()
+        fans()
         print("\(passes) passed, \(failures) failed")
         if failures > 0 { exit(1) }
     }
@@ -100,5 +101,31 @@ struct CPUMeterTests {
         expect(MeterLayout(coreCount: 8).order == Array(0..<8), "one cluster draws in core order")
         expect(MeterLayout(coreCount: 2, efficiencyCount: 5).efficiencyCount == 2, "the efficiency count never exceeds the cores")
         expect(MeterLayout(coreCount: 0).size.width == 0, "no cores draw nothing")
+    }
+
+    static func fans() {
+        let bytes: [UInt8] = [31, 102, 19, 69]
+        let rpm = SMCValue.decode(type: "flt ", bytes: bytes) ?? 0
+        expect(abs(rpm - 2358.38) < 0.01, "an Apple silicon float reads little-endian")
+        expect(SMCValue.decode(type: "fpe2", bytes: [0x24, 0x4C]) == 2323, "fpe2 is big-endian with two fraction bits")
+        expect(SMCValue.decode(type: "ui8 ", bytes: [2]) == 2, "ui8 is the byte itself")
+        expect(SMCValue.decode(type: "flt ", bytes: [1, 2]) == nil, "a short reply decodes to nothing")
+        expect(SMCValue.decode(type: "sp78", bytes: [1, 2]) == nil, "an unknown type decodes to nothing")
+
+        let idle = FanReading(rpm: 0, maximum: 6800)
+        expect(!idle.isSpinning && idle.speedText == "Off", "a stopped fan reads Off")
+        expect(!FanReading(rpm: 40, maximum: 6800).isSpinning, "a few rpm of noise is still stopped")
+        let running = FanReading(rpm: 2358.4, maximum: 6800)
+        expect(running.percent == 35, "the level is the share of top speed")
+        expect(running.speedText == "\(2358.formatted()) rpm · 35%", "a spinning fan shows rpm and level")
+        expect(FanReading(rpm: 7000, maximum: 6800).percent == 100, "an overshoot caps at 100")
+        expect(FanReading(rpm: 2000, maximum: 0).percent == 0, "no known maximum reads 0, not a crash")
+        expect(FanReading.name(index: 0, count: 1) == "Fan", "a lone fan needs no number")
+        expect(FanReading.name(index: 1, count: 2) == "Fan 2", "fans number from 1")
+
+        // A real read: a Mac with fans reports a top speed, and a fanless one reports none.
+        let real = FanReader.read()
+        expect(real.allSatisfy { $0.maximum > 0 && $0.rpm >= 0 }, "every real fan reports a top speed")
+        print("fans on this Mac: \(real.map(\.speedText))")
     }
 }

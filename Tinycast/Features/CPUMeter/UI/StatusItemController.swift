@@ -89,6 +89,7 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             menu.addItem(item("Proxmox…") { $0.proxmoxCoordinator.showPanel() })
         }
         menu.addItem(.separator())
+        addFanItems(to: menu)
         addDiskItems(to: menu)
         menu.addItem(.separator())
         menu.addItem(item("Open Launcher") { $0.paletteCoordinator.showPalette(mode: .launcher) })
@@ -100,6 +101,22 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         menu.addItem(item("Settings…") { $0.settingsCoordinator.showSettings() })
         menu.addItem(.separator())
         menu.addItem(item("Quit \(Bundle.main.appDisplayName)") { _ in NSApp.terminate(nil) })
+    }
+
+    /// A Mac with no fan gets no section, rather than a row that always reads Off.
+    private func addFanItems(to menu: NSMenu) {
+        let fans = FanReader.read()
+        guard !fans.isEmpty else { return }
+        menu.addItem(.sectionHeader(title: "Fans"))
+        for (index, fan) in fans.enumerated() {
+            let name = FanReading.name(index: index, count: fans.count)
+            let row = NSMenuItem(title: "\(name) \(fan.speedText)", action: nil, keyEquivalent: "")
+            row.attributedTitle = Self.columnTitle(
+                Self.leadingText(name, description: nil), trailing: fan.speedText,
+                column: Self.processColumnWidth)
+            menu.addItem(row)
+        }
+        menu.addItem(.separator())
     }
 
     private func addDiskItems(to menu: NSMenu) {
@@ -160,7 +177,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
             if !sent { core.showMessage("Could not quit \(name)", tone: .danger) }
         }
         let leading = Self.leadingText(label, description: force ? nil : row.description)
-        item.attributedTitle = Self.processTitle(leading, percent: usage.percent, column: column)
+        item.attributedTitle = Self.columnTitle(
+            leading, trailing: "\(Int(usage.percent.rounded()))%", column: column)
         // Without an action AppKit greys the row, which is the disabled look wanted here.
         if !owned { item.action = nil }
         if force {
@@ -183,16 +201,16 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         return text
     }
 
-    /// The leading text, then the share on a right-aligned tab stop, so the numbers line up.
-    private static func processTitle(
-        _ leading: NSAttributedString, percent: Double, column: CGFloat
+    /// The leading text, then a figure on a right-aligned tab stop, so the numbers line up.
+    private static func columnTitle(
+        _ leading: NSAttributedString, trailing: String, column: CGFloat
     ) -> NSAttributedString {
         let style = NSMutableParagraphStyle()
         style.tabStops = [NSTextTab(textAlignment: .right, location: column)]
         let title = NSMutableAttributedString(attributedString: leading)
         title.append(
             NSAttributedString(
-                string: "\t\(Int(percent.rounded()))%",
+                string: "\t\(trailing)",
                 attributes: [.font: NSFont.menuFont(ofSize: 0)]))
         title.addAttribute(
             .paragraphStyle, value: style, range: NSRange(location: 0, length: title.length))

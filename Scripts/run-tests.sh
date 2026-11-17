@@ -334,7 +334,8 @@ run settings-file-test     Tinycast/Features/Settings/Model/*.swift \
                            Tinycast/Features/Settings/Service/SettingsFileMonitor.swift \
                            Tinycast/Features/Settings/Service/SettingsFileRepository.swift \
                            Tinycast/Platform/AppPaths.swift
-run cpu-meter-test         Tinycast/Features/CPUMeter/Model/*.swift
+run cpu-meter-test         Tinycast/Features/CPUMeter/Model/*.swift \
+                           Tinycast/Features/CPUMeter/Service/FanReader.swift
 run proxmox-test           Tinycast/Features/Proxmox/Model/*.swift
 run process-labels-test    Tinycast/Features/ProcessLabels/Model/*.swift
 run git-watch-test         Tinycast/Features/GitWatch/Model/*.swift \

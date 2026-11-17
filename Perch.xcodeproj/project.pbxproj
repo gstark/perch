@@ -27,6 +27,7 @@
 		0EF72E3951C5C29F5DEAE7FD /* ASCIIKeyboardLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953BD1A8C84B395D539A1F9F /* ASCIIKeyboardLayout.swift */; };
 		0F9CC37F80C75821B5E59426 /* EmojiGridGeometry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F037E3B78FEB00DAFF88B3 /* EmojiGridGeometry.swift */; };
 		10B0E69EB876427B5F85A530 /* ProcessLabelFailure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A15EE8642636B7201CE78C9 /* ProcessLabelFailure.swift */; };
+		10C9D78D0836BA6E23B46EE7 /* FanSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74D8CD40A2C03D0766C53A2E /* FanSpeed.swift */; };
 		1272A7FF39275E964FA806D4 /* FeatureCommandsSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0214D46A2DF67E11BE1209DA /* FeatureCommandsSection.swift */; };
 		139B2F3FCB64AE8A5AD9382C /* ColorSwatch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541E8544331879E6F94476A1 /* ColorSwatch.swift */; };
 		147ADB34251A1CD126956FEC /* HotKeyDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE95BDAB6DC4E979F2E6AB99 /* HotKeyDefaults.swift */; };
@@ -334,6 +335,7 @@
 		E8708D6139A794AC8B874D0F /* SettingsNavigationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84D5F76455ADC07B7DE84E2 /* SettingsNavigationState.swift */; };
 		E8AE463B464F3AD64A729D73 /* EdgeDissolve.swift in Sources */ = {isa = PBXBuildFile; fileRef = 337B18FCF55FF3BCC37284E3 /* EdgeDissolve.swift */; };
 		EA4427A531AEBC3067F70098 /* DialogTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B4D1B46939E7125C039A476 /* DialogTextField.swift */; };
+		EAA21731C3034DEBB3AF381D /* FanReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226B14A9D086B2DFBB4F6039 /* FanReader.swift */; };
 		ECA65B9FB6237B7154FB57CC /* FormWindowChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60F9114009EE1CCA5A8E2FDF /* FormWindowChrome.swift */; };
 		ED363D88E8DCF4B67FCDE17A /* PasteSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = B769C0497F1061ACFBFEF8CD /* PasteSequence.swift */; };
 		EDB8F5617D7D92BCAEE66B45 /* WindowLayoutNumberField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7706D40944796EA182F1EECF /* WindowLayoutNumberField.swift */; };
@@ -437,6 +439,7 @@
 		20E3D55A642AF3FAC587796D /* ProcessLabelFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessLabelFormat.swift; sourceTree = "<group>"; };
 		2167E253972E5D3CA6371534 /* PanelTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelTransition.swift; sourceTree = "<group>"; };
 		2187826DBBF1527919DAD696 /* EntryNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntryNaming.swift; sourceTree = "<group>"; };
+		226B14A9D086B2DFBB4F6039 /* FanReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FanReader.swift; sourceTree = "<group>"; };
 		2355CD88A9DB4D869DE42EC1 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 		240BC9494ED1615A9819755F /* CalcFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalcFormatter.swift; sourceTree = "<group>"; };
 		245F6484451D44E52C41AA88 /* PaletteShortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaletteShortcut.swift; sourceTree = "<group>"; };
@@ -542,6 +545,7 @@
 		73F6CFF75E79A17C8D33F3E6 /* FavoriteSlots.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteSlots.swift; sourceTree = "<group>"; };
 		741D5129A822B62620B52F5D /* ActivationPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActivationPolicy.swift; sourceTree = "<group>"; };
 		745A538EFEC115DEC12A189E /* PseudoTerminal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PseudoTerminal.swift; sourceTree = "<group>"; };
+		74D8CD40A2C03D0766C53A2E /* FanSpeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FanSpeed.swift; sourceTree = "<group>"; };
 		752A4F59E02192759382245C /* ProxmoxFailure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxmoxFailure.swift; sourceTree = "<group>"; };
 		7577EB8E92D9B623242B99B3 /* WindowShortcutPresetCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowShortcutPresetCoordinator.swift; sourceTree = "<group>"; };
 		7615B1E6CA4E6DB3E9606BB2 /* WindowManagementSettingsFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WindowManagementSettingsFile.swift; sourceTree = "<group>"; };
@@ -1628,6 +1632,7 @@
 			isa = PBXGroup;
 			children = (
 				000DACE858F9A74B29B099AD /* CPUSampler.swift */,
+				226B14A9D086B2DFBB4F6039 /* FanReader.swift */,
 				0E29A73A414257A222C814D7 /* ProcessControl.swift */,
 			);
 			path = Service;
@@ -1661,6 +1666,7 @@
 			isa = PBXGroup;
 			children = (
 				888F45421E88671D14399551 /* CPULoad.swift */,
+				74D8CD40A2C03D0766C53A2E /* FanSpeed.swift */,
 				43A41A32C2D423956BFF860B /* MeterLayout.swift */,
 				3B7070A07762DA335E96A0F0 /* ProcessLoad.swift */,
 			);
@@ -2003,6 +2009,8 @@
 				A73A13FA9407B569C0A547EE /* EscapeKeyBehavior.swift in Sources */,
 				985CDE5B580A70EC8D44F4F4 /* ExecutableLocator.swift in Sources */,
 				5DC554A32E98AAC11175D6DC /* ExecutablePicker.swift in Sources */,
+				EAA21731C3034DEBB3AF381D /* FanReader.swift in Sources */,
+				10C9D78D0836BA6E23B46EE7 /* FanSpeed.swift in Sources */,
 				7D945B063BB4E44FB41F5132 /* FavoriteSlots.swift in Sources */,
 				7E6FC4B43721B79051D4F6BF /* FavoritesStore.swift in Sources */,
 				1272A7FF39275E964FA806D4 /* FeatureCommandsSection.swift in Sources */,
